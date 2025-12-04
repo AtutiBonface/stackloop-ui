@@ -1,267 +1,392 @@
-# @stackloop/ui
+**Installation**
 
-A modern, consistent, and animated React component library built with **Framer Motion**, **Lucide Icons**, and **Tailwind CSS v4**.
+- **NPM:**
 
-## Features
+  ```bash
+  npm install --save stackloop-ui
+  ```
 
-✨ **Consistent Design System** - Single primary color palette with automatic shade generation  
-🎨 **Unified Styling** - Consistent borders, shadows, spacing, and border radius across all components  
-🎭 **Smooth Animations** - Framer Motion animations on every component  
-📱 **Mobile-First** - Touch-friendly interactions and responsive design  
-🎯 **TypeScript** - Fully typed components with comprehensive props  
-🎁 **Tree-Shakeable** - Import only what you need
+- **Peer deps:** ensure `react` and `react-dom` (>=18) are installed.
 
-## Installation
+- **CSS:** import the library CSS where you bootstrap your app:
 
-```bash
-npm install @stackloop/ui
-# or
-yarn add @stackloop/ui
-# or
-pnpm add @stackloop/ui
-```
+  ```js
+  import 'stackloop-ui/theme.css'
+  ```
 
-**Peer Dependencies:**
-```bash
-npm install react react-dom framer-motion lucide-react clsx tailwind-merge
-```
+**Importing components**
 
-## Setup
+- Import components from the package root:
 
-Import the theme CSS file in your application's entry point:
+  ```js
+  import { Button, Modal, Input } from 'stackloop-ui'
+  ```
 
-```tsx
-// main.tsx or App.tsx
-import '@stackloop/ui/theme.css'
-```
+**Components Reference**
 
-## Usage
+- For each component below you'll find a short description, props (type, default, notes) and a minimal usage example.
 
-```tsx
-import { Button, Input, Card, CardHeader, CardTitle, CardContent, Modal } from '@stackloop/ui'
-import { useState } from 'react'
+**Checkbox**:
+- **Description:** Accessible checkbox with optional label and description.
+- **Props:**
+  - **`label`**: `string` — optional.
+  - **`description`**: `string` — optional.
+  - **`onChange`**: `(checked: boolean) => void` — optional.
+  - Inherits standard `input` props (e.g. `disabled`, `defaultChecked`, `checked`).
+- **Usage:**
 
-function App() {
-  const [isOpen, setIsOpen] = useState(false)
-  
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Welcome</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Input 
-          label="Email" 
-          type="email" 
-          placeholder="you@example.com" 
-        />
-        <Button onClick={() => setIsOpen(true)}>
-          Open Modal
-        </Button>
-      </CardContent>
-      
-      <Modal
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-        title="Hello World"
-      >
-        <p>This is a modal dialog</p>
-      </Modal>
-    </Card>
-  )
-}
-```
+  ```jsx
+  import { Checkbox } from 'stackloop-ui'
 
-## Components
+  <Checkbox label="Accept terms" onChange={(v) => console.log(v)} />
+  ```
 
-### Form Components
-- **Button** - Primary, secondary, ghost, and danger variants with loading states
-- **Input** - Text inputs with icons, labels, and error states
-- **Textarea** - Multi-line text input with validation
-- **Checkbox** - Animated checkboxes with labels
-- **Toggle** - Switch toggle with descriptions
-- **Slider** - Single value range slider
-- **DualSlider** - Range slider with min/max values
-- **RadioPills** - Stylized radio button group
-- **Dropdown** - Searchable dropdown with icons
-- **DatePicker** - Calendar date picker
+**Button**:
+- **Description:** Animated button with variants, sizes, icons and loading state.
+- **Props:**
+  - **`variant`**: `'primary' | 'secondary' | 'outline' | 'ghost' | 'danger'` — default: `'primary'`.
+  - **`size`**: `'sm' | 'md' | 'lg'` — default: `'md'`.
+  - **`loading`**: `boolean` — default: `false`.
+  - **`icon`**: `ReactNode` — optional.
+  - Inherits standard `button` props.
+- **Usage:**
 
-### Layout Components
-- **Card** - Container with variants (default, outlined, elevated)
-- **CardHeader, CardTitle, CardDescription, CardContent** - Card sub-components
-- **Drawer** - Slide-in side panel (left/right)
-- **Modal** - Centered overlay dialog
-- **BottomSheet** - Mobile-friendly bottom slide-up panel
-- **Table** - Sortable data table with loading states
-- **Pagination** - Page navigation with item counts
+  ```jsx
+  import { Button } from 'stackloop-ui'
 
-### Display Components
-- **Badge** - Status indicators with color variants
-- **FloatingActionButton (FAB)** - Fixed positioned action button with expandable menu
-- **StepProgress** - Multi-step progress indicator
-- **ThumbnailGrid** - Image grid with selection
-- **StatusBadges** - Offline badge and sync indicator
+  <Button variant="outline" size="lg" onClick={() => {}}>Save</Button>
+  ```
 
-### Media Components
-- **FileUpload** - Drag-and-drop file uploader
-- **AudioRecorder** - Audio recording interface
+**Input**:
+- **Description:** Text input with label, error and optional icons.
+- **Props:**
+  - **`label`**: `string` — optional.
+  - **`error`**: `string` — optional.
+  - **`hint`**: `string` — optional.
+  - **`leftIcon`** / **`rightIcon`**: `ReactNode` — optional.
+  - Inherits `input` HTML attributes.
+- **Usage:**
 
-## Usage Example
+  ```jsx
+  import { Input } from 'stackloop-ui'
 
-```tsx
-import { Button, Card, CardHeader, CardTitle, Input } from './index'
-import { Mail } from 'lucide-react'
+  <Input label="Email" placeholder="you@example.com" />
+  ```
 
-function MyComponent() {
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Sign In</CardTitle>
-      </CardHeader>
-      <Input 
-        label="Email" 
-        type="email" 
-        leftIcon={<Mail />} 
-        placeholder="you@example.com"
-      />
-      <Button variant="primary">Submit</Button>
-    </Card>
-  )
-}
-```
+**Modal**:
+- **Description:** Centered modal with backdrop, title and Escape-to-close handling.
+- **Props:**
+  - **`isOpen`**: `boolean` — required.
+  - **`onClose`**: `() => void` — required.
+  - **`children`**: `ReactNode` — required.
+  - **`title`**: `string` — optional.
+  - **`size`**: `'sm'|'md'|'lg'|'xl'|'full'` — default: `'md'`.
+  - **`className`**: `string` — optional.
+- **Subcomponents:** `ModalContent`, `ModalFooter`.
+- **Usage:**
 
-## Design System
+  ```jsx
+  import { Modal, ModalContent, ModalFooter } from 'stackloop-ui'
 
-### Color Palette
-The library uses a **single primary color** (#2e7d32 green) with automatically generated shades:
-- Primary: 50, 100, 200, 300, 400, 500, 600, 700, 800, 900
-- Neutral: Consistent grayscale from 50-900
-- Semantic: Success, Warning, Error, Info
+  <Modal isOpen={open} onClose={() => setOpen(false)} title="My Modal">
+    <ModalContent>Body</ModalContent>
+    <ModalFooter>
+      <button onClick={() => setOpen(false)}>Close</button>
+    </ModalFooter>
+  </Modal>
+  ```
 
-### Design Tokens
-- **Border Radius**: sm (0.375rem), md (0.5rem), lg (0.75rem), xl (1rem), full (9999px)
-- **Shadows**: sm, md, lg, xl, card
-- **Spacing**: xs (0.5rem), sm (0.75rem), md (1rem), lg (1.5rem), xl (2rem)
+**Table**:
+- **Description:** Generic table with sortable columns and loading skeleton.
+- **Props:**
+  - **`data`**: `T[]` — required.
+  - **`columns`**: `Column<T>[]` — required. Column: `{ key, header, sortable?, render?, width? }`.
+  - **`loading`**: `boolean` — optional.
+  - **`onRowClick`**: `(item: T) => void` — optional.
+  - **`keyExtractor`**: `(item: T) => string` — required.
+  - **`className`**: `string` — optional.
+- **Usage:**
 
-### Animations
-All components include Framer Motion animations:
-- **Fade in** - Opacity transitions
-- **Scale** - Grow/shrink effects
-- **Slide** - Directional entrance/exit
-- **Spring** - Bouncy interactions
+  ```jsx
+  import { Table } from 'stackloop-ui'
 
-## Tech Stack
+  const columns = [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }]
+  <Table data={items} columns={columns} keyExtractor={(i) => String(i.id)} />
+  ```
 
-- **React 19** - UI framework
-- **TypeScript** - Type safety
-- **Vite** - Build tool
-- **Tailwind CSS v4** - Styling
-- **Framer Motion** - Animations
-- **Lucide React** - Icons
+**Dropdown**:
+- **Description:** Select with optional search, clear and icons.
+- **Props:**
+  - **`options`**: `{ value: string; label: string; icon?: ReactNode }[]` — required.
+  - **`value`**: `string` — optional.
+  - **`onChange`**: `(value: string) => void` — required.
+  - **`placeholder`**: `string` — default: `'Select an option'`.
+  - **`label`**, **`error`**, **`searchable`** (default `false`), **`clearable`** (default `true`), **`disabled`**, **`className`**.
+- **Usage:**
 
-## Development
+  ```jsx
+  import { Dropdown } from 'stackloop-ui'
 
-```bash
-# Install dependencies
-npm install
+  <Dropdown options={[{value:'a',label:'A'}]} value={val} onChange={setVal} searchable />
+  ```
 
-# Run development server
-npm run dev
+**BottomSheet**:
+- **Description:** Mobile bottom sheet with header and optional close button.
+- **Props:**
+  - **`isOpen`**: `boolean` — required.
+  - **`onClose`**: `() => void` — required.
+  - **`title`**: `string` — optional.
+  - **`children`**: `ReactNode` — required.
+  - **`showCloseButton`**: `boolean` — default: `true`.
+  - **`className`**: `string` — optional.
+- **Usage:**
 
-# Build for production
-npm run build
+  ```jsx
+  import { BottomSheet } from 'stackloop-ui'
 
-# Preview production build
-npm run preview
-```
+  <BottomSheet isOpen={open} onClose={() => setOpen(false)} title="Actions">...</BottomSheet>
+  ```
 
-## File Structure
+**DatePicker**:
+- **Description:** Date picker with month navigation and min/max options.
+- **Props:**
+  - **`value`**: `Date` — optional.
+  - **`onChange`**: `(date: Date) => void` — required.
+  - **`label`**, **`placeholder`** (default `'Select date'`), **`error`**, **`disabled`**, **`minDate`**, **`maxDate`**, **`className`**.
+- **Usage:**
 
-```
-src/
-├── components/
-│   ├── Button.tsx
-│   ├── Input.tsx
-│   ├── Card.tsx
-│   ├── ... (all components)
-├── index.ts          # Main export file
-├── utils.ts          # Utility functions (cn helper)
-├── theme.css         # Design tokens and global styles
-├── App.tsx           # Component showcase
-└── main.tsx          # Entry point
-```
+  ```jsx
+  import { DatePicker } from 'stackloop-ui'
 
-## License
+  <DatePicker value={date} onChange={setDate} />
+  ```
 
-MIT
+**DualSlider**:
+- **Description:** Two linked sliders showing relative portions.
+- **Props:**
+  - **`value1`**, **`value2`**: `number` — required.
+  - **`onChange`**: `(v1:number, v2:number)=>void` — required.
+  - **`label1`**, **`label2`**: `string` — required.
+  - **`min`** (default `0`), **`max`** (default `100`), **`step`** (default `1`), **`unit`** (default `'%')`, **`disabled`**, **`className`**.
+- **Usage:**
 
+  ```jsx
+  import { DualSlider } from 'stackloop-ui'
 
-Currently, two official plugins are available:
+  <DualSlider value1={30} value2={70} onChange={(a,b)=>{}} label1="A" label2="B" />
+  ```
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**Pagination**:
+- **Description:** Pagination with previous/next and numeric buttons.
+- **Props:**
+  - **`currentPage`**: `number` — required.
+  - **`totalPages`**: `number` — required.
+  - **`onPageChange`**: `(page:number)=>void` — required.
+  - **`totalItems`**, **`itemsPerPage`**, **`className`** — optional.
+- **Usage:**
 
-## React Compiler
+  ```jsx
+  import { Pagination } from 'stackloop-ui'
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+  <Pagination currentPage={1} totalPages={10} onPageChange={setPage} />
+  ```
 
-## Expanding the ESLint configuration
+**Badge**:
+- **Description:** Inline badge with color variants and optional dot.
+- **Props:**
+  - **`children`**: `ReactNode` — required.
+  - **`variant`**: `'default'|'primary'|'success'|'warning'|'danger'|'info'` — default: `'default'`.
+  - **`size`**: `'sm'|'md'|'lg'` — default: `'md'`.
+  - **`dot`**: `boolean` — default: `false`.
+  - **`className`**: `string` — optional.
+- **Usage:**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+  ```jsx
+  import { Badge } from 'stackloop-ui'
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+  <Badge variant="primary">New</Badge>
+  ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+**FloatingActionButton (FAB)**:
+- **Description:** Floating action button with expanded action list support.
+- **Props:**
+  - **`icon`**, **`label`**, **`onClick`**, **`actions`** (array of `{label, icon, onClick, variant}`) — optional.
+  - **`variant`**: `'primary'|'secondary'` — default: `'primary'`.
+  - **`position`**: `'bottom-right'|'bottom-left'|'bottom-center'` — default: `'bottom-right'`.
+  - **`disabled`**, **`className`**.
+- **Usage:**
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+  ```jsx
+  import { FloatingActionButton as FAB } from 'stackloop-ui'
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+  <FAB label="New" onClick={()=>{}} />
+  ```
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+**AudioRecorder**:
+- **Description:** Browser audio recorder component using MediaRecorder.
+- **Props:**
+  - **`onRecordingComplete`**: `(audioBlob: Blob) => void` — required.
+  - **`label`**: `string` — default: `'Record Audio'`.
+  - **`maxDuration`**: `number` — default: `300` seconds.
+  - **`disabled`**, **`className`**.
+- **Usage:**
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+  ```jsx
+  import { AudioRecorder } from 'stackloop-ui'
+
+  <AudioRecorder onRecordingComplete={(blob)=>{ /* handle */ }} />
+  ```
+
+**Drawer**:
+- **Description:** Side drawer that slides in from the left or right.
+- **Props:**
+  - **`isOpen`**: `boolean` — required.
+  - **`onClose`**: `() => void` — required.
+  - **`children`**: `ReactNode` — required.
+  - **`title`**: `string` — optional.
+  - **`position`**: `'left'|'right'` — default: `'right'`.
+  - **`className`**: `string` — optional.
+- **Usage:**
+
+  ```jsx
+  import { Drawer } from 'stackloop-ui'
+
+  <Drawer isOpen={open} onClose={()=>setOpen(false)} title="Menu">...</Drawer>
+  ```
+
+**Toggle**:
+- **Description:** Switch control with label and description.
+- **Props:**
+  - **`label`**: `string` — optional.
+  - **`description`**: `string` — optional.
+  - **`onChange`**: `(checked:boolean)=>void` — optional.
+  - Inherits input attributes such as `checked`, `disabled`.
+- **Usage:**
+
+  ```jsx
+  import { Toggle } from 'stackloop-ui'
+
+  <Toggle label="Enable" onChange={(v)=>console.log(v)} />
+  ```
+
+**StatusBadges** (OfflineBadge, SyncIndicator):
+- **OfflineBadge Props:** `isOffline: boolean` (required), `className?: string`.
+- **SyncIndicator Props:** `status: 'synced'|'syncing'|'unsynced'|'error'` (required), `count?: number`, `className?: string`.
+- **Usage:**
+
+  ```jsx
+  import { OfflineBadge, SyncIndicator } from 'stackloop-ui'
+
+  <OfflineBadge isOffline={true} />
+  <SyncIndicator status="syncing" />
+  ```
+
+**Slider**:
+- **Description:** Single-value slider with optional unit and label.
+- **Props:**
+  - **`value`**: `number` — required.
+  - **`onChange`**: `(value:number)=>void` — required.
+  - **`min`** (default `0`), **`max`** (default `100`), **`step`** (default `1`), **`label`**, **`showValue`** (default `true`), **`unit`** (default `'%')`, **`disabled`**, **`className`**.
+- **Usage:**
+
+  ```jsx
+  import { Slider } from 'stackloop-ui'
+
+  <Slider value={50} onChange={setValue} />
+  ```
+
+**RadioPills**:
+- **Description:** Radio group styled as pill buttons.
+- **Props:**
+  - **`options`**: `{ value: string; label: string; icon?: ReactNode }[]` — required.
+  - **`value`**: `string` — optional.
+  - **`onChange`**: `(v:string)=>void` — optional.
+  - **`name`**: `string` — required.
+  - **`disabled`**, **`className`**.
+- **Usage:**
+
+  ```jsx
+  import { RadioPills } from 'stackloop-ui'
+
+  <RadioPills name="mode" options={[{value:'a',label:'A'}]} />
+  ```
+
+**Textarea**:
+- **Description:** Multiline input with label, error and helper text.
+- **Props:**
+  - **`label`**, **`error`**, **`helperText`**, plus native `textarea` attributes.
+- **Usage:**
+
+  ```jsx
+  import { Textarea } from 'stackloop-ui'
+
+  <Textarea label="Message" helperText="Max 500 chars" />
+  ```
+
+**ThumbnailGrid**:
+- **Description:** Grid to display thumbnails for images, documents, audio with optional remove/view actions.
+- **Props:**
+  - **`items`**: `{ id, name, url, type:'image'|'document'|'audio', size? }[]` — required.
+  - **`onRemove`**: `(id:string)=>void` — optional.
+  - **`onView`**: `(item)=>void` — optional.
+  - **`columns`**: `2|3|4` — default: `3`.
+  - **`className`**.
+- **Usage:**
+
+  ```jsx
+  import { ThumbnailGrid } from 'stackloop-ui'
+
+  <ThumbnailGrid items={items} onRemove={(id)=>{}} />
+  ```
+
+**Card**:
+- **Description:** Generic card container with variants and content subcomponents.
+- **Props:**
+  - **`children`**: `ReactNode` — required.
+  - **`variant`**: `'default'|'outlined'|'elevated'` — default: `'default'`.
+  - **`padding`**: `'sm'|'md'|'lg'|'none'` — default: `'md'`.
+  - **`onClick`**: `() => void` — optional.
+  - **`hover`**: `boolean` — default: `false`.
+- **Subcomponents:** `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`.
+- **Usage:**
+
+  ```jsx
+  import { Card, CardTitle, CardContent } from 'stackloop-ui'
+
+  <Card variant="elevated"> <CardTitle>Title</CardTitle> <CardContent>Body</CardContent> </Card>
+  ```
+
+**FileUpload (CameraCapture, FileUploader)**:
+- **CameraCapture Props:** `onCapture(file:File) => void` (required), `onRemove?`, `preview?`, `label?`, `disabled?`, `className?`.
+- **FileUploader Props:** `onUpload(files:File[]) => void` (required), `accept?` (default `'*/*'`), `multiple?` (default `false`), `label?`, `disabled?`, `className?`.
+- **Usage:**
+
+  ```jsx
+  import { FileUploader, CameraCapture } from 'stackloop-ui'
+
+  <FileUploader onUpload={(files)=>{}} multiple accept="image/*" />
+  <CameraCapture onCapture={(file)=>{}} />
+  ```
+
+**StepProgress**:
+- **Description:** Horizontal stepper (desktop) and compact dots view (mobile) showing progress.
+- **Props:**
+  - **`steps`**: `{ label: string; description?: string }[]` — required.
+  - **`currentStep`**: `number` — required.
+  - **`className`**: optional.
+- **Usage:**
+
+  ```jsx
+  import { StepProgress } from 'stackloop-ui'
+
+  <StepProgress steps={[{label:'One'},{label:'Two'}]} currentStep={1} />
+  ```
+
+---
+
+If you'd like, I can:
+
+- generate a `docs/` folder with a separate file per component and richer examples, or
+- create Storybook stories or a small demo page that mounts each component for visual testing.
+
+Which would you prefer as the next step?
