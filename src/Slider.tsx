@@ -43,8 +43,8 @@ export const Slider: React.FC<SliderProps> = ({
         </div>
       )}
       
-      <div className="relative h-5 flex items-center">
-        <div className="relative w-full h-1.5 bg-neutral-200 rounded-full group">
+      <div className="relative h-12 flex items-center">
+        <div className="relative w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
           <motion.div
             className="absolute left-0 top-0 h-full bg-primary-600 rounded-full"
             style={{ width: `${percentage}%` }}
@@ -67,21 +67,19 @@ export const Slider: React.FC<SliderProps> = ({
           onTouchEnd={() => setIsDragging(false)}
           disabled={disabled}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+          style={{ zIndex: 10 }}
         />
         
         <motion.div
           className={cn(
-            'absolute w-5 h-5 bg-primary-600 rounded-full shadow-sm',
+            'absolute w-6 h-6 bg-white  border-2 border-primary-600 rounded-full shadow-md',
             'pointer-events-none',
-            disabled && 'bg-neutral-400',
-            'flex items-center justify-center'
+            disabled && 'opacity-50'
           )}
-          style={{ left: `calc(${percentage}% - 10px)` }}
-          animate={{ scale: isDragging ? 1.25 : 1 }}
-          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
-        >
-          <div className="w-2 h-2 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity" />
-        </motion.div>
+          style={{ left: `calc(${percentage}% - 12px)` }}
+          animate={{ scale: isDragging ? 1.2 : 1 }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        />
       </div>
     </div>
   )
