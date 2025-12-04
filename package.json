@@ -1,0 +1,74 @@
+{
+  "name": "stackloop-ui",
+  "version": "1.0.6",
+  "description": "A modern, animated React component library built with Framer Motion, Lucide Icons, and Tailwind CSS",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./theme.css": "./dist/stackloop-ui.css",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "tailwindcss",
+    "framer-motion",
+    "lucide-icons",
+    "typescript"
+  ],
+  "author": "Atuti Bonface",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AtutiBonface/stackloop-ui"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:lib": "vite build --mode lib && tsc -p tsconfig.lib.json",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.23.25",
+    "lucide-react": "^0.555.0",
+    "tailwind-merge": "^3.4.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.1",
+    "@tailwindcss/vite": "^4.1.17",
+    "@types/node": "^24.10.1",
+    "@types/react": "^19.2.5",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.1",
+    "eslint": "^9.39.1",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.4.24",
+    "globals": "^16.5.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "tailwindcss": "^4.1.17",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.46.4",
+    "vite": "^7.2.4",
+    "vite-plugin-dts": "^4.5.4"
+  }
+}

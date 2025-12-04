@@ -1,0 +1,21 @@
+# Example .npmrc configuration for publishing
+# Uncomment and configure as needed
+
+# Registry (default is npmjs.com)
+# registry=https://registry.npmjs.org/
+
+# Always require authentication for publishing
+# //registry.npmjs.org/:_authToken=${NPM_TOKEN}
+
+# Set package scope access level (required for scoped packages)
+# access=public
+
+# Sign git tags when using npm version
+# sign-git-tag=true
+
+# Create annotated git tags
+# git-tag-version=true
+
+# Automatically save dependencies
+# save=true
+# save-exact=true
