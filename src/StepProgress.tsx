@@ -25,7 +25,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
     <div className={cn('w-full', className)}>
       {/* Desktop View - Horizontal Steps */}
       <div className="hidden md:block">
-        <div className="relative flex items-center justify-between mb-2">
+        <div className="relative flex items-center mb-2">
           {steps.map((step, index) => {
             const isCompleted = index < currentStep
             const isCurrent = index === currentStep
@@ -33,32 +33,33 @@ export const StepProgress: React.FC<StepProgressProps> = ({
 
             return (
               <React.Fragment key={index}>
-                {/* Step Circle */}
+                {/* Step Circle and Label */}
                 <div className="flex flex-col items-center relative z-10">
                   <motion.div
                     initial={false}
                     animate={{
-                      scale: isCurrent ? 1.1 : 1,
+                      scale: isCurrent ? 1.05 : 1,
                       backgroundColor: isCompleted || isCurrent ? '#2e7d32' : '#e5e5e5'
                     }}
                     className={cn(
-                      'w-10 h-10 rounded-full flex items-center justify-center',
-                      'font-semibold text-sm transition-all duration-300',
-                      (isCompleted || isCurrent) && 'text-white shadow-md',
-                      isUpcoming && 'text-neutral-500'
+                      'w-12 h-12 rounded-full flex items-center justify-center',
+                      'font-semibold text-base transition-all duration-300',
+                      (isCompleted || isCurrent) && 'text-white shadow-lg',
+                      isUpcoming && 'text-neutral-500',
+                      'ring-4 ring-white'
                     )}
                   >
                     {isCompleted ? (
-                      <Check className="w-5 h-5" />
+                      <Check className="w-6 h-6 stroke-[3]" />
                     ) : (
                       <span>{index + 1}</span>
                     )}
                   </motion.div>
                   
-                  <div className="mt-2 text-center">
+                  <div className="mt-3 text-center max-w-[120px]">
                     <span
                       className={cn(
-                        'text-xs font-medium',
+                        'text-sm font-semibold block',
                         isCurrent && 'text-primary-700',
                         isCompleted && 'text-neutral-700',
                         isUpcoming && 'text-neutral-400'
@@ -69,7 +70,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                     {step.description && (
                       <p
                         className={cn(
-                          'text-[10px] mt-0.5',
+                          'text-xs mt-1 leading-tight',
                           isCurrent && 'text-primary-600',
                           isCompleted && 'text-neutral-500',
                           isUpcoming && 'text-neutral-400'
@@ -81,17 +82,19 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                   </div>
                 </div>
 
-                {/* Connector Line */}
+                {/* Connector Line - Thicker with rounded ends */}
                 {index < steps.length - 1 && (
-                  <div className="flex-1 h-0.5 bg-neutral-200 mx-2 relative -mt-8">
-                    <motion.div
-                      initial={false}
-                      animate={{
-                        width: index < currentStep ? '100%' : '0%'
-                      }}
-                      transition={{ duration: 0.3 }}
-                      className="h-full bg-primary-600"
-                    />
+                  <div className="flex-1 relative" style={{ marginTop: '-48px', marginLeft: '4px', marginRight: '4px' }}>
+                    <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                      <motion.div
+                        initial={false}
+                        animate={{
+                          width: index < currentStep ? '100%' : '0%'
+                        }}
+                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+                        className="h-full bg-primary-600 rounded-full"
+                      />
+                    </div>
                   </div>
                 )}
               </React.Fragment>
@@ -100,7 +103,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
         </div>
       </div>
 
-      {/* Mobile View - Compact with Dots */}
+      {/* Mobile View - Compact with Dots (Description Hidden) */}
       <div className="md:hidden">
         {/* Step Dots at Top */}
         <div className="flex items-center justify-center gap-2 mb-3">
@@ -126,7 +129,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
           })}
         </div>
 
-        {/* Current Step Title */}
+        {/* Current Step Title Only (No Description) */}
         <motion.div
           key={currentStep}
           initial={{ opacity: 0, y: 10 }}
@@ -137,11 +140,6 @@ export const StepProgress: React.FC<StepProgressProps> = ({
           <p className="text-sm font-semibold text-neutral-900">
             {currentStepData?.label}
           </p>
-          {currentStepData?.description && (
-            <p className="text-xs text-neutral-500 mt-1">
-              {currentStepData.description}
-            </p>
-          )}
         </motion.div>
       </div>
     </div>

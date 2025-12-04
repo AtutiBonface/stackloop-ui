@@ -29,14 +29,25 @@ export const DualSlider: React.FC<DualSliderProps> = ({
   disabled,
   className
 }) => {
-  const total = value1 + value2
-  const percentage1 = total > 0 ? (value1 / total) * 100 : 50
-  const percentage2 = total > 0 ? (value2 / total) * 100 : 50
+  const total = value1 + value2;
+  const percentage1 = total > 0 ? (value1 / max) * 100 : 50;
+  const percentage2 = total > 0 ? (value2 / max) * 100 : 50;
 
-  const handleSliderChange = (newValue1: number) => {
-    const remaining = max - newValue1
-    onChange(newValue1, Math.max(min, Math.min(max, remaining)))
-  }
+  const handleSlider1Change = (newValue: number) => {
+    if (newValue + value2 > max) {
+      onChange(newValue, max - newValue);
+    } else {
+      onChange(newValue, value2);
+    }
+  };
+
+  const handleSlider2Change = (newValue: number) => {
+    if (value1 + newValue > max) {
+      onChange(max - newValue, newValue);
+    } else {
+      onChange(value1, newValue);
+    }
+  };
 
   return (
     <div className={cn('w-full space-y-3', className)}>
@@ -48,10 +59,10 @@ export const DualSlider: React.FC<DualSliderProps> = ({
           </span>
         </div>
         
-        <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+        <div className="relative h-5 flex items-center">
+          <div className="w-full h-1.5 bg-neutral-200 rounded-full">
             <motion.div
-              className="h-full bg-primary-600"
+              className="h-full bg-primary-600 rounded-full"
               initial={false}
               animate={{ width: `${percentage1}%` }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -64,7 +75,7 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             max={max}
             step={step}
             value={value1}
-            onChange={(e) => handleSliderChange(Number(e.target.value))}
+            onChange={(e) => handleSlider1Change(Number(e.target.value))}
             disabled={disabled}
             className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
           />
@@ -79,10 +90,10 @@ export const DualSlider: React.FC<DualSliderProps> = ({
           </span>
         </div>
         
-        <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+        <div className="relative h-5 flex items-center">
+          <div className="w-full h-1.5 bg-neutral-200 rounded-full">
             <motion.div
-              className="h-full bg-success"
+              className="h-full bg-success rounded-full"
               initial={false}
               animate={{ width: `${percentage2}%` }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -95,15 +106,15 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             max={max}
             step={step}
             value={value2}
-            onChange={(e) => handleSliderChange(max - Number(e.target.value))}
+            onChange={(e) => handleSlider2Change(Number(e.target.value))}
             disabled={disabled}
             className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
           />
         </div>
       </div>
 
-      <div className="text-xs text-neutral-500 text-center">
-        Total: {total}{unit}
+      <div className="text-xs text-neutral-500 text-center pt-2">
+        Total: {value1 + value2}{unit} / {max}{unit}
       </div>
     </div>
   )

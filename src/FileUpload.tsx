@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Camera, Upload, X } from 'lucide-react'
 import { cn } from './utils'
@@ -56,20 +56,15 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
           className={cn(
-            'w-full h-48 rounded-lg border-2 border-dashed border-neutral-300',
-            'flex flex-col items-center justify-center gap-3',
+            'w-full p-4 rounded-lg border-2 border-neutral-300',
+            'flex items-center justify-center gap-3',
             'bg-neutral-50 hover:bg-neutral-100 hover:border-primary-400',
             'transition-all duration-200',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
-          <div className="p-4 rounded-full bg-primary-100">
-            <Camera className="w-8 h-8 text-primary-700" />
-          </div>
-          <div className="text-center">
-            <p className="font-medium text-neutral-900">Tap to capture photo</p>
-            <p className="text-sm text-neutral-500 mt-1">or upload from gallery</p>
-          </div>
+          <Camera className="w-6 h-6 text-primary-700" />
+          <span className="font-medium text-neutral-900">Capture Photo</span>
         </motion.button>
       )}
 
@@ -104,7 +99,6 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   className
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const [isDragging, setIsDragging] = useState(false)
 
   const handleFiles = (files: FileList | null) => {
     if (files) {
@@ -112,48 +106,28 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
     }
   }
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault()
-    setIsDragging(false)
-    if (!disabled) {
-      handleFiles(e.dataTransfer.files)
-    }
-  }
-
   return (
     <div className={cn('w-full', className)}>
       {label && <label className="block mb-2 text-sm font-medium text-neutral-700">{label}</label>}
       
-      <motion.div
+      <motion.button
+        type="button"
         whileTap={{ scale: disabled ? 1 : 0.98 }}
-        onDragOver={(e) => {
-          e.preventDefault()
-          !disabled && setIsDragging(true)
-        }}
-        onDragLeave={() => setIsDragging(false)}
-        onDrop={handleDrop}
         onClick={() => !disabled && fileInputRef.current?.click()}
+        disabled={disabled}
         className={cn(
-          'w-full p-8 rounded-lg border-2 border-dashed',
-          'flex flex-col items-center justify-center gap-3',
+          'w-full p-4 rounded-lg border-2 border-neutral-300',
+          'flex items-center justify-center gap-3',
+          'bg-neutral-50 hover:bg-neutral-100 hover:border-primary-400',
           'transition-all duration-200 cursor-pointer',
-          isDragging && 'border-primary-500 bg-primary-50',
-          !isDragging && 'border-neutral-300 bg-neutral-50 hover:bg-neutral-100 hover:border-primary-400',
           'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
-        <div className="p-4 rounded-full bg-primary-100">
-          <Upload className="w-8 h-8 text-primary-700" />
-        </div>
-        <div className="text-center">
-          <p className="font-medium text-neutral-900">
-            {isDragging ? 'Drop files here' : 'Tap to upload'}
-          </p>
-          <p className="text-sm text-neutral-500 mt-1">
-            {multiple ? 'Select one or more files' : 'Select a file'}
-          </p>
-        </div>
-      </motion.div>
+        <Upload className="w-6 h-6 text-primary-700" />
+        <span className="font-medium text-neutral-900">
+          {multiple ? 'Upload Files' : 'Upload File'}
+        </span>
+      </motion.button>
 
       <input
         ref={fileInputRef}

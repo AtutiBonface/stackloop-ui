@@ -111,7 +111,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
     <div className={cn('w-full', className)}>
       {label && <label className="block mb-2 text-sm font-medium text-neutral-700">{label}</label>}
       
-      <div className="p-6 bg-white rounded-lg border-2 border-neutral-200 space-y-4">
+      <div className="p-4 md:p-6 bg-white rounded-lg border-2 border-neutral-200 space-y-4">
         {/* Recording Controls */}
         {!audioUrl && (
           <div className="flex flex-col items-center gap-4">
@@ -122,7 +122,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 onClick={isRecording ? (isPaused ? resumeRecording : pauseRecording) : startRecording}
                 disabled={disabled}
                 className={cn(
-                  'w-20 h-20 rounded-full flex items-center justify-center',
+                  'w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center',
                   'transition-all duration-200',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
                   isRecording
@@ -131,15 +131,15 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 )}
               >
                 {isRecording ? (
-                  isPaused ? <Play className="w-8 h-8" /> : <Pause className="w-8 h-8" />
+                  isPaused ? <Play className="w-6 h-6 md:w-8 md:h-8" /> : <Pause className="w-6 h-6 md:w-8 md:h-8" />
                 ) : (
-                  <Mic className="w-8 h-8" />
+                  <Mic className="w-6 h-6 md:w-8 md:h-8" />
                 )}
               </motion.button>
 
-              {isRecording && (
+              {isRecording && !isPaused && (
                 <motion.div
-                  className="absolute -top-1 -right-1 w-6 h-6 bg-error rounded-full"
+                  className="absolute top-0 right-0 w-4 h-4 bg-error rounded-full border-2 border-white"
                   animate={{ scale: [1, 1.2, 1] }}
                   transition={{ repeat: Infinity, duration: 1.5 }}
                 />
@@ -147,10 +147,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             </div>
 
             <div className="text-center">
-              <p className="text-2xl font-mono font-semibold text-neutral-900">
+              <p className="text-xl md:text-2xl font-mono font-semibold text-neutral-900">
                 {formatTime(duration)}
               </p>
-              <p className="text-sm text-neutral-500 mt-1">
+              <p className="text-xs md:text-sm text-neutral-500 mt-1">
                 {isRecording ? (isPaused ? 'Paused' : 'Recording...') : 'Tap to record'}
               </p>
             </div>
@@ -161,10 +161,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                 animate={{ opacity: 1, scale: 1 }}
                 type="button"
                 onClick={stopRecording}
-                className="px-6 py-2 bg-error text-white rounded-full font-medium hover:bg-red-600"
+                className="px-4 py-2 text-sm bg-error text-white rounded-full font-medium hover:bg-red-600 flex items-center gap-2"
               >
-                <Square className="w-4 h-4 inline mr-2" />
-                Stop Recording
+                <Square className="w-4 h-4" />
+                Stop
               </motion.button>
             )}
           </div>
@@ -186,7 +186,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               <button
                 type="button"
                 onClick={deleteRecording}
-                className="flex items-center gap-2 px-4 py-2 text-error hover:bg-red-50 rounded-lg transition-colors"
+                className="flex items-center gap-2 px-3 py-1.5 text-sm text-error hover:bg-red-50 rounded-lg transition-colors"
               >
                 <Trash2 className="w-4 h-4" />
                 Delete

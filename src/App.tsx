@@ -25,7 +25,8 @@ import {
   Pagination,
   FloatingActionButton,
   StepProgress,
-  BottomSheet
+  BottomSheet,
+  AudioRecorder
 } from './index'
 
 import {
@@ -209,6 +210,8 @@ function App() {
             </div>
           </CardContent>
         </Card>
+
+        <AudioRecorder onRecordingComplete={(audioBlob) => console.log(audioBlob)} />
 
         {/* Sliders Section */}
         <Card>
