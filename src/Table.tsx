@@ -52,24 +52,24 @@ export function Table<T>({
 
   if (loading) {
     return (
-      <div className={cn('border border-neutral-200 rounded-lg overflow-hidden', className)}>
+      <div className={cn('border border-border rounded-lg overflow-hidden', className)}>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-neutral-50 border-b border-neutral-200">
+            <thead className="bg-secondary border-b border-border">
               <tr>
                 {columns.map((_, idx) => (
                   <th key={idx} className="px-6 py-4 text-left">
-                    <div className="h-4 bg-neutral-200 rounded w-24 animate-pulse"></div>
+                    <div className="h-4 bg-border rounded w-24 animate-pulse"></div>
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {[...Array(5)].map((_, idx) => (
-                <tr key={idx} className="border-b border-neutral-200">
+                <tr key={idx} className="border-b border-border">
                   {columns.map((_, colIdx) => (
                     <td key={colIdx} className="px-6 py-4">
-                      <div className="h-4 bg-neutral-100 rounded animate-pulse"></div>
+                      <div className="h-4 bg-secondary rounded animate-pulse"></div>
                     </td>
                   ))}
                 </tr>
@@ -86,26 +86,26 @@ export function Table<T>({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={cn('border border-neutral-200 rounded-lg overflow-hidden shadow-card', className)}
+      className={cn('border border-border rounded-lg overflow-hidden shadow-card', className)}
     >
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-neutral-50 border-b border-neutral-200">
+          <thead className="bg-secondary border-b border-border">
             <tr>
               {columns.map((col, idx) => (
                 <th
                   key={idx}
                   className={cn(
-                    'px-6 py-4 text-left text-sm font-semibold text-neutral-900',
+                    'px-6 py-4 text-left text-sm font-semibold text-foreground',
                     col.width,
-                    col.sortable && 'cursor-pointer hover:bg-neutral-100 transition-colors'
+                    col.sortable && 'cursor-pointer hover:bg-border transition-colors'
                   )}
                   onClick={() => col.sortable && handleSort(col.key as string)}
                 >
                   <div className="flex items-center gap-2">
                     {col.header}
                     {col.sortable && (
-                      <span className="text-neutral-400">
+                      <span className="text-primary/50">
                         {sortKey === col.key ? (
                           sortOrder === 'asc' ? (
                             <ArrowUp className="w-4 h-4" />
@@ -131,12 +131,12 @@ export function Table<T>({
                 transition={{ duration: 0.2, delay: idx * 0.05 }}
                 onClick={() => onRowClick && onRowClick(item)}
                 className={cn(
-                  'border-b border-neutral-200 transition-colors',
-                  onRowClick && 'cursor-pointer hover:bg-neutral-50'
+                  'border-b border-border transition-colors',
+                  onRowClick && 'cursor-pointer hover:bg-secondary'
                 )}
               >
                 {columns.map((col, colIdx) => (
-                  <td key={colIdx} className="px-6 py-4 text-sm text-neutral-700">
+                  <td key={colIdx} className="px-6 py-4 text-sm text-foreground/70">
                     {col.render
                       ? col.render(item)
                       : String((item as any)[col.key] ?? '')}

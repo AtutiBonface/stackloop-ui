@@ -31,10 +31,10 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      {label && <label className="block mb-2 text-sm font-medium text-neutral-700">{label}</label>}
+      {label && <label className="block mb-2 text-sm font-medium text-primary">{label}</label>}
       
       {preview ? (
-        <div className="relative rounded-lg overflow-hidden border-2 border-neutral-200">
+        <div className="relative rounded-lg overflow-hidden border-2 border-border">
           <img
             src={preview}
             alt="Preview"
@@ -56,15 +56,15 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
           className={cn(
-            'w-full p-4 rounded-lg border-2 border-neutral-300',
+            'w-full p-4 rounded-lg border-2 border-border',
             'flex items-center justify-center gap-3',
-            'bg-neutral-50 hover:bg-neutral-100 hover:border-primary-400',
+            'bg-secondary hover:bg-border hover:border-border-dark',
             'transition-all duration-200',
             'disabled:opacity-50 disabled:cursor-not-allowed'
           )}
         >
-          <Camera className="w-6 h-6 text-primary-700" />
-          <span className="font-medium text-neutral-900">Capture Photo</span>
+          <Camera className="w-6 h-6 text-primary" />
+          <span className="font-medium text-foreground">Capture Photo</span>
         </motion.button>
       )}
 
@@ -108,7 +108,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      {label && <label className="block mb-2 text-sm font-medium text-neutral-700">{label}</label>}
+      {label && <label className="block mb-2 text-sm font-medium text-primary">{label}</label>}
       
       <motion.button
         type="button"
@@ -116,15 +116,15 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
         onClick={() => !disabled && fileInputRef.current?.click()}
         disabled={disabled}
         className={cn(
-          'w-full p-4 rounded-lg border-2 border-neutral-300',
+          'w-full p-4 rounded-lg border-2 border-border',
           'flex items-center justify-center gap-3',
-          'bg-neutral-50 hover:bg-neutral-100 hover:border-primary-400',
+          'bg-secondary hover:bg-border hover:border-border-dark',
           'transition-all duration-200 cursor-pointer',
           'disabled:opacity-50 disabled:cursor-not-allowed'
         )}
       >
-        <Upload className="w-6 h-6 text-primary-700" />
-        <span className="font-medium text-neutral-900">
+        <Upload className="w-6 h-6 text-primary" />
+        <span className="font-medium text-foreground">
           {multiple ? 'Upload Files' : 'Upload File'}
         </span>
       </motion.button>

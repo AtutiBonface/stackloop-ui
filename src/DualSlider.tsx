@@ -42,16 +42,16 @@ export const DualSlider: React.FC<DualSliderProps> = ({
     <div className={cn('w-full space-y-3', className)}>
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-neutral-700">{label1}</label>
-          <span className="text-sm font-semibold text-primary-700">
+          <label className="text-sm font-medium text-primary">{label1}</label>
+          <span className="text-sm font-semibold text-primary">
             {value1}{unit}
           </span>
         </div>
         
         <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-border rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-primary-600"
+              className="h-full bg-primary"
               initial={false}
               animate={{ width: `${percentage1}%` }}
               transition={{ type: 'spring', stiffness: 300, damping: 30 }}
@@ -73,14 +73,14 @@ export const DualSlider: React.FC<DualSliderProps> = ({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-neutral-700">{label2}</label>
+          <label className="text-sm font-medium text-primary">{label2}</label>
           <span className="text-sm font-semibold text-success">
             {value2}{unit}
           </span>
         </div>
         
         <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-border rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-success"
               initial={false}
@@ -102,7 +102,7 @@ export const DualSlider: React.FC<DualSliderProps> = ({
         </div>
       </div>
 
-      <div className="text-xs text-neutral-500 text-center">
+      <div className="text-xs text-primary/70 text-center">
         Total: {total}{unit}
       </div>
     </div>

@@ -15,7 +15,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label className="block text-sm font-medium text-neutral-700">
+          <label className="block text-sm font-medium text-foreground">
             {label}
             {props.required && <span className="text-error ml-1">*</span>}
           </label>
@@ -23,7 +23,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-0 pl-3.5 inset-y-0 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute left-0 pl-3.5 inset-y-0 flex items-center pointer-events-none text-primary">
               {leftIcon}
             </div>
           )}
@@ -32,12 +32,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             className={cn(
               'w-full px-4 py-3 rounded-md border transition-all duration-200',
-              'bg-white text-neutral-900 placeholder:text-neutral-400',
-              'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
-              'disabled:bg-neutral-100 disabled:cursor-not-allowed',
+              'bg-background text-foreground placeholder:text-foreground/50',
+              'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+              'disabled:bg-secondary disabled:cursor-not-allowed',
               'touch-target text-base',
               error && 'border-error focus:ring-error',
-              !error && 'border-neutral-300',
+              !error && 'border-border',
               leftIcon && 'pl-11',
               rightIcon && 'pr-11',
               className
@@ -46,7 +46,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           />
           
           {rightIcon && (
-            <div className="absolute right-0 pr-3.5 inset-y-0 flex items-center pointer-events-none text-neutral-500">
+            <div className="absolute right-0 pr-3.5 inset-y-0 flex items-center pointer-events-none text-primary">
               {rightIcon}
             </div>
           )}
@@ -63,7 +63,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
         
         {hint && !error && (
-          <p className="text-sm text-neutral-500">{hint}</p>
+          <p className="text-sm text-primary/70">{hint}</p>
         )}
       </div>
     )

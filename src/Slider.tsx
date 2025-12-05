@@ -34,9 +34,9 @@ export const Slider: React.FC<SliderProps> = ({
     <div className={cn('w-full space-y-2', className)}>
       {(label || showValue) && (
         <div className="flex items-center justify-between">
-          {label && <label className="text-sm font-medium text-neutral-700">{label}</label>}
+          {label && <label className="text-sm font-medium text-primary">{label}</label>}
           {showValue && (
-            <span className="text-sm font-semibold text-primary-700">
+            <span className="text-sm font-semibold text-primary">
               {value}{unit}
             </span>
           )}
@@ -44,9 +44,9 @@ export const Slider: React.FC<SliderProps> = ({
       )}
       
       <div className="relative h-12 flex items-center">
-        <div className="relative w-full h-2 bg-neutral-200 rounded-full overflow-hidden">
+        <div className="relative w-full h-2 bg-border rounded-full overflow-hidden">
           <motion.div
-            className="absolute left-0 top-0 h-full bg-primary-600 rounded-full"
+            className="absolute left-0 top-0 h-full bg-primary rounded-full"
             style={{ width: `${percentage}%` }}
             initial={false}
             animate={{ width: `${percentage}%` }}
@@ -72,7 +72,7 @@ export const Slider: React.FC<SliderProps> = ({
         
         <motion.div
           className={cn(
-            'absolute w-6 h-6 bg-white  border-2 border-primary-600 rounded-full shadow-md',
+            'absolute w-6 h-6 bg-background  border-2 border-primary rounded-full shadow-md',
             'pointer-events-none',
             disabled && 'opacity-50'
           )}

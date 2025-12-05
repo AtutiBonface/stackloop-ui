@@ -42,11 +42,11 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
   const getIcon = (type: ThumbnailItem['type']) => {
     switch (type) {
       case 'document':
-        return <FileText className="w-8 h-8 text-primary-600" />
+        return <FileText className="w-8 h-8 text-primary" />
       case 'audio':
-        return <FileText className="w-8 h-8 text-primary-600" />
+        return <FileText className="w-8 h-8 text-primary" />
       default:
-        return <ImageIcon className="w-8 h-8 text-primary-600" />
+        return <ImageIcon className="w-8 h-8 text-primary" />
     }
   }
 
@@ -66,10 +66,10 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
             <div
               onClick={() => onView?.(item)}
               className={cn(
-                'aspect-square rounded-lg overflow-hidden border-2 border-neutral-200',
+                'aspect-square rounded-lg overflow-hidden border-2 border-border',
                 'flex items-center justify-center',
-                'cursor-pointer hover:border-primary-400 transition-all',
-                item.type === 'image' ? 'bg-neutral-100' : 'bg-neutral-50'
+                'cursor-pointer hover:border-border-dark transition-all',
+                item.type === 'image' ? 'bg-border' : 'bg-secondary'
               )}
             >
               {item.type === 'image' ? (
@@ -81,7 +81,7 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
               ) : (
                 <div className="flex flex-col items-center gap-2 p-3">
                   {getIcon(item.type)}
-                  <p className="text-xs text-center text-neutral-700 line-clamp-2">
+                  <p className="text-xs text-center text-primary line-clamp-2">
                     {item.name}
                   </p>
                 </div>
@@ -107,7 +107,7 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
             {item.size && (
               <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-xs p-1.5 backdrop-blur-sm">
                 <p className="truncate">{item.name}</p>
-                <p className="text-neutral-300">{formatSize(item.size)}</p>
+                <p className="text-white/70">{formatSize(item.size)}</p>
               </div>
             )}
           </motion.div>

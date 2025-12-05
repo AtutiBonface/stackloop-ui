@@ -37,10 +37,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           <motion.div
             className={cn(
               'w-6 h-6 rounded-md border-2 transition-all duration-200',
-              'peer-focus:ring-2 peer-focus:ring-primary-500 peer-focus:ring-offset-2',
+              'peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2',
               'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
               'flex items-center justify-center',
-              isChecked ? 'bg-primary-600 border-primary-600' : 'border-neutral-300 bg-white',
+              isChecked ? 'bg-primary border-primary' : 'border-border bg-background',
               className
             )}
             whileTap={{ scale: 0.95 }}
@@ -55,12 +55,12 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         {(label || description) && (
           <div className="flex-1 space-y-0.5">
             {label && (
-              <div className="text-base font-medium text-neutral-900 group-hover:text-primary-700 transition-colors">
+              <div className="text-base font-medium text-foreground group-hover:text-primary transition-colors">
                 {label}
               </div>
             )}
             {description && (
-              <div className="text-sm text-neutral-600">{description}</div>
+              <div className="text-sm text-primary/70">{description}</div>
             )}
           </div>
         )}

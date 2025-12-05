@@ -109,9 +109,9 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
   return (
     <div className={cn('w-full', className)}>
-      {label && <label className="block mb-2 text-sm font-medium text-neutral-700">{label}</label>}
+      {label && <label className="block mb-2 text-sm font-medium text-primary">{label}</label>}
       
-      <div className="p-4 md:p-6 bg-white rounded-lg border-2 border-neutral-200 space-y-4">
+      <div className="p-4 md:p-6 bg-background rounded-lg border-2 border-border space-y-4">
         {/* Recording Controls */}
         {!audioUrl && (
           <div className="flex flex-col items-center gap-4">
@@ -127,7 +127,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                   'disabled:opacity-50 disabled:cursor-not-allowed',
                   isRecording
                     ? 'bg-warning text-white animate-pulse'
-                    : 'bg-primary-600 text-white hover:bg-primary-700'
+                    : 'bg-primary text-white hover:bg-primary-dark'
                 )}
               >
                 {isRecording ? (
@@ -147,10 +147,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             </div>
 
             <div className="text-center">
-              <p className="text-xl md:text-2xl font-mono font-semibold text-neutral-900">
+              <p className="text-xl md:text-2xl font-mono font-semibold text-foreground">
                 {formatTime(duration)}
               </p>
-              <p className="text-xs md:text-sm text-neutral-500 mt-1">
+              <p className="text-xs md:text-sm text-primary/70 mt-1">
                 {isRecording ? (isPaused ? 'Paused' : 'Recording...') : 'Tap to record'}
               </p>
             </div>
@@ -180,7 +180,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <audio src={audioUrl} controls className="w-full" />
             
             <div className="flex items-center justify-between">
-              <span className="text-sm text-neutral-600">
+              <span className="text-sm text-primary/70">
                 Duration: {formatTime(duration)}
               </span>
               <button

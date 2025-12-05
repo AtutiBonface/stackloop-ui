@@ -17,10 +17,10 @@ export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-all duration-200 touch-target disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]'
     
     const variants = {
-      primary: 'bg-primary-600 text-white hover:bg-primary-700 active:bg-primary-800 shadow-sm',
-      secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 active:bg-neutral-400',
-      outline: 'bg-transparent text-primary-700 border-2 border-primary-600 hover:bg-primary-50 active:bg-primary-100',
-      ghost: 'bg-transparent text-neutral-700 hover:bg-neutral-100 active:bg-neutral-200',
+      primary: 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark/90 shadow-sm',
+      secondary: 'bg-secondary text-foreground hover:bg-border active:bg-border-dark',
+      outline: 'bg-transparent text-primary border-2 border-primary hover:bg-secondary active:bg-border',
+      ghost: 'bg-transparent text-primary hover:bg-secondary active:bg-border',
       danger: 'bg-error text-white hover:bg-red-600 active:bg-red-700 shadow-sm'
     }
     
