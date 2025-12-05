@@ -59,19 +59,19 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-2">
-              <div className="w-12 h-1.5 bg-neutral-300 rounded-full" />
+              <div className="w-12 h-1.5 bg-border-dark rounded-full" />
             </div>
 
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
-                {title && <h2 className="text-lg font-semibold text-neutral-900">{title}</h2>}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                {title && <h2 className="text-lg font-semibold text-foreground">{title}</h2>}
                 {showCloseButton && (
                   <button
                     onClick={onClose}
-                    className="p-2 rounded-full hover:bg-neutral-100 transition-colors"
+                    className="p-2 rounded-full hover:bg-secondary transition-colors"
                   >
-                    <X className="w-5 h-5 text-neutral-500" />
+                    <X className="w-5 h-5 text-primary" />
                   </button>
                 )}
               </div>

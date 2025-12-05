@@ -72,7 +72,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div ref={dropdownRef} className={cn('relative w-full', className)}>
       {label && (
-        <label className="block mb-1.5 text-sm font-medium text-neutral-700">
+        <label className="block mb-1.5 text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -83,18 +83,18 @@ export const Dropdown: React.FC<DropdownProps> = ({
         disabled={disabled}
         className={cn(
           'w-full px-4 py-3 rounded-md border transition-all duration-200',
-          'bg-white text-left flex items-center justify-between gap-2',
-          'focus:outline-none focus:ring-2 focus:ring-primary-500',
-          'disabled:bg-neutral-100 disabled:cursor-not-allowed',
+          'bg-background text-left flex items-center justify-between gap-2',
+          'focus:outline-none focus:ring-2 focus:ring-primary',
+          'disabled:bg-secondary disabled:cursor-not-allowed',
           'touch-target',
           error && 'border-error',
-          !error && 'border-neutral-300',
-          isOpen && 'ring-2 ring-primary-500'
+          !error && 'border-border',
+          isOpen && 'ring-2 ring-primary'
         )}
       >
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {selectedOption?.icon && <span className="flex-shrink-0">{selectedOption.icon}</span>}
-          <span className={cn('truncate', !selectedOption && 'text-neutral-400')}>
+          <span className={cn('truncate', !selectedOption && 'text-foreground/50')}>
             {selectedOption?.label || placeholder}
           </span>
         </div>
@@ -103,14 +103,14 @@ export const Dropdown: React.FC<DropdownProps> = ({
             <button
               type="button"
               onClick={handleClear}
-              className="p-1 hover:bg-neutral-200 rounded transition-colors"
+              className="p-1 hover:bg-secondary rounded transition-colors"
             >
-              <X className="w-4 h-4 text-neutral-500" />
+              <X className="w-4 h-4 text-primary" />
             </button>
           )}
           <ChevronDown
             className={cn(
-              'w-5 h-5 text-neutral-500 transition-transform',
+              'w-5 h-5 text-primary transition-transform',
               isOpen && 'rotate-180'
             )}
           />
@@ -124,25 +124,25 @@ export const Dropdown: React.FC<DropdownProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 w-full mt-2 bg-white rounded-md border border-neutral-200 shadow-lg max-h-80 overflow-hidden"
+            className="absolute z-50 w-full mt-2 bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
           >
             {searchable && (
-              <div className="p-2 border-b border-neutral-200">
+              <div className="p-2 border-b border-border">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
                   <input
                     type="text"
                     placeholder="Search..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-8 py-2 text-sm border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                    className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
                       className="absolute right-2 top-1/2 -translate-y-1/2"
                     >
-                      <X className="w-4 h-4 text-neutral-400 hover:text-neutral-600" />
+                      <X className="w-4 h-4 text-primary/50 hover:text-primary" />
                     </button>
                   )}
                 </div>
@@ -157,8 +157,8 @@ export const Dropdown: React.FC<DropdownProps> = ({
                     onClick={() => handleSelect(option.value)}
                     className={cn(
                       'w-full px-4 py-3 text-left flex items-center gap-2',
-                      'hover:bg-primary-50 transition-colors',
-                      option.value === value && 'bg-primary-100 text-primary-900'
+                      'hover:bg-secondary transition-colors',
+                      option.value === value && 'bg-border text-foreground'
                     )}
                   >
                     {option.icon && <span className="flex-shrink-0">{option.icon}</span>}
@@ -166,7 +166,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
                   </button>
                 ))
               ) : (
-                <div className="px-4 py-6 text-center text-neutral-500 text-sm">
+                <div className="px-4 py-6 text-center text-primary/70 text-sm">
                   No options found
                 </div>
               )}

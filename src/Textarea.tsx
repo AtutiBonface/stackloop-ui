@@ -18,7 +18,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         className="w-full"
       >
         {label && (
-          <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+          <label className="block text-sm font-medium text-foreground mb-1.5">
             {label}
             {required && <span className="text-error ml-1">*</span>}
           </label>
@@ -26,10 +26,10 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={cn(
-            'w-full px-4 py-3 bg-white border border-neutral-300 rounded-md',
-            'text-neutral-900 placeholder:text-neutral-400',
-            'focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent',
-            'disabled:bg-neutral-100 disabled:opacity-50 disabled:cursor-not-allowed',
+            'w-full px-4 py-3 bg-background border border-border rounded-md',
+            'text-foreground placeholder:text-foreground/50',
+            'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+            'disabled:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed',
             'transition-all duration-200 resize-vertical',
             'text-base touch-target',
             error && 'border-error focus:ring-error',
@@ -47,7 +47,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           </motion.p>
         )}
         {helperText && !error && (
-          <p className="mt-1 text-sm text-neutral-600">{helperText}</p>
+          <p className="mt-1 text-sm text-primary/70">{helperText}</p>
         )}
       </motion.div>
     )

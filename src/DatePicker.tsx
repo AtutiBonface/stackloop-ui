@@ -124,7 +124,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div ref={datePickerRef} className={cn('relative w-full', className)}>
       {label && (
-        <label className="block mb-1.5 text-sm font-medium text-neutral-700">
+        <label className="block mb-1.5 text-sm font-medium text-foreground">
           {label}
         </label>
       )}
@@ -135,19 +135,19 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         disabled={disabled}
         className={cn(
           'w-full px-4 py-3 rounded-md border transition-all duration-200',
-          'bg-white text-left flex items-center justify-between gap-2',
-          'focus:outline-none focus:ring-2 focus:ring-primary-500',
-          'disabled:bg-neutral-100 disabled:cursor-not-allowed',
+          'bg-background text-left flex items-center justify-between gap-2',
+          'focus:outline-none focus:ring-2 focus:ring-primary',
+          'disabled:bg-secondary disabled:cursor-not-allowed',
           'touch-target',
           error && 'border-error',
-          !error && 'border-neutral-300',
-          isOpen && 'ring-2 ring-primary-500'
+          !error && 'border-border',
+          isOpen && 'ring-2 ring-primary'
         )}
       >
-        <span className={cn('truncate', !value && 'text-neutral-400')}>
+        <span className={cn('truncate', !value && 'text-primary/50')}>
           {value ? formatDate(value) : placeholder}
         </span>
-        <Calendar className="w-5 h-5 text-neutral-500 flex-shrink-0" />
+        <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
       </button>
 
       <AnimatePresence>
@@ -157,28 +157,28 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute z-50 w-80 mt-2 bg-white rounded-md border border-neutral-200 shadow-lg p-4"
+            className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
           >
             {/* Month Navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
-                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-neutral-700" />
+                <ChevronLeft className="w-5 h-5 text-primary" />
               </button>
               
-              <div className="font-semibold text-neutral-900">
+              <div className="font-semibold text-foreground">
                 {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
               </div>
               
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-2 hover:bg-neutral-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronRight className="w-5 h-5 text-neutral-700" />
+                <ChevronRight className="w-5 h-5 text-primary" />
               </button>
             </div>
 
@@ -187,7 +187,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-xs font-medium text-neutral-500 py-2"
+                  className="text-center text-xs font-medium text-primary/70 py-2"
                 >
                   {day}
                 </div>
@@ -215,11 +215,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     className={cn(
                       'aspect-square rounded-lg flex items-center justify-center',
                       'text-sm font-medium transition-all duration-200',
-                      'hover:bg-neutral-100',
-                      isSelected && 'bg-primary-600 text-white hover:bg-primary-700',
-                      isCurrentDay && !isSelected && 'border-2 border-primary-600 text-primary-700',
-                      isDisabled && 'text-neutral-300 cursor-not-allowed hover:bg-transparent',
-                      !isSelected && !isCurrentDay && !isDisabled && 'text-neutral-900'
+                      'hover:bg-secondary',
+                      isSelected && 'bg-primary text-white hover:bg-primary-dark',
+                      isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
+                      isDisabled && 'text-border-dark cursor-not-allowed hover:bg-transparent',
+                      !isSelected && !isCurrentDay && !isDisabled && 'text-foreground'
                     )}
                   >
                     {day.getDate()}
@@ -229,11 +229,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-4 pt-4 border-t border-neutral-200">
+            <div className="mt-4 pt-4 border-t border-border">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}
-                className="w-full py-2 text-sm font-medium text-primary-700 hover:bg-primary-50 rounded-lg transition-colors"
+                className="w-full py-2 text-sm font-medium text-primary hover:bg-secondary rounded-lg transition-colors"
               >
                 Today
               </button>

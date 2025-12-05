@@ -19,12 +19,12 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
         {(label || description) && (
           <div className="flex-1 space-y-0.5">
             {label && (
-              <div className="text-base font-medium text-neutral-900">
+              <div className="text-base font-medium text-foreground">
                 {label}
               </div>
             )}
             {description && (
-              <div className="text-sm text-neutral-600">{description}</div>
+              <div className="text-sm text-primary/70">{description}</div>
             )}
           </div>
         )}
@@ -41,9 +41,9 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           <div
             className={cn(
               'w-12 h-7 rounded-full transition-all duration-200 relative',
-              'peer-focus:ring-2 peer-focus:ring-primary-500 peer-focus:ring-offset-2',
+              'peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2',
               'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
-              checked ? 'bg-primary-600' : 'bg-neutral-300',
+              checked ? 'bg-primary' : 'bg-border-dark',
               className
             )}
           >

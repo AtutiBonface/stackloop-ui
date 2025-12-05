@@ -21,12 +21,12 @@ export const Badge: React.FC<BadgeProps> = ({
   dot = false
 }) => {
   const variantClasses = {
-    default: 'bg-neutral-100 text-neutral-700 border border-neutral-300',
-    primary: 'bg-primary-50 text-primary-700 border border-primary-200',
-    success: 'bg-green-50 text-green-700 border border-green-200',
-    warning: 'bg-yellow-50 text-yellow-700 border border-yellow-200',
-    danger: 'bg-red-50 text-red-700 border border-red-200',
-    info: 'bg-blue-50 text-blue-700 border border-blue-200'
+    default: 'bg-secondary text-primary border border-border',
+    primary: 'bg-primary/10 text-primary border border-primary/20',
+    success: 'bg-success/10 text-success border border-success/20',
+    warning: 'bg-warning/10 text-warning border border-warning/20',
+    danger: 'bg-error/10 text-error border border-error/20',
+    info: 'bg-info/10 text-info border border-info/20'
   }
 
   const sizeClasses = {
@@ -36,12 +36,12 @@ export const Badge: React.FC<BadgeProps> = ({
   }
 
   const dotColors = {
-    default: 'bg-neutral-700',
-    primary: 'bg-primary-700',
-    success: 'bg-green-700',
-    warning: 'bg-yellow-700',
-    danger: 'bg-red-700',
-    info: 'bg-blue-700'
+    default: 'bg-primary',
+    primary: 'bg-primary',
+    success: 'bg-success',
+    warning: 'bg-warning',
+    danger: 'bg-error',
+    info: 'bg-info'
   }
 
   return (

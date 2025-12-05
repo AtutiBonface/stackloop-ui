@@ -20,9 +20,9 @@ export const Card: React.FC<CardProps> = ({
   hover = false
 }) => {
   const variants = {
-    default: 'bg-white border border-neutral-200',
-    outlined: 'bg-transparent border-2 border-neutral-300',
-    elevated: 'bg-white shadow-card'
+    default: 'bg-background border border-border',
+    outlined: 'bg-transparent border-2 border-border-dark',
+    elevated: 'bg-background shadow-card'
   }
 
   const paddings = {
@@ -60,11 +60,11 @@ export const CardHeader: React.FC<{ children: React.ReactNode; className?: strin
 )
 
 export const CardTitle: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <h3 className={cn('text-lg font-semibold text-neutral-900', className)}>{children}</h3>
+  <h3 className={cn('text-lg font-semibold text-foreground', className)}>{children}</h3>
 )
 
 export const CardDescription: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
-  <p className={cn('text-sm text-neutral-600 mt-1', className)}>{children}</p>
+  <p className={cn('text-sm text-foreground/70 mt-1', className)}>{children}</p>
 )
 
 export const CardContent: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (

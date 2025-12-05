@@ -34,7 +34,7 @@ export const Pagination: React.FC<PaginationProps> = ({
       transition={{ duration: 0.3 }}
       className={cn('flex items-center justify-between gap-4 flex-wrap', className)}
     >
-      <div className="text-sm text-neutral-600">
+      <div className="text-sm text-foreground/70">
         {totalItems && itemsPerPage && (
           <span>
             Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to{' '}
@@ -59,11 +59,11 @@ export const Pagination: React.FC<PaginationProps> = ({
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onPageChange(1)}
-                className="w-10 h-10 rounded-md hover:bg-neutral-100 border border-neutral-200 text-sm transition-colors"
+                className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
               >
                 1
               </motion.button>
-              <span className="text-neutral-400 px-1">...</span>
+              <span className="text-primary/50 px-1">...</span>
             </>
           )}
           {showPages.map((page) => (
@@ -75,8 +75,8 @@ export const Pagination: React.FC<PaginationProps> = ({
               className={cn(
                 'w-10 h-10 rounded-md text-sm border transition-all',
                 page === currentPage
-                  ? 'bg-primary-600 text-white border-primary-600 shadow-sm'
-                  : 'hover:bg-neutral-100 border-neutral-200'
+                  ? 'bg-primary text-white border-primary shadow-sm'
+                  : 'hover:bg-secondary border-border'
               )}
             >
               {page}
@@ -84,12 +84,12 @@ export const Pagination: React.FC<PaginationProps> = ({
           ))}
           {currentPage < totalPages - 2 && (
             <>
-              <span className="text-neutral-400 px-1">...</span>
+              <span className="text-primary/50 px-1">...</span>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => onPageChange(totalPages)}
-                className="w-10 h-10 rounded-md hover:bg-neutral-100 border border-neutral-200 text-sm transition-colors"
+                className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
               >
                 {totalPages}
               </motion.button>

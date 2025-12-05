@@ -62,17 +62,17 @@ export const Modal: React.FC<ModalProps> = ({
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
             className={cn(
-              'bg-white border border-neutral-200 rounded-lg shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col',
+              'bg-background border border-border rounded-lg shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col',
               sizeClasses[size],
               className
             )}
           >
             {title && (
-              <div className="px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-neutral-900">{title}</h2>
+              <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-foreground">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
                   aria-label="Close modal"
                 >
                   <X className="w-5 h-5" />
@@ -96,7 +96,7 @@ export const ModalFooter: React.FC<{ children: React.ReactNode; className?: stri
   children,
   className
 }) => (
-  <div className={cn('px-6 py-4 border-t border-neutral-200 flex items-center justify-end gap-3 bg-white sticky bottom-0', className)}>
+  <div className={cn('px-6 py-4 border-t border-border flex items-center justify-end gap-3 bg-background sticky bottom-0', className)}>
     {children}
   </div>
 )

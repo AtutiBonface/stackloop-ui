@@ -41,11 +41,11 @@ export const RadioPills: React.FC<RadioPillsProps> = ({
               className={cn(
                 'px-4 py-2.5 rounded-full border-2 transition-all duration-200',
                 'flex items-center gap-2 min-h-[2.75rem]',
-                'peer-focus:ring-2 peer-focus:ring-primary-500 peer-focus:ring-offset-2',
+                'peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2',
                 'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
                 isSelected
-                  ? 'bg-primary-600 border-primary-600 text-white'
-                  : 'bg-white border-neutral-300 text-neutral-700 hover:border-primary-400'
+                  ? 'bg-primary border-primary text-white'
+                  : 'bg-background border-border text-primary hover:border-border-dark'
               )}
             >
               {option.icon && <span className="flex-shrink-0">{option.icon}</span>}

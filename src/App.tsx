@@ -84,7 +84,7 @@ function App() {
   ]
 
   return (
-    <div className="min-h-screen bg-neutral-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-secondary p-4 sm:p-8">
       <div className="max-w-7xl w-full mx-auto space-y-12">
         {/* Header */}
         <motion.header
@@ -92,10 +92,10 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center space-y-4"
         >
-          <h1 className="text-4xl sm:text-5xl font-bold text-neutral-900">
+          <h1 className="text-4xl sm:text-5xl font-bold text-foreground">
             UI Components Library
           </h1>
-          <p className="text-lg text-neutral-600">
+          <p className="text-lg text-primary/70">
             A consistent, animated component library built with Framer Motion & Lucide Icons
           </p>
         </motion.header>
@@ -367,7 +367,7 @@ function App() {
               <CardDescription>With shadow effect</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600">
+              <p className="text-primary/70">
                 This card has an elevated appearance with a shadow.
               </p>
             </CardContent>
@@ -378,7 +378,7 @@ function App() {
               <CardDescription>With border</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600">
+              <p className="text-primary/70">
                 This card has an outlined style with a border.
               </p>
             </CardContent>
@@ -389,7 +389,7 @@ function App() {
               <CardDescription>Interactive</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-neutral-600">This card is clickable!</p>
+              <p className="text-primary/70">This card is clickable!</p>
             </CardContent>
           </Card>
         </div>
@@ -422,7 +422,7 @@ function App() {
       {/* Modal */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Example Modal">
         <ModalContent>
-          <p className="text-neutral-700">
+          <p className="text-primary/70">
             This is a modal dialog with animations and backdrop blur.
           </p>
         </ModalContent>
@@ -437,7 +437,7 @@ function App() {
       {/* Drawer */}
       <Drawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} title="Side Drawer">
         <div className="space-y-4">
-          <p className="text-neutral-700">
+          <p className="text-primary/70">
             This is a drawer that slides in from the side.
           </p>
           <Button onClick={() => setIsDrawerOpen(false)}>Close Drawer</Button>
@@ -451,7 +451,7 @@ function App() {
         title="Bottom Sheet"
       >
         <div className="space-y-4">
-          <p className="text-neutral-700">
+          <p className="text-primary/70">
             This is a bottom sheet that slides up from the bottom.
           </p>
           <Button onClick={() => setIsBottomSheetOpen(false)}>Close Sheet</Button>

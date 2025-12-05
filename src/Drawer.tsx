@@ -54,18 +54,18 @@ export const Drawer: React.FC<DrawerProps> = ({
             exit={{ x: position === 'left' ? '-100%' : '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 300 }}
             className={cn(
-              'fixed top-0 z-50 h-full w-[400px] sm:w-[480px] bg-white shadow-xl',
+              'fixed top-0 z-50 h-full w-[400px] sm:w-[480px] bg-background shadow-xl',
               position === 'left' ? 'left-0 border-r' : 'right-0 border-l',
-              'border-neutral-200',
+              'border-border',
               className
             )}
           >
             {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
-                <h2 className="text-xl font-semibold text-neutral-900">{title}</h2>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+                <h2 className="text-xl font-semibold text-foreground">{title}</h2>
                 <button
                   onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-neutral-100 transition-colors"
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
                   aria-label="Close drawer"
                 >
                   <X className="w-5 h-5" />

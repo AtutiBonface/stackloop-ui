@@ -40,15 +40,15 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   }
 
   const variants = {
-    primary: 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg',
-    secondary: 'bg-white text-primary-700 border-2 border-primary-600 hover:bg-primary-50 shadow-md'
+    primary: 'bg-primary text-white hover:bg-primary-dark shadow-lg',
+    secondary: 'bg-background text-primary border-2 border-primary hover:bg-secondary shadow-md'
   }
 
   const actionVariants = {
-    primary: 'bg-primary-600 text-white',
-    success: 'bg-green-600 text-white',
-    danger: 'bg-red-600 text-white',
-    warning: 'bg-yellow-600 text-white'
+    primary: 'bg-primary text-white',
+    success: 'bg-success text-white',
+    danger: 'bg-error text-white',
+    warning: 'bg-warning text-white'
   }
 
   const handleMainClick = () => {
@@ -78,7 +78,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                 transition={{ delay: index * 0.05 }}
                 className="flex items-center gap-3"
               >
-                <span className="bg-white border border-neutral-200 rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap shadow-lg">
+                <span className="bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap shadow-lg">
                   {action.label}
                 </span>
                 <motion.button

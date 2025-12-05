@@ -39,13 +39,13 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                     initial={false}
                     animate={{
                       scale: isCurrent ? 1.05 : 1,
-                      backgroundColor: isCompleted || isCurrent ? '#2e7d32' : '#e5e5e5'
+                      backgroundColor: isCompleted || isCurrent ? 'var(--color-primary)' : 'var(--color-border)'
                     }}
                     className={cn(
                       'w-12 h-12 rounded-full flex items-center justify-center',
                       'font-semibold text-base transition-all duration-300',
                       (isCompleted || isCurrent) && 'text-white shadow-lg',
-                      isUpcoming && 'text-neutral-500',
+                      isUpcoming && 'text-primary/50',
                       'ring-4 ring-white'
                     )}
                   >
@@ -60,9 +60,9 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                     <span
                       className={cn(
                         'text-sm font-semibold block',
-                        isCurrent && 'text-primary-700',
-                        isCompleted && 'text-neutral-700',
-                        isUpcoming && 'text-neutral-400'
+                        isCurrent && 'text-primary',
+                        isCompleted && 'text-primary',
+                        isUpcoming && 'text-primary/50'
                       )}
                     >
                       {step.label}
@@ -71,9 +71,9 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                       <p
                         className={cn(
                           'text-xs mt-1 leading-tight',
-                          isCurrent && 'text-primary-600',
-                          isCompleted && 'text-neutral-500',
-                          isUpcoming && 'text-neutral-400'
+                          isCurrent && 'text-primary',
+                          isCompleted && 'text-primary/70',
+                          isUpcoming && 'text-primary/50'
                         )}
                       >
                         {step.description}
@@ -85,14 +85,14 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                 {/* Connector Line - Thicker with rounded ends */}
                 {index < steps.length - 1 && (
                   <div className="flex-1 relative" style={{ marginTop: '-48px', marginLeft: '4px', marginRight: '4px' }}>
-                    <div className="h-1.5 bg-neutral-200 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-border rounded-full overflow-hidden">
                       <motion.div
                         initial={false}
                         animate={{
                           width: index < currentStep ? '100%' : '0%'
                         }}
                         transition={{ duration: 0.4, ease: 'easeInOut' }}
-                        className="h-full bg-primary-600 rounded-full"
+                        className="h-full bg-primary rounded-full"
                       />
                     </div>
                   </div>
@@ -117,7 +117,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                 initial={false}
                 animate={{
                   scale: isCurrent ? 1.2 : 1,
-                  backgroundColor: isCompleted || isCurrent ? '#2e7d32' : '#d4d4d4'
+                  backgroundColor: isCompleted || isCurrent ? 'var(--color-primary)' : 'var(--color-border-dark)'
                 }}
                 className={cn(
                   'rounded-full transition-all duration-300',
@@ -137,7 +137,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
           transition={{ duration: 0.3 }}
           className="text-center"
         >
-          <p className="text-sm font-semibold text-neutral-900">
+          <p className="text-sm font-semibold text-foreground">
             {currentStepData?.label}
           </p>
         </motion.div>
