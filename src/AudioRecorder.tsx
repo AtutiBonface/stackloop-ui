@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Mic, Square, Pause, Play, Trash2 } from 'lucide-react'

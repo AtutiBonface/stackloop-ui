@@ -1,5 +1,5 @@
 {
-  "name": "stackloop-ui",
+  "name": "@stackloop/ui",
   "version": "1.0.6",
   "description": "A modern, animated React component library built with Framer Motion, Lucide Icons, and Tailwind CSS",
   "type": "module",

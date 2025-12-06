@@ -1,28 +1,149 @@
-**Installation**
+## Installation
 
-- **NPM:**
+### NPM
 
-  ```bash
-  npm install --save stackloop-ui
-  ```
+```bash
+npm install --save @stackloop/ui
+```
 
-- **Peer deps:** ensure `react` and `react-dom` (>=18) are installed.
+### Peer Dependencies
 
-- **CSS:** import the library CSS where you bootstrap your app:
+Ensure `react` and `react-dom` (>=18) are installed.
 
-  ```js
-  import 'stackloop-ui/theme.css'
-  ```
+### Next.js Setup
 
-**Importing components**
+#### 1. Import Theme CSS
 
-- Import components from the package root:
+Import the library CSS in your root layout or `_app.tsx`:
 
-  ```js
-  import { Button, Modal, Input } from 'stackloop-ui'
-  ```
+```tsx
+// app/layout.tsx (App Router)
+import '@stackloop/ui/theme.css'
 
-**Components Reference**
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  )
+}
+```
+
+```tsx
+// pages/_app.tsx (Pages Router)
+import '@stackloop/ui/theme.css'
+
+export default function App({ Component, pageProps }) {
+  return <Component {...pageProps} />
+}
+```
+
+#### 2. Tailwind Configuration
+
+If using Tailwind CSS v4 with `@theme`, the library's theme variables are already configured. If you need to customize colors:
+
+```css
+/* In your global CSS or theme.css */
+@theme {
+  /* Override library colors */
+  --color-primary: #your-color;
+  --color-primary-dark: #your-darker-color;
+  --color-border: #your-border-color;
+  --color-border-dark: #your-darker-border;
+  --color-secondary: #your-secondary-bg;
+  --color-background: #your-bg-color;
+  --color-foreground: #your-text-color;
+  
+  /* Semantic colors */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+}
+```
+
+### Usage with React (Vite/CRA)
+
+```js
+// In your main entry file (main.tsx or index.tsx)
+import '@stackloop/ui/theme.css'
+```
+
+## Importing Components
+
+Import components from the package root:
+
+```tsx
+import { Button, Modal, Input } from '@stackloop/ui'
+```
+
+All components are **client-side** components with `'use client'` directive, making them compatible with Next.js App Router.
+
+## Theme Customization
+
+The library uses a simplified color system with semantic variables:
+
+### Color Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--color-primary` | `#525252` | Primary brand color |
+| `--color-primary-dark` | `#404040` | Darker primary variant |
+| `--color-border` | `#e5e5e5` | Default border color |
+| `--color-border-dark` | `#d4d4d4` | Darker border variant |
+| `--color-secondary` | `#fafafa` | Secondary background |
+| `--color-background` | `#ffffff` | Main background |
+| `--color-foreground` | `#171717` | Primary text color |
+| `--color-success` | `#10b981` | Success state |
+| `--color-warning` | `#f59e0b` | Warning state |
+| `--color-error` | `#ef4444` | Error state |
+| `--color-info` | `#3b82f6` | Info state |
+
+### Customizing Colors
+
+Create a custom theme file or extend the existing one:
+
+```css
+/* styles/custom-theme.css */
+@import '@stackloop/ui/theme.css';
+
+@theme {
+  /* Brand colors */
+  --color-primary: #3b82f6;
+  --color-primary-dark: #2563eb;
+  
+  /* Borders */
+  --color-border: #e2e8f0;
+  --color-border-dark: #cbd5e1;
+  
+  /* Backgrounds */
+  --color-secondary: #f8fafc;
+  --color-background: #ffffff;
+  --color-foreground: #0f172a;
+}
+```
+
+### Dark Mode Support
+
+You can add dark mode variants:
+
+```css
+@theme {
+  /* Light mode (default) */
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    --color-background: #0a0a0a;
+    --color-foreground: #fafafa;
+    --color-primary: #60a5fa;
+    --color-border: #27272a;
+  }
+}
+```
+
+## Components Reference
 
 - For each component below you'll find a short description, props (type, default, notes) and a minimal usage example.
 
@@ -36,7 +157,7 @@
 - **Usage:**
 
   ```jsx
-  import { Checkbox } from 'stackloop-ui'
+  import { Checkbox } from '@stackloop/ui'
 
   <Checkbox label="Accept terms" onChange={(v) => console.log(v)} />
   ```
@@ -52,7 +173,7 @@
 - **Usage:**
 
   ```jsx
-  import { Button } from 'stackloop-ui'
+  import { Button } from '@stackloop/ui'
 
   <Button variant="outline" size="lg" onClick={() => {}}>Save</Button>
   ```
@@ -68,7 +189,7 @@
 - **Usage:**
 
   ```jsx
-  import { Input } from 'stackloop-ui'
+  import { Input } from '@stackloop/ui'
 
   <Input label="Email" placeholder="you@example.com" />
   ```
@@ -86,7 +207,7 @@
 - **Usage:**
 
   ```jsx
-  import { Modal, ModalContent, ModalFooter } from 'stackloop-ui'
+  import { Modal, ModalContent, ModalFooter } from '@stackloop/ui'
 
   <Modal isOpen={open} onClose={() => setOpen(false)} title="My Modal">
     <ModalContent>Body</ModalContent>
@@ -108,7 +229,7 @@
 - **Usage:**
 
   ```jsx
-  import { Table } from 'stackloop-ui'
+  import { Table } from '@stackloop/ui'
 
   const columns = [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }]
   <Table data={items} columns={columns} keyExtractor={(i) => String(i.id)} />
@@ -125,7 +246,7 @@
 - **Usage:**
 
   ```jsx
-  import { Dropdown } from 'stackloop-ui'
+  import { Dropdown } from '@stackloop/ui'
 
   <Dropdown options={[{value:'a',label:'A'}]} value={val} onChange={setVal} searchable />
   ```
@@ -142,7 +263,7 @@
 - **Usage:**
 
   ```jsx
-  import { BottomSheet } from 'stackloop-ui'
+  import { BottomSheet } from '@stackloop/ui'
 
   <BottomSheet isOpen={open} onClose={() => setOpen(false)} title="Actions">...</BottomSheet>
   ```
@@ -156,7 +277,7 @@
 - **Usage:**
 
   ```jsx
-  import { DatePicker } from 'stackloop-ui'
+  import { DatePicker } from '@stackloop/ui'
 
   <DatePicker value={date} onChange={setDate} />
   ```
@@ -171,7 +292,7 @@
 - **Usage:**
 
   ```jsx
-  import { DualSlider } from 'stackloop-ui'
+  import { DualSlider } from '@stackloop/ui'
 
   <DualSlider value1={30} value2={70} onChange={(a,b)=>{}} label1="A" label2="B" />
   ```
@@ -186,7 +307,7 @@
 - **Usage:**
 
   ```jsx
-  import { Pagination } from 'stackloop-ui'
+  import { Pagination } from '@stackloop/ui'
 
   <Pagination currentPage={1} totalPages={10} onPageChange={setPage} />
   ```
@@ -202,7 +323,7 @@
 - **Usage:**
 
   ```jsx
-  import { Badge } from 'stackloop-ui'
+  import { Badge } from '@stackloop/ui'
 
   <Badge variant="primary">New</Badge>
   ```
@@ -217,7 +338,7 @@
 - **Usage:**
 
   ```jsx
-  import { FloatingActionButton as FAB } from 'stackloop-ui'
+  import { FloatingActionButton as FAB } from '@stackloop/ui'
 
   <FAB label="New" onClick={()=>{}} />
   ```
@@ -232,7 +353,7 @@
 - **Usage:**
 
   ```jsx
-  import { AudioRecorder } from 'stackloop-ui'
+  import { AudioRecorder } from '@stackloop/ui'
 
   <AudioRecorder onRecordingComplete={(blob)=>{ /* handle */ }} />
   ```
@@ -249,7 +370,7 @@
 - **Usage:**
 
   ```jsx
-  import { Drawer } from 'stackloop-ui'
+  import { Drawer } from '@stackloop/ui'
 
   <Drawer isOpen={open} onClose={()=>setOpen(false)} title="Menu">...</Drawer>
   ```
@@ -264,7 +385,7 @@
 - **Usage:**
 
   ```jsx
-  import { Toggle } from 'stackloop-ui'
+  import { Toggle } from '@stackloop/ui'
 
   <Toggle label="Enable" onChange={(v)=>console.log(v)} />
   ```
@@ -275,7 +396,7 @@
 - **Usage:**
 
   ```jsx
-  import { OfflineBadge, SyncIndicator } from 'stackloop-ui'
+  import { OfflineBadge, SyncIndicator } from '@stackloop/ui'
 
   <OfflineBadge isOffline={true} />
   <SyncIndicator status="syncing" />
@@ -290,7 +411,7 @@
 - **Usage:**
 
   ```jsx
-  import { Slider } from 'stackloop-ui'
+  import { Slider } from '@stackloop/ui'
 
   <Slider value={50} onChange={setValue} />
   ```
@@ -306,7 +427,7 @@
 - **Usage:**
 
   ```jsx
-  import { RadioPills } from 'stackloop-ui'
+  import { RadioPills } from '@stackloop/ui'
 
   <RadioPills name="mode" options={[{value:'a',label:'A'}]} />
   ```
@@ -318,7 +439,7 @@
 - **Usage:**
 
   ```jsx
-  import { Textarea } from 'stackloop-ui'
+  import { Textarea } from '@stackloop/ui'
 
   <Textarea label="Message" helperText="Max 500 chars" />
   ```
@@ -334,7 +455,7 @@
 - **Usage:**
 
   ```jsx
-  import { ThumbnailGrid } from 'stackloop-ui'
+  import { ThumbnailGrid } from '@stackloop/ui'
 
   <ThumbnailGrid items={items} onRemove={(id)=>{}} />
   ```
@@ -351,7 +472,7 @@
 - **Usage:**
 
   ```jsx
-  import { Card, CardTitle, CardContent } from 'stackloop-ui'
+  import { Card, CardTitle, CardContent } from '@stackloop/ui'
 
   <Card variant="elevated"> <CardTitle>Title</CardTitle> <CardContent>Body</CardContent> </Card>
   ```
@@ -362,7 +483,7 @@
 - **Usage:**
 
   ```jsx
-  import { FileUploader, CameraCapture } from 'stackloop-ui'
+  import { FileUploader, CameraCapture } from '@stackloop/ui'
 
   <FileUploader onUpload={(files)=>{}} multiple accept="image/*" />
   <CameraCapture onCapture={(file)=>{}} />
@@ -377,16 +498,73 @@
 - **Usage:**
 
   ```jsx
-  import { StepProgress } from 'stackloop-ui'
+  import { StepProgress } from '@stackloop/ui'
 
   <StepProgress steps={[{label:'One'},{label:'Two'}]} currentStep={1} />
   ```
 
 ---
 
-If you'd like, I can:
+## Next.js Best Practices
 
-- generate a `docs/` folder with a separate file per component and richer examples, or
-- create Storybook stories or a small demo page that mounts each component for visual testing.
+### App Router
 
-Which would you prefer as the next step?
+All components work seamlessly with Next.js 13+ App Router. They include the `'use client'` directive:
+
+```tsx
+// app/page.tsx
+import { Button, Card } from '@stackloop/ui'
+
+export default function Page() {
+  return (
+    <div>
+      <Card>
+        <Button onClick={() => console.log('clicked')}>Click me</Button>
+      </Card>
+    </div>
+  )
+}
+```
+
+### Server Components
+
+To use these components with Server Components, import them in client components:
+
+```tsx
+// components/ClientWrapper.tsx
+'use client'
+import { Button } from '@stackloop/ui'
+
+export function ClientButton() {
+  return <Button onClick={() => alert('Hello')}>Click</Button>
+}
+```
+
+```tsx
+// app/page.tsx (Server Component)
+import { ClientButton } from '@/components/ClientWrapper'
+
+export default function Page() {
+  return <ClientButton />
+}
+```
+
+### Styling Considerations
+
+- The library uses Tailwind CSS v4 with `@theme` directive
+- Ensure your Next.js project is configured for Tailwind CSS v4
+- All animations use Framer Motion and are optimized for performance
+
+## Browser Support
+
+- Modern browsers (Chrome, Firefox, Safari, Edge)
+- Mobile browsers (iOS Safari, Chrome Mobile)
+- Audio recording requires MediaRecorder API support
+
+## License
+
+MIT
+
+---
+
+For questions, issues, or contributions, please visit the [GitHub repository](https://github.com/AtutiBonface/@stackloop/ui).
