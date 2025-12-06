@@ -238,6 +238,7 @@ You can add dark mode variants:
     sortable?: boolean;                  // Enable sorting for this column (default: false)
     render?: (item: T) => React.ReactNode; // Custom render function - can return any valid React element
     width?: string;                      // CSS width value (e.g., '100px', '20%', 'auto')
+    truncate?: boolean;                  // Enable text truncation with ellipsis for long content (default: false)
   }
   ```
 
@@ -321,6 +322,41 @@ You can add dark mode variants:
       </div>
     )
   }
+
+  // Enable text truncation for long content
+  {
+    key: 'description',
+    header: 'Description',
+    truncate: true,      // Adds ellipsis when text exceeds cell width
+    width: '300px'       // Set explicit width to control truncation point
+  }
+  ```
+
+- **Text Truncation:**
+  - Set `truncate: true` on any column to automatically truncate long text with ellipsis (`...`) when content exceeds the cell width.
+  - Hovering over truncated cells shows a browser tooltip with the full text.
+  - **Must specify `width`** property (e.g., `'200px'`, `'30%'`, `'20rem'`) to define when truncation occurs.
+  - Without `width`, the cell will expand to fit content and truncation won't activate.
+  - Only applies to default cell rendering; custom `render` functions handle their own truncation.
+  
+  **Example:**
+  ```jsx
+  const columns = [
+    { key: 'title', header: 'Title', sortable: true },
+    { 
+      key: 'description', 
+      header: 'Description', 
+      truncate: true,        // Enable ellipsis
+      width: '250px'         // Required: defines max width before truncation
+    },
+    { 
+      key: 'email', 
+      header: 'Email', 
+      truncate: true,
+      width: '200px'
+    },
+    { key: 'author', header: 'Author' }
+  ]
   ```
 
 - **Sorting Behavior:**

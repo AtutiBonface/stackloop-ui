@@ -11,6 +11,7 @@ export interface Column<T> {
   sortable?: boolean
   render?: (item: T) => React.ReactNode
   width?: string
+  truncate?: boolean // Enable text truncation with ellipsis
 }
 
 export interface TableProps<T> {
@@ -138,10 +139,24 @@ export function Table<T>({
                 )}
               >
                 {columns.map((col, colIdx) => (
-                  <td key={colIdx} className="px-6 py-4 text-sm text-foreground/70">
-                    {col.render
-                      ? col.render(item)
-                      : String((item as any)[col.key] ?? '')}
+                  <td 
+                    key={colIdx} 
+                    className={cn(
+                      'px-6 py-4 text-sm text-foreground/70',
+                      col.width
+                    )}
+                    style={col.width ? { width: col.width } : undefined}
+                    title={col.truncate && !col.render ? String((item as any)[col.key] ?? '') : undefined}
+                  >
+                    {col.truncate && !col.render ? (
+                      <div className="truncate">
+                        {String((item as any)[col.key] ?? '')}
+                      </div>
+                    ) : col.render ? (
+                      col.render(item)
+                    ) : (
+                      String((item as any)[col.key] ?? '')
+                    )}
                   </td>
                 ))}
               </motion.tr>
