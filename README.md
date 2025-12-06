@@ -233,11 +233,93 @@ You can add dark mode variants:
 - **Column Interface:**
   ```typescript
   interface Column<T> {
-    key: string;                    // Unique column identifier and default accessor key
-    header: string;                 // Column header text displayed in table header
-    sortable?: boolean;             // Enable sorting for this column (default: false)
-    render?: (item: T) => ReactNode; // Custom render function for cell content
-    width?: string;                 // CSS width value (e.g., '100px', '20%', 'auto')
+    key: string;                         // Unique column identifier and default accessor key
+    header: string;                      // Column header text displayed in table header
+    sortable?: boolean;                  // Enable sorting for this column (default: false)
+    render?: (item: T) => React.ReactNode; // Custom render function - can return any valid React element
+    width?: string;                      // CSS width value (e.g., '100px', '20%', 'auto')
+  }
+  ```
+
+- **Custom Rendering with `render`:**
+  
+  The `render` function accepts the current row item and can return **any React node**, including:
+  - JSX elements (buttons, badges, icons)
+  - Formatted strings or numbers
+  - Complex components with conditional logic
+  - Nested elements with multiple components
+  
+  **Examples:**
+
+  ```jsx
+  // Render Badge components
+  {
+    key: 'status',
+    header: 'Status',
+    render: (item) => (
+      <Badge variant={item.status === 'active' ? 'success' : 'danger'}>
+        {item.status}
+      </Badge>
+    )
+  }
+
+  // Render action buttons
+  {
+    key: 'actions',
+    header: 'Actions',
+    render: (item) => (
+      <div className="flex gap-2">
+        <Button size="sm" onClick={() => handleEdit(item)}>Edit</Button>
+        <Button size="sm" variant="danger" onClick={() => handleDelete(item)}>Delete</Button>
+      </div>
+    )
+  }
+
+  // Render images with fallback
+  {
+    key: 'avatar',
+    header: 'Avatar',
+    render: (user) => (
+      <img 
+        src={user.avatar || '/default-avatar.png'} 
+        alt={user.name}
+        className="w-10 h-10 rounded-full"
+      />
+    )
+  }
+
+  // Render formatted dates
+  {
+    key: 'createdAt',
+    header: 'Created',
+    render: (item) => new Date(item.createdAt).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    })
+  }
+
+  // Render icons with conditional colors
+  {
+    key: 'verified',
+    header: 'Verified',
+    render: (user) => user.verified ? (
+      <Check className="w-5 h-5 text-success" />
+    ) : (
+      <X className="w-5 h-5 text-error" />
+    )
+  }
+
+  // Render multiple values combined
+  {
+    key: 'fullName',
+    header: 'User',
+    render: (user) => (
+      <div>
+        <div className="font-semibold">{user.firstName} {user.lastName}</div>
+        <div className="text-sm text-primary/60">{user.email}</div>
+      </div>
+    )
   }
   ```
 
@@ -258,19 +340,53 @@ You can add dark mode variants:
   - Colors: Uses semantic color tokens (`border`, `border-dark`, `background`, `foreground-color`, `primary`).
   - Animations: Powered by Framer Motion for smooth row entry and sorting transitions.
 
-- **Usage:**
+- **Complete Usage Example:**
 
   ```jsx
-  import { Table } from '@stackloop/ui'
+  import { Table, Badge, Button } from '@stackloop/ui'
+  import { Check, X, Edit, Trash2 } from 'lucide-react'
 
-  // Basic example
   const columns = [
-    { key: 'id', header: 'ID', width: '80px' },
-    { key: 'name', header: 'Name', sortable: true },
+    { 
+      key: 'id', 
+      header: 'ID', 
+      width: '80px',
+      sortable: true 
+    },
+    { 
+      key: 'name', 
+      header: 'Name', 
+      sortable: true 
+    },
     { 
       key: 'status', 
       header: 'Status',
-      render: (item) => <Badge variant={item.status === 'active' ? 'success' : 'default'}>{item.status}</Badge>
+      render: (user) => (
+        <Badge variant={user.status === 'active' ? 'success' : 'default'}>
+          {user.status}
+        </Badge>
+      )
+    },
+    {
+      key: 'verified',
+      header: 'Verified',
+      render: (user) => user.verified ? 
+        <Check className="w-5 h-5 text-success" /> : 
+        <X className="w-5 h-5 text-error" />
+    },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (user) => (
+        <div className="flex gap-2">
+          <Button size="sm" icon={<Edit />} onClick={() => handleEdit(user)}>
+            Edit
+          </Button>
+          <Button size="sm" variant="danger" icon={<Trash2 />}>
+            Delete
+          </Button>
+        </div>
+      )
     }
   ]
 
@@ -281,19 +397,6 @@ You can add dark mode variants:
     onRowClick={(user) => navigate(`/users/${user.id}`)}
     loading={isLoading}
   />
-
-  // Advanced example with custom rendering
-  const columns = [
-    { key: 'avatar', header: '', width: '50px', render: (u) => <img src={u.avatar} /> },
-    { key: 'name', header: 'Full Name', sortable: true },
-    { key: 'email', header: 'Email Address', sortable: true },
-    { 
-      key: 'createdAt', 
-      header: 'Joined', 
-      sortable: true,
-      render: (u) => new Date(u.createdAt).toLocaleDateString()
-    }
-  ]
   ```
 
 **Dropdown**:
