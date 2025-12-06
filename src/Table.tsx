@@ -58,7 +58,7 @@ export function Table<T>({
       <div className={cn('border border-border rounded-lg overflow-hidden', className)}>
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-secondary border-b border-border">
+            <thead className="border-b border-border">
               <tr>
                 {columns.map((_, idx) => (
                   <th key={idx} className="px-6 py-4 text-left">
@@ -89,11 +89,11 @@ export function Table<T>({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className={cn('border border-border rounded-lg overflow-hidden shadow-card', className)}
+      className={cn('border border-border rounded-lg overflow-hidden', className)}
     >
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-secondary border-b border-border">
+          <thead className="border-b border-border">
             <tr>
               {columns.map((col, idx) => (
                 <th
@@ -101,14 +101,14 @@ export function Table<T>({
                   className={cn(
                     'px-6 py-4 text-left text-sm font-semibold text-foreground',
                     col.width,
-                    col.sortable && 'cursor-pointer hover:bg-border transition-colors'
+                    col.sortable && 'cursor-pointer  transition-colors'
                   )}
                   onClick={() => col.sortable && handleSort(col.key as string)}
                 >
                   <div className="flex items-center gap-2">
                     {col.header}
                     {col.sortable && (
-                      <span className="text-primary/50">
+                      <span className="text-primary/50 hover:text-primary transition-colors">
                         {sortKey === col.key ? (
                           sortOrder === 'asc' ? (
                             <ArrowUp className="w-4 h-4" />

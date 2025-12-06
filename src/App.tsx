@@ -100,6 +100,8 @@ function App() {
           </p>
         </motion.header>
 
+        <Input leftIcon={<Search/>} placeholder="test" />
+
         {/* Buttons Section */}
         <Card>
           <CardHeader>
@@ -321,6 +323,7 @@ function App() {
               data={tableData}
               columns={tableColumns}
               keyExtractor={(item) => item.id.toString()}
+              
             />
           </CardContent>
         </Card>
