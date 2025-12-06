@@ -153,6 +153,7 @@ You can add dark mode variants:
   - **`label`**: `string` — optional.
   - **`description`**: `string` — optional.
   - **`onChange`**: `(checked: boolean) => void` — optional.
+  - **`className`**: `string` — optional.
   - Inherits standard `input` props (e.g. `disabled`, `defaultChecked`, `checked`).
 - **Usage:**
 
@@ -169,6 +170,7 @@ You can add dark mode variants:
   - **`size`**: `'sm' | 'md' | 'lg'` — default: `'md'`.
   - **`loading`**: `boolean` — default: `false`.
   - **`icon`**: `ReactNode` — optional.
+  - **`className`**: `string` — optional.
   - Inherits standard `button` props.
 - **Usage:**
 
@@ -185,6 +187,7 @@ You can add dark mode variants:
   - **`error`**: `string` — optional.
   - **`hint`**: `string` — optional.
   - **`leftIcon`** / **`rightIcon`**: `ReactNode` — optional.
+  - **`className`**: `string` — optional.
   - Inherits `input` HTML attributes.
 - **Usage:**
 
@@ -218,21 +221,79 @@ You can add dark mode variants:
   ```
 
 **Table**:
-- **Description:** Generic table with sortable columns and loading skeleton.
+- **Description:** Generic sortable table component with loading skeleton, row interactions, and responsive design. Supports client-side sorting and custom cell rendering.
 - **Props:**
-  - **`data`**: `T[]` — required.
-  - **`columns`**: `Column<T>[]` — required. Column: `{ key, header, sortable?, render?, width? }`.
-  - **`loading`**: `boolean` — optional.
-  - **`onRowClick`**: `(item: T) => void` — optional.
-  - **`keyExtractor`**: `(item: T) => string` — required.
-  - **`className`**: `string` — optional.
+  - **`data`**: `T[]` — required. Array of data items to display in the table.
+  - **`columns`**: `Column<T>[]` — required. Array of column definitions (see Column interface below).
+  - **`loading`**: `boolean` — optional. Shows animated skeleton loading state when true.
+  - **`onRowClick`**: `(item: T) => void` — optional. Callback fired when a row is clicked. Adds hover effect and pointer cursor to rows.
+  - **`keyExtractor`**: `(item: T) => string` — required. Function to extract unique key from each data item for React reconciliation.
+  - **`className`**: `string` — optional. Additional CSS classes for the table wrapper.
+
+- **Column Interface:**
+  ```typescript
+  interface Column<T> {
+    key: string;                    // Unique column identifier and default accessor key
+    header: string;                 // Column header text displayed in table header
+    sortable?: boolean;             // Enable sorting for this column (default: false)
+    render?: (item: T) => ReactNode; // Custom render function for cell content
+    width?: string;                 // CSS width value (e.g., '100px', '20%', 'auto')
+  }
+  ```
+
+- **Sorting Behavior:**
+  - Click sortable column headers to toggle between ascending → descending → no sort.
+  - Sort icons: `ChevronUp` (ascending), `ChevronDown` (descending), `ChevronsUpDown` (sortable but not active).
+  - Sorting is client-side using JavaScript's `localeCompare` for strings and numeric comparison for numbers.
+  - Only one column can be sorted at a time.
+
+- **Loading State:**
+  - When `loading={true}`, displays skeleton rows with animated gradient shimmer.
+  - Shows 5 skeleton rows by default, preserving table structure and column widths.
+  - Loading state prevents interactions and hides real data.
+
+- **Styling & Customization:**
+  - Responsive: Horizontal scroll on mobile, full table view on desktop.
+  - Hover states: Rows have hover background when `onRowClick` is provided.
+  - Colors: Uses semantic color tokens (`border`, `border-dark`, `background`, `foreground-color`, `primary`).
+  - Animations: Powered by Framer Motion for smooth row entry and sorting transitions.
+
 - **Usage:**
 
   ```jsx
   import { Table } from '@stackloop/ui'
 
-  const columns = [{ key: 'id', header: 'ID' }, { key: 'name', header: 'Name' }]
-  <Table data={items} columns={columns} keyExtractor={(i) => String(i.id)} />
+  // Basic example
+  const columns = [
+    { key: 'id', header: 'ID', width: '80px' },
+    { key: 'name', header: 'Name', sortable: true },
+    { 
+      key: 'status', 
+      header: 'Status',
+      render: (item) => <Badge variant={item.status === 'active' ? 'success' : 'default'}>{item.status}</Badge>
+    }
+  ]
+
+  <Table 
+    data={users} 
+    columns={columns} 
+    keyExtractor={(user) => String(user.id)}
+    onRowClick={(user) => navigate(`/users/${user.id}`)}
+    loading={isLoading}
+  />
+
+  // Advanced example with custom rendering
+  const columns = [
+    { key: 'avatar', header: '', width: '50px', render: (u) => <img src={u.avatar} /> },
+    { key: 'name', header: 'Full Name', sortable: true },
+    { key: 'email', header: 'Email Address', sortable: true },
+    { 
+      key: 'createdAt', 
+      header: 'Joined', 
+      sortable: true,
+      render: (u) => new Date(u.createdAt).toLocaleDateString()
+    }
+  ]
   ```
 
 **Dropdown**:
@@ -381,6 +442,7 @@ You can add dark mode variants:
   - **`label`**: `string` — optional.
   - **`description`**: `string` — optional.
   - **`onChange`**: `(checked:boolean)=>void` — optional.
+  - **`className`**: `string` — optional.
   - Inherits input attributes such as `checked`, `disabled`.
 - **Usage:**
 
@@ -423,7 +485,8 @@ You can add dark mode variants:
   - **`value`**: `string` — optional.
   - **`onChange`**: `(v:string)=>void` — optional.
   - **`name`**: `string` — required.
-  - **`disabled`**, **`className`**.
+  - **`disabled`**: `boolean` — optional.
+  - **`className`**: `string` — optional.
 - **Usage:**
 
   ```jsx
@@ -435,7 +498,11 @@ You can add dark mode variants:
 **Textarea**:
 - **Description:** Multiline input with label, error and helper text.
 - **Props:**
-  - **`label`**, **`error`**, **`helperText`**, plus native `textarea` attributes.
+  - **`label`**: `string` — optional.
+  - **`error`**: `string` — optional.
+  - **`helperText`**: `string` — optional.
+  - **`className`**: `string` — optional.
+  - Inherits native `textarea` attributes.
 - **Usage:**
 
   ```jsx
@@ -468,6 +535,7 @@ You can add dark mode variants:
   - **`padding`**: `'sm'|'md'|'lg'|'none'` — default: `'md'`.
   - **`onClick`**: `() => void` — optional.
   - **`hover`**: `boolean` — default: `false`.
+  - **`className`**: `string` — optional.
 - **Subcomponents:** `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`.
 - **Usage:**
 

@@ -146,7 +146,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           isOpen && 'ring-2 ring-primary'
         )}
       >
-        <span className={cn('truncate', !value && 'text-primary/50')}>
+        <span className={cn('truncate', !value && 'text-foreground/50')}>
           {value ? formatDate(value) : placeholder}
         </span>
         <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
