@@ -1,3 +1,5 @@
+'use client'
+
 import React from 'react'
 import { motion } from 'framer-motion'
 import { X, FileText, Image as ImageIcon } from 'lucide-react'
