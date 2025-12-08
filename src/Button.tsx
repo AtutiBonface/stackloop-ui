@@ -16,7 +16,7 @@ type MotionButtonProps = Omit<ButtonProps, 'children' | keyof HTMLMotionProps<'b
 
 export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
   ({ variant = 'primary', size = 'md', loading, icon, className, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-all duration-200 touch-target disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] w-auto'
+    const baseStyles = 'flex items-center justify-center gap-2 font-medium rounded-md transition-all duration-200 touch-target disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] w-auto'
     
     const variants = {
       primary: 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark/90 shadow-sm',

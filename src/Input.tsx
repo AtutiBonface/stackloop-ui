@@ -30,7 +30,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         
         <div className="relative">
           {leftIcon && (
-            <div className="absolute left-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none text-primary">
+            <div className="absolute flex items-center pointer-events-none text-primary" style={{ left: '14px', top: '50%', transform: 'translateY(-50%)' }}>
               {leftIcon}
             </div>
           )}
@@ -39,17 +39,21 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             ref={ref}
             type={inputType}
             className={cn(
-              'w-full px-4 py-3 rounded-md border transition-all duration-200',
+              'w-full rounded-md border transition-all duration-200',
               'bg-background text-foreground placeholder:text-foreground/50',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
               'disabled:bg-secondary disabled:cursor-not-allowed',
               'touch-target text-base',
               error && 'border-error focus:ring-error',
               !error && 'border-border',
-              leftIcon && 'pl-11',
-              (rightIcon || isPassword) && 'pr-11',
               className
             )}
+            style={{
+              paddingTop: '12px',
+              paddingBottom: '12px',
+              paddingLeft: leftIcon ? '44px' : '16px',
+              paddingRight: (rightIcon || isPassword) ? '44px' : '16px',
+            }}
             {...props}
           />
           
@@ -57,7 +61,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <motion.button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center text-primary hover:text-primary-dark transition-colors"
+              className="absolute flex items-center text-primary hover:text-primary-dark transition-colors"
+              style={{ right: '14px', top: '50%', transform: 'translateY(-50%)' }}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.1 }}
@@ -71,7 +76,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           
           {rightIcon && !isPassword && (
-            <div className="absolute right-3.5 top-1/2 -translate-y-1/2 flex items-center pointer-events-none text-primary">
+            <div className="absolute flex items-center pointer-events-none text-primary" style={{ right: '14px', top: '50%', transform: 'translateY(-50%)' }}>
               {rightIcon}
             </div>
           )}
