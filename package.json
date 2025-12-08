@@ -1,6 +1,6 @@
 {
   "name": "@stackloop/ui",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "description": "A modern, animated React component library built with Framer Motion, Lucide Icons, and Tailwind CSS",
   "type": "module",
   "main": "./dist/index.cjs",
