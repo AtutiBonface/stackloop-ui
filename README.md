@@ -181,7 +181,7 @@ You can add dark mode variants:
   ```
 
 **Input**:
-- **Description:** Text input with label, error and optional icons.
+- **Description:** Text input with label, error and optional icons. Includes automatic password visibility toggle for password inputs.
 - **Props:**
   - **`label`**: `string` — optional.
   - **`error`**: `string` — optional.
@@ -189,12 +189,27 @@ You can add dark mode variants:
   - **`leftIcon`** / **`rightIcon`**: `ReactNode` — optional.
   - **`className`**: `string` — optional.
   - Inherits `input` HTML attributes.
+- **Features:**
+  - **Password Toggle:** When `type="password"`, automatically displays an Eye/EyeOff icon to toggle password visibility. This overrides any custom `rightIcon`.
+  - **Icon Support:** Display icons on left or right side of input
+  - **Validation:** Built-in error and hint display
+  - **Accessibility:** Proper labels and ARIA attributes
 - **Usage:**
 
   ```jsx
   import { Input } from '@stackloop/ui'
 
   <Input label="Email" placeholder="you@example.com" />
+  
+  // Password with automatic toggle
+  <Input label="Password" type="password" placeholder="Enter password" />
+  
+  // With icons
+  <Input 
+    label="Search" 
+    leftIcon={<Search />} 
+    placeholder="Search..." 
+  />
   ```
 
 **Modal**:

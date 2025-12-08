@@ -40,7 +40,6 @@ import {
   Mail,
   Search,
   Settings,
-  User,
   Lock,
   Globe,
 } from 'lucide-react'
