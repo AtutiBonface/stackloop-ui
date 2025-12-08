@@ -61,8 +61,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <motion.button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute flex items-center text-primary hover:text-primary-dark transition-colors"
-              style={{ right: '14px', top: '50%', transform: 'translateY(-50%)' }}
+              className="absolute text-primary hover:text-primary-dark transition-colors"
+              style={{ 
+                right: '14px', 
+                top: '50%', 
+                transform: 'translateY(-50%)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               whileTap={{ scale: 0.9 }}
               transition={{ duration: 0.1 }}
