@@ -82,6 +82,9 @@ export type { AudioRecorderProps } from './AudioRecorder'
 export { ThumbnailGrid } from './ThumbnailGrid'
 export type { ThumbnailGridProps, ThumbnailItem } from './ThumbnailGrid'
 
+export { CreditBar } from './CreditBar'
+export type { CreditBarProps } from './CreditBar'
+
 // Utilities
 export { cn } from './utils'
 

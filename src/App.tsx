@@ -30,7 +30,8 @@ import {
   AudioRecorder,
   Spinner,
   ToastProvider,
-  useToast
+  useToast,
+  CreditBar
 } from './index'
 
 import {
@@ -599,6 +600,7 @@ function AppContent() {
           <Button onClick={() => setIsBottomSheetOpen(false)}>Close Sheet</Button>
         </div>
       </BottomSheet>
+      <CreditBar />
     </div>
   )
 }
