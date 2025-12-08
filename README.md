@@ -938,6 +938,40 @@ You can add dark mode variants:
   <StepProgress steps={[{label:'One'},{label:'Two'}]} currentStep={1} />
   ```
 
+**CreditBar**:
+- **Description:** Thin footer attribution bar for showing developer/company credit. Perfect for "Built with ❤️ by..." displays.
+- **Props:**
+  - **`text`**: `string` — default: `'Built by StackLoop'`. The company/developer name to display.
+  - **`showHeart`**: `boolean` — default: `true`. Shows heart emoji in "Built with ❤️ by..." format.
+  - **`href`**: `string` — optional. Link URL to make the credit clickable.
+  - **`position`**: `'fixed' | 'relative' | 'sticky'` — default: `'fixed'`. Positioning of the bar.
+  - **`backgroundColor`**: `string` — default: `'bg-gray-900'`. Tailwind background class.
+  - **`textColor`**: `string` — default: `'text-gray-400'`. Tailwind text color class.
+  - **`className`**: `string` — optional. Additional CSS classes.
+- **Usage:**
+
+  ```jsx
+  import { CreditBar } from '@stackloop/ui'
+
+  // Simple usage with heart
+  <CreditBar text="StackLoop" />
+  // Displays: "Built with ❤️ by StackLoop"
+
+  // With link
+  <CreditBar text="StackLoop" href="https://stackloop.com" />
+
+  // Without heart
+  <CreditBar text="Your Company" showHeart={false} />
+
+  // Custom styling
+  <CreditBar 
+    text="StackLoop"
+    backgroundColor="bg-blue-900"
+    textColor="text-blue-300"
+    position="sticky"
+  />
+  ```
+
 ---
 
 ## Next.js Best Practices
