@@ -436,7 +436,7 @@ You can add dark mode variants:
   ```
 
 **Dropdown**:
-- **Description:** Select with optional search, clear and icons.
+- **Description:** General-purpose select component with optional search, clear, and icons. Use this for general UI selections outside of forms. For form-specific needs with validation, use the **Select** component instead.
 - **Props:**
   - **`options`**: `{ value: string; label: string; icon?: ReactNode }[]` — required.
   - **`value`**: `string` — optional.
@@ -452,7 +452,7 @@ You can add dark mode variants:
   ```
 
 **Select**:
-- **Description:** Form-optimized select component with label, error, hint, and validation support. Built for forms with proper semantics and accessibility. Based on Dropdown but includes form-specific features like `required` prop, hint text, and better integration with form libraries.
+- **Description:** **Form-specific** select component with label, error, hint, and validation support. Specifically designed for use in forms with proper semantics, accessibility, and validation integration. Use this component when building forms. For general UI selections (navigation, filters, etc.), use the **Dropdown** component instead. Based on Dropdown but includes form-specific features like `required` prop, hint text, and better integration with form libraries (React Hook Form, Formik, etc.).
 - **Props:**
   - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required. Array of selectable options with optional icons and disabled state.
   - **`value`**: `string` — optional. Currently selected value.
