@@ -64,14 +64,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               className="absolute text-primary hover:text-primary-dark transition-colors"
               style={{ 
                 right: '14px', 
-                top: '50%', 
-                transform: 'translateY(-50%)',
+                top: '50%',
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center'
               }}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.9, y: '-50%' }}
+              animate={{ y: '-50%' }}
               transition={{ duration: 0.1 }}
             >
               {showPassword ? (
