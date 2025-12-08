@@ -42,7 +42,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               'peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2',
               'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
               'flex items-center justify-center',
-              isChecked ? 'bg-primary border-primary' : 'border-border bg-background',
+              isChecked ? 'bg-primary border-primary' : 'border-border bg-secondary',
               className
             )}
             whileTap={{ scale: 0.95 }}
