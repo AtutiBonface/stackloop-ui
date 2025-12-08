@@ -28,6 +28,9 @@ export type { DualSliderProps } from './DualSlider'
 export { Dropdown } from './Dropdown'
 export type { DropdownProps, DropdownOption } from './Dropdown'
 
+export { Select } from './Select'
+export type { SelectProps, SelectOption } from './Select'
+
 export { DatePicker } from './DatePicker'
 export type { DatePickerProps } from './DatePicker'
 
@@ -62,6 +65,12 @@ export type { BadgeProps } from './Badge'
 
 export { OfflineBadge, SyncIndicator } from './StatusBadges'
 export type { OfflineBadgeProps, SyncIndicatorProps } from './StatusBadges'
+
+export { Spinner } from './Spinner'
+export type { SpinnerProps } from './Spinner'
+
+export { ToastProvider, useToast } from './Toast'
+export type { Toast, ToastVariant, ToastPosition } from './Toast'
 
 // File Upload & Media Components
 export { CameraCapture, FileUploader } from './FileUpload'

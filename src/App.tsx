@@ -10,6 +10,7 @@ import {
   DualSlider,
   RadioPills,
   Dropdown,
+  Select,
   DatePicker,
   Card,
   CardHeader,
@@ -26,7 +27,10 @@ import {
   FloatingActionButton,
   StepProgress,
   BottomSheet,
-  AudioRecorder
+  AudioRecorder,
+  Spinner,
+  ToastProvider,
+  useToast
 } from './index'
 
 import {
@@ -36,9 +40,13 @@ import {
   Mail,
   Search,
   Settings,
+  User,
+  Lock,
+  Globe,
 } from 'lucide-react'
 
-function App() {
+function AppContent() {
+  const { addToast } = useToast()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
@@ -50,12 +58,21 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [dropdownValue, setDropdownValue] = useState('')
+  const [selectValue, setSelectValue] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
+  const [isLoading, setIsLoading] = useState(false)
 
   const dropdownOptions = [
     { label: 'Option 1', value: 'opt1' },
     { label: 'Option 2', value: 'opt2' },
     { label: 'Option 3', value: 'opt3' }
+  ]
+
+  const selectOptions = [
+    { label: 'United States', value: 'us', icon: <Globe className="w-4 h-4" /> },
+    { label: 'United Kingdom', value: 'uk', icon: <Globe className="w-4 h-4" /> },
+    { label: 'Canada', value: 'ca', icon: <Globe className="w-4 h-4" /> },
+    { label: 'Australia', value: 'au', icon: <Globe className="w-4 h-4" />, disabled: true }
   ]
 
   const radioOptions = [
@@ -99,8 +116,6 @@ function App() {
             A consistent, animated component library built with Framer Motion & Lucide Icons
           </p>
         </motion.header>
-
-        <Input leftIcon={<Search/>} placeholder="test" />
 
         {/* Buttons Section */}
         <Card>
@@ -154,6 +169,13 @@ function App() {
                 error="This field is required"
                 placeholder="Error state"
               />
+              <Input
+                label="Password"
+                type="password"
+                placeholder="Enter password"
+                rightIcon={<Lock className="w-5 h-5" />}
+                hint="Must be at least 8 characters"
+              />
               <Textarea
                 label="Message"
                 placeholder="Enter your message"
@@ -163,29 +185,127 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* Badges Section */}
+        {/* Badges & Spinner Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Badges</CardTitle>
-            <CardDescription>Status indicators and labels</CardDescription>
+            <CardTitle>Badges & Spinner</CardTitle>
+            <CardDescription>Status indicators and loading states</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-sm font-medium text-foreground mb-3">Badges</h3>
+                <div className="flex flex-wrap gap-3">
+                  <Badge variant="default">Default</Badge>
+                  <Badge variant="primary">Primary</Badge>
+                  <Badge variant="success" dot>
+                    Success
+                  </Badge>
+                  <Badge variant="warning" dot>
+                    Warning
+                  </Badge>
+                  <Badge variant="danger" dot>
+                    Danger
+                  </Badge>
+                  <Badge variant="info">Info</Badge>
+                  <Badge variant="primary" size="lg">
+                    Large Badge
+                  </Badge>
+                </div>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-foreground mb-3">Spinners</h3>
+                <div className="flex flex-wrap items-center gap-8">
+                  <Spinner size="sm" />
+                  <Spinner size="md" />
+                  <Spinner size="lg" />
+                  <Spinner size="xl" />
+                  <Spinner label="Loading..." />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Toast Notifications Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Toast Notifications</CardTitle>
+            <CardDescription>Trigger toast notifications with different variants</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              <Badge variant="default">Default</Badge>
-              <Badge variant="primary">Primary</Badge>
-              <Badge variant="success" dot>
-                Success
-              </Badge>
-              <Badge variant="warning" dot>
-                Warning
-              </Badge>
-              <Badge variant="danger" dot>
-                Danger
-              </Badge>
-              <Badge variant="info">Info</Badge>
-              <Badge variant="primary" size="lg">
-                Large Badge
-              </Badge>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  addToast({
+                    message: 'Successfully saved your changes!',
+                    variant: 'success',
+                    duration: 3000
+                  })
+                }}
+              >
+                Show Success
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  addToast({
+                    message: 'Failed to connect to server',
+                    variant: 'error',
+                    duration: 4000
+                  })
+                }}
+              >
+                Show Error
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  addToast({
+                    message: 'Your session will expire in 5 minutes',
+                    variant: 'warning'
+                  })
+                }}
+              >
+                Show Warning
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  addToast({
+                    message: 'New message received from John',
+                    variant: 'info',
+                    duration: 0,
+                    action: {
+                      label: 'View',
+                      onClick: () => alert('Viewing message')
+                    }
+                  })
+                }}
+              >
+                Show Info with Action
+              </Button>
+              <Button
+                onClick={() => {
+                  setIsLoading(true)
+                  addToast({
+                    message: 'Processing your request...',
+                    variant: 'default',
+                    duration: 2000
+                  })
+                  setTimeout(() => {
+                    setIsLoading(false)
+                    addToast({
+                      message: 'Request completed successfully!',
+                      variant: 'success'
+                    })
+                  }, 2000)
+                }}
+                disabled={isLoading}
+              >
+                {isLoading ? <Spinner size="sm" variant="white" /> : 'Simulate Process'}
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -259,28 +379,48 @@ function App() {
           </CardContent>
         </Card>
 
-        {/* Dropdown & DatePicker Section */}
+        {/* Dropdown & Select Section */}
         <Card>
           <CardHeader>
-            <CardTitle>Dropdown & DatePicker</CardTitle>
-            <CardDescription>Selection controls</CardDescription>
+            <CardTitle>Dropdown & Select</CardTitle>
+            <CardDescription>Selection controls for forms and general use</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Dropdown
-                label="Select Option"
+                label="Dropdown (General)"
                 options={dropdownOptions}
                 value={dropdownValue}
                 onChange={setDropdownValue}
                 searchable
                 placeholder="Choose an option"
               />
-              <DatePicker
-                label="Select Date"
-                value={selectedDate}
-                onChange={setSelectedDate}
+              <Select
+                label="Country"
+                options={selectOptions}
+                value={selectValue}
+                onChange={setSelectValue}
+                searchable
+                placeholder="Select your country"
+                hint="Choose your country of residence"
+                required
               />
             </div>
+          </CardContent>
+        </Card>
+
+        {/* DatePicker Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>DatePicker</CardTitle>
+            <CardDescription>Date selection control</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <DatePicker
+              label="Select Date"
+              value={selectedDate}
+              onChange={setSelectedDate}
+            />
           </CardContent>
         </Card>
 
@@ -464,5 +604,12 @@ function App() {
   )
 }
 
-export default App
+function App() {
+  return (
+    <ToastProvider position="top-right" maxToasts={5}>
+      <AppContent />
+    </ToastProvider>
+  )
+}
 
+export default App

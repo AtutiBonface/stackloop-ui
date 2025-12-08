@@ -451,6 +451,96 @@ You can add dark mode variants:
   <Dropdown options={[{value:'a',label:'A'}]} value={val} onChange={setVal} searchable />
   ```
 
+**Select**:
+- **Description:** Form-optimized select component with label, error, hint, and validation support. Built for forms with proper semantics and accessibility. Based on Dropdown but includes form-specific features like `required` prop, hint text, and better integration with form libraries.
+- **Props:**
+  - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required. Array of selectable options with optional icons and disabled state.
+  - **`value`**: `string` — optional. Currently selected value.
+  - **`onChange`**: `(value: string) => void` — required. Callback fired when selection changes.
+  - **`placeholder`**: `string` — default: `'Select an option'`. Shown when no value is selected.
+  - **`label`**: `string` — optional. Label displayed above the select.
+  - **`error`**: `string` — optional. Error message displayed below select with error styling.
+  - **`hint`**: `string` — optional. Helper text displayed below select when no error is present.
+  - **`searchable`**: `boolean` — default: `false`. Enables search input to filter options.
+  - **`clearable`**: `boolean` — default: `true`. Shows clear button when value is selected.
+  - **`required`**: `boolean` — optional. Displays asterisk (*) next to label and sets aria-required.
+  - **`disabled`**: `boolean` — optional. Disables the select.
+  - **`className`**: `string` — optional. Additional CSS classes for the wrapper.
+- **Features:**
+  - **Form Integration:** Works seamlessly with form libraries (React Hook Form, Formik, etc.)
+  - **Validation Support:** Built-in error and hint display with animated transitions
+  - **Accessibility:** Full ARIA attributes, keyboard navigation, and screen reader support
+  - **Search:** Optional searchable mode with real-time filtering
+  - **Icons:** Support for icons in options for better visual recognition
+  - **Disabled Options:** Individual options can be disabled while keeping select active
+  - **Clearable:** Optional clear button to reset selection
+  - **Touch-Friendly:** Optimized for mobile with proper touch targets
+- **Usage:**
+
+  ```jsx
+  import { Select } from '@stackloop/ui'
+  import { User, Settings, Bell } from 'lucide-react'
+
+  // Basic usage
+  <Select 
+    label="Country"
+    options={[
+      { value: 'us', label: 'United States' },
+      { value: 'uk', label: 'United Kingdom' },
+      { value: 'ca', label: 'Canada' }
+    ]} 
+    value={country} 
+    onChange={setCountry}
+    required
+  />
+
+  // With icons and search
+  <Select 
+    label="Navigation"
+    options={[
+      { value: 'profile', label: 'Profile', icon: <User /> },
+      { value: 'settings', label: 'Settings', icon: <Settings /> },
+      { value: 'notifications', label: 'Notifications', icon: <Bell />, disabled: true }
+    ]}
+    value={selected}
+    onChange={setSelected}
+    searchable
+    placeholder="Choose a page"
+  />
+
+  // With error and hint
+  <Select 
+    label="Payment Method"
+    options={paymentMethods}
+    value={payment}
+    onChange={setPayment}
+    error={errors.payment}
+    hint="Select your preferred payment method"
+    required
+  />
+
+  // With React Hook Form
+  import { useForm, Controller } from 'react-hook-form'
+
+  const { control, formState: { errors } } = useForm()
+
+  <Controller
+    name="category"
+    control={control}
+    rules={{ required: 'Category is required' }}
+    render={({ field }) => (
+      <Select
+        label="Category"
+        options={categories}
+        value={field.value}
+        onChange={field.onChange}
+        error={errors.category?.message}
+        required
+      />
+    )}
+  />
+  ```
+
 **BottomSheet**:
 - **Description:** Mobile bottom sheet with header and optional close button.
 - **Props:**
@@ -526,6 +616,129 @@ You can add dark mode variants:
   import { Badge } from '@stackloop/ui'
 
   <Badge variant="primary">New</Badge>
+  ```
+
+**Spinner**:
+- **Description:** Animated loading spinner with size variants and optional label.
+- **Props:**
+  - **`size`**: `'sm' | 'md' | 'lg' | 'xl'` — default: `'md'`. Controls spinner dimensions (sm=16px, md=32px, lg=48px, xl=64px).
+  - **`variant`**: `'primary' | 'secondary' | 'white'` — default: `'primary'`. Color variant of the spinner.
+  - **`label`**: `string` — optional. Text displayed below spinner.
+  - **`className`**: `string` — optional. Additional CSS classes for the wrapper.
+- **Usage:**
+
+  ```jsx
+  import { Spinner } from '@stackloop/ui'
+
+  // Basic spinner
+  <Spinner />
+
+  // With label
+  <Spinner label="Loading..." />
+
+  // Custom size and variant
+  <Spinner size="lg" variant="white" />
+
+  // In a button
+  <Button disabled>
+    <Spinner size="sm" variant="white" label="Processing..." />
+  </Button>
+  ```
+
+**Toast**:
+- **Description:** Context-based toast notification system with variants, actions, and customizable positioning. Provides non-intrusive feedback messages that auto-dismiss.
+- **Components:**
+  - **`ToastProvider`**: Wrapper component that manages toast state and rendering. Must wrap your app or components that use toasts.
+  - **`useToast`**: Hook to trigger toasts from any component within the provider.
+- **ToastProvider Props:**
+  - **`children`**: `ReactNode` — required. Your app content.
+  - **`position`**: `'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'` — default: `'top-right'`. Where toasts appear on screen.
+  - **`maxToasts`**: `number` — default: `5`. Maximum number of toasts shown at once.
+- **useToast() Returns:**
+  - **`addToast(toast)`**: Function to create a new toast notification.
+  - **`removeToast(id)`**: Function to manually dismiss a toast.
+  - **`toasts`**: Array of currently active toasts.
+- **Toast Object:**
+  - **`message`**: `string` — required. Toast content text.
+  - **`variant`**: `'success' | 'error' | 'warning' | 'info' | 'default'` — optional (default: `'default'`). Visual style with corresponding icon.
+  - **`duration`**: `number` — optional (default: `5000`ms). Auto-dismiss time in milliseconds. Set to `0` for persistent toast.
+  - **`action`**: `{ label: string; onClick: () => void }` — optional. Action button within the toast.
+- **Features:**
+  - **Auto-dismiss**: Toasts automatically disappear after duration
+  - **Manual dismiss**: Click X button or call `removeToast(id)`
+  - **Variants with icons**: Visual feedback with CheckCircle, AlertCircle, AlertTriangle, Info icons
+  - **Action buttons**: Add clickable actions to toasts
+  - **Animations**: Smooth enter/exit animations with Framer Motion
+  - **Position control**: Place toasts anywhere on screen
+  - **Max limit**: Prevents toast overflow
+  - **Responsive**: Adapts to mobile screens
+- **Usage:**
+
+  ```jsx
+  import { ToastProvider, useToast } from '@stackloop/ui'
+
+  // 1. Wrap your app with ToastProvider
+  function App() {
+    return (
+      <ToastProvider position="top-right" maxToasts={5}>
+        <YourApp />
+      </ToastProvider>
+    )
+  }
+
+  // 2. Use toasts in any component
+  function MyComponent() {
+    const { addToast } = useToast()
+
+    const handleSuccess = () => {
+      addToast({
+        message: 'Profile updated successfully!',
+        variant: 'success',
+        duration: 3000
+      })
+    }
+
+    const handleError = () => {
+      addToast({
+        message: 'Failed to save changes',
+        variant: 'error',
+        duration: 5000
+      })
+    }
+
+    const handleWithAction = () => {
+      addToast({
+        message: 'New message received',
+        variant: 'info',
+        duration: 0, // Persistent until dismissed
+        action: {
+          label: 'View',
+          onClick: () => navigate('/messages')
+        }
+      })
+    }
+
+    const handleWarning = () => {
+      addToast({
+        message: 'Your session will expire in 5 minutes',
+        variant: 'warning'
+      })
+    }
+
+    return (
+      <div>
+        <Button onClick={handleSuccess}>Save</Button>
+        <Button onClick={handleError}>Trigger Error</Button>
+        <Button onClick={handleWithAction}>Show Notification</Button>
+        <Button onClick={handleWarning}>Show Warning</Button>
+      </div>
+    )
+  }
+
+  // 3. Bottom-centered positioning
+  <ToastProvider position="bottom-center">
+    <App />
+  </ToastProvider>
   ```
 
 **FloatingActionButton (FAB)**:
