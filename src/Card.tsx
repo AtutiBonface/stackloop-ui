@@ -56,7 +56,7 @@ export const Card: React.FC<CardProps> = ({
     </Component>
   )
 }
-
+ 
 export const CardHeader: React.FC<{ children: React.ReactNode; className?: string }> = ({ children, className }) => (
   <div className={cn('mb-4', className)}>{children}</div>
 )
