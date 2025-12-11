@@ -26,7 +26,7 @@ export default defineConfig(({ mode }) => {
               'lucide-react': 'LucideReact'
             },
             assetFileNames: (assetInfo) => {
-              if (assetInfo.name === 'style.css') return 'theme.css'
+              if (assetInfo.name?.endsWith('.css')) return 'stackloop-ui.css'
               return assetInfo.name || ''
             }
           }
