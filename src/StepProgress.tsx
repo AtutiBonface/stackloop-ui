@@ -40,15 +40,14 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                   <motion.div
                     initial={false}
                     animate={{
-                      scale: isCurrent ? 1.05 : 1,
-                      backgroundColor: isCompleted || isCurrent ? 'var(--color-primary)' : 'var(--color-border)'
+                      scale: isCurrent ? 1.05 : 1
                     }}
                     className={cn(
                       'w-12 h-12 rounded-full flex items-center justify-center',
                       'font-semibold text-base transition-all duration-300',
-                      (isCompleted || isCurrent) && 'text-white shadow-lg',
-                      isUpcoming && 'text-primary/50',
-                      'ring-4 ring-white'
+                      'ring-4 ring-white',
+                      (isCompleted || isCurrent) && 'bg-primary text-white shadow-lg',
+                      isUpcoming && 'bg-border text-muted-foreground'
                     )}
                   >
                     {isCompleted ? (

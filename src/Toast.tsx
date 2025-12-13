@@ -68,6 +68,11 @@ interface ToastItemProps {
 const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
   const variant = toast.variant || 'default'
   const Icon = variantIcons[variant]
+  
+  // Ensure message is always a string
+  const messageText = typeof toast.message === 'string' 
+    ? toast.message 
+    : String(toast.message)
 
   return (
     <motion.div
@@ -84,7 +89,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
       {Icon && <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />}
       
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium leading-relaxed">{toast.message}</p>
+        <p className="text-sm font-medium leading-relaxed">{messageText}</p>
         
         {toast.action && (
           <button
@@ -120,8 +125,18 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 }) => {
   const [toasts, setToasts] = useState<Toast[]>([])
 
+  const removeToast = useCallback((id: string) => {
+    setToasts((prev) => prev.filter((toast) => toast.id !== id))
+  }, [])
+
   const addToast = useCallback(
     (toast: Omit<Toast, 'id'>) => {
+      // Type guard to ensure message is a string
+      if (typeof toast.message !== 'string') {
+        console.error('Toast message must be a string, received:', toast.message)
+        return
+      }
+
       const id = Math.random().toString(36).substring(2, 9)
       const duration = toast.duration ?? 5000
 
@@ -136,12 +151,8 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
         }, duration)
       }
     },
-    [maxToasts]
+    [maxToasts, removeToast]
   )
-
-  const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id))
-  }, [])
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
