@@ -545,7 +545,8 @@ function AppContent() {
             label: 'Create',
             icon: <Plus className="w-5 h-5" />,
             onClick: () => alert('Create clicked'),
-            variant: 'primary'
+            variant: 'primary',
+            labelClassName: 'bg-primary/10 text-primary'
           },
           {
             label: 'Edit',

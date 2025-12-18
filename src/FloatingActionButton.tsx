@@ -10,6 +10,8 @@ export interface FABAction {
   icon: React.ReactNode
   onClick: () => void
   variant?: 'primary' | 'success' | 'danger' | 'warning'
+  labelClassName?: string
+  labelStyle?: React.CSSProperties
 }
 
 export interface FloatingActionButtonProps {
@@ -80,7 +82,13 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                 transition={{ delay: index * 0.05 }}
                 className="flex items-center gap-3"
               >
-                <span className="bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap shadow-lg">
+                <span 
+                  className={cn(
+                    'bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap shadow-lg',
+                    action.labelClassName
+                  )}
+                  style={action.labelStyle}
+                >
                   {action.label}
                 </span>
                 <motion.button

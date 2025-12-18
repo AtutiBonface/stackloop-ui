@@ -759,16 +759,44 @@ You can add dark mode variants:
 **FloatingActionButton (FAB)**:
 - **Description:** Floating action button with expanded action list support.
 - **Props:**
-  - **`icon`**, **`label`**, **`onClick`**, **`actions`** (array of `{label, icon, onClick, variant}`) — optional.
+  - **`icon`**, **`label`**, **`onClick`**, **`actions`** (array of `{label, icon, onClick, variant, labelClassName?, labelStyle?}`) — optional.
   - **`variant`**: `'primary'|'secondary'` — default: `'primary'`.
   - **`position`**: `'bottom-right'|'bottom-left'|'bottom-center'` — default: `'bottom-right'`.
   - **`disabled`**, **`className`**.
+- **Action Props:**
+  - **`label`**: `string` — Action label text.
+  - **`icon`**: `ReactNode` — Icon for the action button.
+  - **`onClick`**: `() => void` — Action callback.
+  - **`variant`**: `'primary'|'success'|'danger'|'warning'` — Action button color variant.
+  - **`labelClassName`**: `string` — Custom CSS classes for the label (e.g., remove background: `'!bg-transparent !border-0 text-white'`).
+  - **`labelStyle`**: `CSSProperties` — Inline styles for the label.
 - **Usage:**
 
   ```jsx
   import { FloatingActionButton as FAB } from '@stackloop/ui'
 
+  // Simple FAB
   <FAB label="New" onClick={()=>{}} />
+
+  // FAB with actions and custom label styling
+  <FAB 
+    actions={[
+      {
+        label: 'Create Post',
+        icon: <PlusIcon />,
+        onClick: () => {},
+        variant: 'primary',
+        labelClassName: 'bg-blue-500 text-white border-blue-600'
+      },
+      {
+        label: 'Upload',
+        icon: <UploadIcon />,
+        onClick: () => {},
+        variant: 'success',
+        labelClassName: '!bg-transparent !border-0 text-white shadow-none'
+      }
+    ]}
+  />
   ```
 
 **AudioRecorder**:
