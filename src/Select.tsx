@@ -73,10 +73,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       setSearchQuery('')
     }
 
-    const handleClear = (e: React.MouseEvent) => {
-      e.stopPropagation()
-      onChange('')
-    }
+    
 
     return (
       <div ref={ref} className={cn('w-full space-y-1.5', className)}>
@@ -114,31 +111,12 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                 {selectedOption?.label || placeholder}
               </span>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
-              {clearable && selectedOption && !disabled && (
-                <span
-                  role="button"
-                  tabIndex={0}
-                  onClick={handleClear}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      handleClear(e as any)
-                    }
-                  }}
-                  className="p-1 hover:bg-secondary rounded transition-colors cursor-pointer"
-                  aria-label="Clear selection"
-                >
-                  <X className="w-4 h-4 text-primary" />
-                </span>
+            <ChevronDown
+              className={cn(
+                'w-5 h-5 text-primary transition-transform flex-shrink-0',
+                isOpen && 'rotate-180'
               )}
-              <ChevronDown
-                className={cn(
-                  'w-5 h-5 text-primary transition-transform',
-                  isOpen && 'rotate-180'
-                )}
-              />
-            </div>
+            />
           </button>
 
           <AnimatePresence>
@@ -177,7 +155,23 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                   </div>
                 )}
 
-                <div className="overflow-y-auto max-h-64">
+                <div className="overflow-y-auto max-h-64 p-2">
+                  {clearable && (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={!value}
+                      onClick={() => handleSelect('')}
+                      className={cn(
+                        'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                        'hover:bg-secondary transition-colors',
+                        'text-foreground/70 italic',
+                        !value && 'bg-border text-foreground font-medium'
+                      )}
+                    >
+                      <span>None</span>
+                    </button>
+                  )}
                   {filteredOptions.length > 0 ? (
                     filteredOptions.map((option) => (
                       <button
@@ -188,7 +182,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                         onClick={() => !option.disabled && handleSelect(option.value)}
                         disabled={option.disabled}
                         className={cn(
-                          'w-full px-4 py-3 text-left flex items-center gap-2',
+                          'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
                           'hover:bg-secondary transition-colors',
                           'disabled:opacity-50 disabled:cursor-not-allowed',
                           option.value === value && 'bg-border text-foreground font-medium'

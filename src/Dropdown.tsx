@@ -66,11 +66,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
     setSearchQuery('')
   }
 
-  const handleClear = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    onChange('')
-  }
-
+ 
   return (
     <div ref={dropdownRef} className={cn('relative w-full', className)}>
       {label && (
@@ -100,23 +96,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
             {selectedOption?.label || placeholder}
           </span>
         </div>
-        <div className="flex items-center gap-1 flex-shrink-0">
-          {clearable && selectedOption && (
-            <button
-              type="button"
-              onClick={handleClear}
-              className="p-1 hover:bg-secondary rounded transition-colors"
-            >
-              <X className="w-4 h-4 text-primary" />
-            </button>
+        <ChevronDown
+          className={cn(
+            'w-5 h-5 text-primary transition-transform flex-shrink-0',
+            isOpen && 'rotate-180'
           )}
-          <ChevronDown
-            className={cn(
-              'w-5 h-5 text-primary transition-transform',
-              isOpen && 'rotate-180'
-            )}
-          />
-        </div>
+        />
       </button>
 
       <AnimatePresence>
@@ -151,14 +136,28 @@ export const Dropdown: React.FC<DropdownProps> = ({
               </div>
             )}
 
-            <div className="overflow-y-auto max-h-64">
+            <div className="overflow-y-auto max-h-64 p-2">
+              {clearable && (
+                <button
+                  type="button"
+                  onClick={() => handleSelect('')}
+                  className={cn(
+                    'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                    'hover:bg-secondary transition-colors',
+                    'text-foreground/70 italic',
+                    !value && 'bg-border text-foreground'
+                  )}
+                >
+                  <span>None</span>
+                </button>
+              )}
               {filteredOptions.length > 0 ? (
                 filteredOptions.map((option) => (
                   <button
                     key={option.value}
                     onClick={() => handleSelect(option.value)}
                     className={cn(
-                      'w-full px-4 py-3 text-left flex items-center gap-2',
+                      'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
                       'hover:bg-secondary transition-colors',
                       option.value === value && 'bg-border text-foreground'
                     )}
