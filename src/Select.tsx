@@ -116,14 +116,21 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             </div>
             <div className="flex items-center gap-1 flex-shrink-0">
               {clearable && selectedOption && !disabled && (
-                <button
-                  type="button"
+                <span
+                  role="button"
+                  tabIndex={0}
                   onClick={handleClear}
-                  className="p-1 hover:bg-secondary rounded transition-colors"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      handleClear(e as any)
+                    }
+                  }}
+                  className="p-1 hover:bg-secondary rounded transition-colors cursor-pointer"
                   aria-label="Clear selection"
                 >
                   <X className="w-4 h-4 text-primary" />
-                </button>
+                </span>
               )}
               <ChevronDown
                 className={cn(
