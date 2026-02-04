@@ -136,7 +136,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               </div>
             )}
 
-            <div className="overflow-y-auto max-h-64 p-2">
+            <div className="overflow-y-auto max-h-64 p-2 space-y-1">
               {clearable && (
                 <button
                   type="button"
