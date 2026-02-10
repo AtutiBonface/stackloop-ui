@@ -79,6 +79,9 @@ export type { CameraCaptureProps, FileUploaderProps } from './FileUpload'
 export { AudioRecorder } from './AudioRecorder'
 export type { AudioRecorderProps } from './AudioRecorder'
 
+export { PhoneInput } from './PhoneInput'
+export type { PhoneInputProps } from './PhoneInput'
+
 export { ThumbnailGrid } from './ThumbnailGrid'
 export type { ThumbnailGridProps, ThumbnailItem } from './ThumbnailGrid'
 

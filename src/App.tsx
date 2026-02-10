@@ -12,6 +12,7 @@ import {
   Dropdown,
   Select,
   DatePicker,
+  PhoneInput,
   Card,
   CardHeader,
   CardTitle,
@@ -59,6 +60,7 @@ function AppContent() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [dropdownValue, setDropdownValue] = useState('')
   const [selectValue, setSelectValue] = useState('')
+  const [phoneValue, setPhoneValue] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -175,6 +177,13 @@ function AppContent() {
                 placeholder="Enter password"
                 rightIcon={<Lock className="w-5 h-5" />}
                 hint="Must be at least 8 characters"
+              />
+              <PhoneInput
+                label="Phone"
+                value={phoneValue}
+                onChange={setPhoneValue}
+                searchable
+                autoDetect
               />
               <Textarea
                 label="Message"

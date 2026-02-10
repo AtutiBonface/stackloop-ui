@@ -163,7 +163,7 @@ import { Button, Modal } from '@stackloop/ui'
 
 Components with the `animate` prop:
 
-- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
 **Checkbox**:
 - **Description:** Accessible checkbox with optional label and description.
@@ -227,6 +227,33 @@ Components with the `animate` prop:
     label="Search" 
     leftIcon={<Search />} 
     placeholder="Search..." 
+  />
+  ```
+
+**PhoneInput**:
+- **Description:** Phone number input with a country calling code selector and optional locale-based default.
+- **Props:**
+  - **`value`**: `string` — optional.
+  - **`onChange`**: `(value: string) => void` — optional.
+  - **`country`**: `string` — optional ISO2 override (e.g. `US`).
+  - **`defaultCountry`**: `string` — default: `'US'`.
+  - **`autoDetect`**: `boolean` — default: `true`. Uses `navigator.language` to select a country.
+  - **`onCountryChange`**: `(country: Country) => void` — optional.
+  - **`searchable`**: `boolean` — default: `true`.
+  - **`showFlags`**: `boolean` — default: `true`.
+  - **`animate`**: `boolean` — default: `true`.
+  - Inherits standard `input` HTML attributes.
+- **Usage:**
+
+  ```jsx
+  import { PhoneInput } from '@stackloop/ui'
+
+  <PhoneInput
+    label="Phone"
+    value={phone}
+    onChange={setPhone}
+    searchable
+    autoDetect
   />
   ```
 
