@@ -183,7 +183,7 @@ function AppContent() {
               <PhoneInput
                 label="Phone"
                 value={phoneValue}
-                onChange={setPhoneValue}
+                onChange={(_, value) => setPhoneValue(value)}
                 searchable
                 autoDetect={false}
                 defaultCountry='KE'

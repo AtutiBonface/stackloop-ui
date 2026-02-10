@@ -234,7 +234,7 @@ Components with the `animate` prop:
 - **Description:** Phone number input with a country calling code selector and optional locale-based default.
 - **Props:**
   - **`value`**: `string` — optional.
-  - **`onChange`**: `(value: string) => void` — optional.
+  - **`onChange`**: `(dialCode: string, value: string) => void` — optional.
   - **`country`**: `string` — optional ISO2 override (e.g. `US`).
   - **`defaultCountry`**: `string` — default: `'US'`.
   - **`autoDetect`**: `boolean` — default: `true`. Uses `navigator.language` to select a country.
@@ -251,7 +251,7 @@ Components with the `animate` prop:
   <PhoneInput
     label="Phone"
     value={phone}
-    onChange={setPhone}
+    onChange={(dialCode, value) => setPhone(`${dialCode}${value}`)}
     searchable
     autoDetect
   />

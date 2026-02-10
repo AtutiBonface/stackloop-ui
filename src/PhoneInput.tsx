@@ -9,7 +9,7 @@ import { countries, type Country } from './countries'
 export interface PhoneInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
   value?: string
-  onChange?: (value: string) => void
+  onChange?: (dialCode: string, value: string) => void
   country?: string
   defaultCountry?: string
   autoDetect?: boolean
@@ -173,7 +173,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             type="tel"
             inputMode="tel"
             value={value ?? ''}
-            onChange={(event) => onChange?.(event.target.value)}
+            onChange={(event) => onChange?.(selectedCountry.dialCode, event.target.value)}
             placeholder={placeholder || 'Phone number'}
             disabled={disabled}
             className={cn(
