@@ -13,6 +13,7 @@ export interface BadgeProps {
   size?: BadgeSize
   className?: string
   dot?: boolean
+  animate?: boolean
 }
 
 export const Badge: React.FC<BadgeProps> = ({
@@ -20,8 +21,10 @@ export const Badge: React.FC<BadgeProps> = ({
   variant = 'default',
   size = 'md',
   className,
-  dot = false
+  dot = false,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const variantClasses = {
     default: 'bg-secondary text-primary border border-border',
     primary: 'bg-primary/10 text-primary border border-primary/20',
@@ -48,9 +51,9 @@ export const Badge: React.FC<BadgeProps> = ({
 
   return (
     <motion.span
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.2 }}
+      {...(shouldAnimate
+        ? { initial: { opacity: 0, scale: 0.9 }, animate: { opacity: 1, scale: 1 }, transition: { duration: 0.2 } }
+        : {})}
       className={cn(
         'inline-flex items-center gap-1.5 rounded-lg font-medium',
         variantClasses[variant],

@@ -12,6 +12,7 @@ export interface DrawerProps {
   title?: string
   position?: 'left' | 'right'
   className?: string
+  animate?: boolean
 }
 
 export const Drawer: React.FC<DrawerProps> = ({
@@ -20,8 +21,10 @@ export const Drawer: React.FC<DrawerProps> = ({
   children,
   title,
   position = 'right',
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -38,48 +41,49 @@ export const Drawer: React.FC<DrawerProps> = ({
     }
   }, [isOpen, onClose])
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
-            onClick={onClose}
-          />
-          <motion.div
-            initial={{ x: position === 'left' ? '-100%' : '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: position === 'left' ? '-100%' : '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-            className={cn(
-              'fixed top-0 z-50 h-full w-[400px] sm:w-[480px] bg-background shadow-xl',
-              position === 'left' ? 'left-0 border-r' : 'right-0 border-l',
-              'border-border',
-              className
-            )}
-          >
-            {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">{title}</h2>
-                <button
-                  onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                  aria-label="Close drawer"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-            <div className="overflow-y-auto h-[calc(100%-5rem)] p-6">
-              {children}
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  )
+  const drawerContent = isOpen ? (
+    <>
+      <motion.div
+        {...(shouldAnimate
+          ? { initial: { opacity: 0 }, animate: { opacity: 1 }, exit: { opacity: 0 }, transition: { duration: 0.2 } }
+          : {})}
+        className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+        onClick={onClose}
+      />
+      <motion.div
+        {...(shouldAnimate
+          ? {
+              initial: { x: position === 'left' ? '-100%' : '100%' },
+              animate: { x: 0 },
+              exit: { x: position === 'left' ? '-100%' : '100%' },
+              transition: { type: 'spring', damping: 30, stiffness: 300 }
+            }
+          : {})}
+        className={cn(
+          'fixed top-0 z-50 h-full w-[400px] sm:w-[480px] bg-background shadow-xl',
+          position === 'left' ? 'left-0 border-r' : 'right-0 border-l',
+          'border-border',
+          className
+        )}
+      >
+        {title && (
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+            <h2 className="text-xl font-semibold text-foreground">{title}</h2>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-secondary transition-colors"
+              aria-label="Close drawer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+        <div className="overflow-y-auto h-[calc(100%-5rem)] p-6">
+          {children}
+        </div>
+      </motion.div>
+    </>
+  ) : null
+
+  return shouldAnimate ? <AnimatePresence>{drawerContent}</AnimatePresence> : drawerContent
 }

@@ -63,9 +63,11 @@ const positionStyles = {
 interface ToastItemProps {
   toast: Toast
   onRemove: (id: string) => void
+  animate?: boolean
 }
 
-const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
+const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove, animate = true }) => {
+  const shouldAnimate = animate !== false
   const variant = toast.variant || 'default'
   const Icon = variantIcons[variant]
   
@@ -74,13 +76,19 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
     ? toast.message 
     : String(toast.message)
 
+  const Container = shouldAnimate ? motion.div : 'div'
+
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, x: 100, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
+    <Container
+      {...(shouldAnimate
+        ? {
+            layout: true,
+            initial: { opacity: 0, y: -20, scale: 0.95 },
+            animate: { opacity: 1, y: 0, scale: 1 },
+            exit: { opacity: 0, x: 100, scale: 0.95 },
+            transition: { duration: 0.2 }
+          }
+        : {})}
       className={cn(
         'flex items-start gap-3 p-4 rounded-md border shadow-lg min-w-[320px] max-w-md',
         variantStyles[variant]
@@ -108,7 +116,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
       >
         <X className="w-4 h-4" />
       </button>
-    </motion.div>
+    </Container>
   )
 }
 
@@ -116,13 +124,16 @@ interface ToastProviderProps {
   children: React.ReactNode
   position?: ToastPosition
   maxToasts?: number
+  animate?: boolean
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({
   children,
   position = 'top-right',
-  maxToasts = 5
+  maxToasts = 5,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [toasts, setToasts] = useState<Toast[]>([])
 
   const removeToast = useCallback((id: string) => {
@@ -159,11 +170,17 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       {children}
       
       <div className={cn('fixed z-[100] flex flex-col gap-2', positionStyles[position])}>
-        <AnimatePresence mode="popLayout">
-          {toasts.map((toast) => (
-            <ToastItem key={toast.id} toast={toast} onRemove={removeToast} />
-          ))}
-        </AnimatePresence>
+        {shouldAnimate ? (
+          <AnimatePresence mode="popLayout">
+            {toasts.map((toast) => (
+              <ToastItem key={toast.id} toast={toast} onRemove={removeToast} animate={shouldAnimate} />
+            ))}
+          </AnimatePresence>
+        ) : (
+          toasts.map((toast) => (
+            <ToastItem key={toast.id} toast={toast} onRemove={removeToast} animate={shouldAnimate} />
+          ))
+        )}
       </div>
     </ToastContext.Provider>
   )

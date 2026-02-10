@@ -8,10 +8,12 @@ export interface ToggleProps extends Omit<React.InputHTMLAttributes<HTMLInputEle
   label?: string
   description?: string
   onChange?: (checked: boolean) => void
+  animate?: boolean
 }
 
 export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
-  ({ label, description, className, checked, onChange, ...props }, ref) => {
+  ({ label, description, className, checked, onChange, animate = true, ...props }, ref) => {
+    const shouldAnimate = animate !== false
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       onChange?.(e.target.checked)
     }
@@ -51,8 +53,9 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
           >
             <motion.div
               className="absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm"
-              animate={{ left: checked ? '24px' : '4px' }}
-              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+              style={{ left: checked ? '24px' : '4px' }}
+              animate={shouldAnimate ? { left: checked ? '24px' : '4px' } : undefined}
+              transition={shouldAnimate ? { type: 'spring', stiffness: 500, damping: 30 } : { duration: 0 }}
             />
           </div>
         </div>

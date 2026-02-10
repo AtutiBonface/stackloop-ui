@@ -15,6 +15,7 @@ export interface SliderProps {
   unit?: string
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const Slider: React.FC<SliderProps> = ({
@@ -27,8 +28,10 @@ export const Slider: React.FC<SliderProps> = ({
   showValue = true,
   unit = '%',
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [isDragging, setIsDragging] = useState(false)
   const percentage = ((value - min) / (max - min)) * 100
 
@@ -51,8 +54,8 @@ export const Slider: React.FC<SliderProps> = ({
             className="absolute left-0 top-0 h-full bg-primary rounded-full"
             style={{ width: `${percentage}%` }}
             initial={false}
-            animate={{ width: `${percentage}%` }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            animate={shouldAnimate ? { width: `${percentage}%` } : undefined}
+            transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
           />
         </div>
         
@@ -79,8 +82,8 @@ export const Slider: React.FC<SliderProps> = ({
             disabled && 'opacity-50'
           )}
           style={{ left: `calc(${percentage}% - 12px)` }}
-          animate={{ scale: isDragging ? 1.2 : 1 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+          animate={shouldAnimate ? { scale: isDragging ? 1.2 : 1 } : undefined}
+          transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 20 } : { duration: 0 }}
         />
       </div>
     </div>

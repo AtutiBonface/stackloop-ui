@@ -11,6 +11,7 @@ export interface RadioPillsProps {
   name: string
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const RadioPills: React.FC<RadioPillsProps> = ({
@@ -19,8 +20,10 @@ export const RadioPills: React.FC<RadioPillsProps> = ({
   onChange,
   name,
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   return (
     <div className={cn('flex flex-wrap gap-2', className)}>
       {options.map((option) => {
@@ -39,7 +42,7 @@ export const RadioPills: React.FC<RadioPillsProps> = ({
             />
             
             <motion.div
-              whileTap={{ scale: disabled ? 1 : 0.95 }}
+              whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.95 } : undefined}
               className={cn(
                 'px-4 py-2.5 rounded-full border-2 transition-all duration-200',
                 'flex items-center gap-2 min-h-[2.75rem]',

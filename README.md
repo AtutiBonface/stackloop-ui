@@ -147,6 +147,24 @@ You can add dark mode variants:
 
 - For each component below you'll find a short description, props (type, default, notes) and a minimal usage example.
 
+## Animation Control
+
+Most components support an `animate?: boolean` prop to enable or disable built-in Framer Motion animations. The default is `true`.
+
+```jsx
+import { Button, Modal } from '@stackloop/ui'
+
+<Button animate={false}>No animation</Button>
+
+<Modal isOpen={open} onClose={() => setOpen(false)} animate={false}>
+  ...
+</Modal>
+```
+
+Components with the `animate` prop:
+
+- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+
 **Checkbox**:
 - **Description:** Accessible checkbox with optional label and description.
 - **Props:**

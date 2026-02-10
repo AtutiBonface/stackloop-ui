@@ -12,6 +12,7 @@ export interface CameraCaptureProps {
   label?: string
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const CameraCapture: React.FC<CameraCaptureProps> = ({
@@ -20,8 +21,10 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
   preview,
   label = 'Take Photo',
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +57,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({
       ) : (
         <motion.button
           type="button"
-          whileTap={{ scale: disabled ? 1 : 0.98 }}
+          whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.98 } : undefined}
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled}
           className={cn(
@@ -90,6 +93,7 @@ export interface FileUploaderProps {
   label?: string
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const FileUploader: React.FC<FileUploaderProps> = ({
@@ -98,8 +102,10 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
   multiple = false,
   label = 'Upload Files',
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFiles = (files: FileList | null) => {
@@ -114,7 +120,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
       
       <motion.button
         type="button"
-        whileTap={{ scale: disabled ? 1 : 0.98 }}
+        whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.98 } : undefined}
         onClick={() => !disabled && fileInputRef.current?.click()}
         disabled={disabled}
         className={cn(

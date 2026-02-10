@@ -22,6 +22,7 @@ export interface DropdownProps {
   clearable?: boolean
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const Dropdown: React.FC<DropdownProps> = ({
@@ -34,8 +35,10 @@ export const Dropdown: React.FC<DropdownProps> = ({
   searchable = false,
   clearable = true,
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -104,14 +107,82 @@ export const Dropdown: React.FC<DropdownProps> = ({
         />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
+      {shouldAnimate ? (
+        <AnimatePresence>
+          {isOpen ? (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+            >
+            {searchable && (
+              <div className="p-2 border-b border-border">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-2 top-1/2 -translate-y-1/2"
+                    >
+                      <X className="w-4 h-4 text-primary/50 hover:text-primary" />
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+
+            <div className="overflow-y-auto max-h-64 p-2 space-y-1">
+              {clearable && (
+                <button
+                  type="button"
+                  onClick={() => handleSelect('')}
+                  className={cn(
+                    'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                    'hover:bg-secondary transition-colors',
+                    'text-foreground/70 italic',
+                    !value && 'bg-border text-foreground'
+                  )}
+                >
+                  <span>None</span>
+                </button>
+              )}
+              {filteredOptions.length > 0 ? (
+                filteredOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => handleSelect(option.value)}
+                    className={cn(
+                      'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                      'hover:bg-secondary transition-colors',
+                      option.value === value && 'bg-border text-foreground'
+                    )}
+                  >
+                    {option.icon && <span className="flex-shrink-0">{option.icon}</span>}
+                    <span>{option.label}</span>
+                  </button>
+                ))
+              ) : (
+                <div className="px-4 py-6 text-center text-primary/70 text-sm">
+                  No options found
+                </div>
+              )}
+            </div>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      ) : (
+        isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute z-50 w-full mt-2 bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+            className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
           >
             {searchable && (
               <div className="p-2 border-b border-border">
@@ -173,13 +244,12 @@ export const Dropdown: React.FC<DropdownProps> = ({
               )}
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        )
+      )}
 
       {error && (
         <motion.p
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
+          {...(shouldAnimate ? { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 } } : {})}
           className="mt-1.5 text-sm text-error"
         >
           {error}

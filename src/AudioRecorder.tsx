@@ -11,6 +11,7 @@ export interface AudioRecorderProps {
   maxDuration?: number
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const AudioRecorder: React.FC<AudioRecorderProps> = ({
@@ -18,8 +19,10 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
   label = 'Record Audio',
   maxDuration = 300, // 5 minutes default
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [isRecording, setIsRecording] = useState(false)
   const [isPaused, setIsPaused] = useState(false)
   const [duration, setDuration] = useState(0)
@@ -120,7 +123,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
             <div className="relative">
               <motion.button
                 type="button"
-                whileTap={{ scale: disabled ? 1 : 0.95 }}
+                whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.95 } : undefined}
                 onClick={isRecording ? (isPaused ? resumeRecording : pauseRecording) : startRecording}
                 disabled={disabled}
                 className={cn(
@@ -128,7 +131,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                   'transition-all duration-200',
                   'disabled:opacity-50 disabled:cursor-not-allowed',
                   isRecording
-                    ? 'bg-warning text-white animate-pulse'
+                    ? cn('bg-warning text-white', shouldAnimate && 'animate-pulse')
                     : 'bg-primary text-white hover:bg-primary-dark'
                 )}
               >
@@ -142,8 +145,8 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
               {isRecording && !isPaused && (
                 <motion.div
                   className="absolute top-0 right-0 w-4 h-4 bg-error rounded-full border-2 border-white"
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  animate={shouldAnimate ? { scale: [1, 1.2, 1] } : undefined}
+                  transition={shouldAnimate ? { repeat: Infinity, duration: 1.5 } : { duration: 0 }}
                 />
               )}
             </div>
@@ -159,8 +162,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
 
             {isRecording && (
               <motion.button
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
+                {...(shouldAnimate ? { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 1, scale: 1 } } : {})}
                 type="button"
                 onClick={stopRecording}
                 className="px-4 py-2 text-sm bg-error text-white rounded-full font-medium hover:bg-red-600 flex items-center gap-2"
@@ -175,8 +177,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
         {/* Playback */}
         {audioUrl && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            {...(shouldAnimate ? { initial: { opacity: 0 }, animate: { opacity: 1 } } : {})}
             className="space-y-3"
           >
             <audio src={audioUrl} controls className="w-full" />

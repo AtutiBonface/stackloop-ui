@@ -23,6 +23,7 @@ export interface FloatingActionButtonProps {
   position?: 'bottom-right' | 'bottom-left' | 'bottom-center'
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
@@ -33,8 +34,10 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   variant = 'primary',
   position = 'bottom-right',
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
 
   const positions = {
@@ -65,14 +68,15 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
 
   return (
     <div className={cn(positions[position], 'z-50', className)}>
-      <AnimatePresence>
-        {isOpen && actions && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="absolute bottom-20 right-0 flex flex-col gap-3 mb-2"
-          >
+      {shouldAnimate ? (
+        <AnimatePresence>
+          {isOpen && actions ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute bottom-20 right-0 flex flex-col gap-3 mb-2"
+            >
             {actions.map((action, index) => (
               <motion.div
                 key={index}
@@ -92,8 +96,8 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                   {action.label}
                 </span>
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileHover={shouldAnimate ? { scale: 1.1 } : undefined}
+                  whileTap={shouldAnimate ? { scale: 0.9 } : undefined}
                   onClick={() => {
                     action.onClick()
                     setIsOpen(false)
@@ -107,13 +111,44 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
                 </motion.button>
               </motion.div>
             ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      ) : (
+        isOpen && actions && (
+          <div className="absolute bottom-20 right-0 flex flex-col gap-3 mb-2">
+            {actions.map((action, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <span 
+                  className={cn(
+                    'bg-background border border-border rounded-md px-3 py-1.5 text-sm font-medium whitespace-nowrap shadow-lg',
+                    action.labelClassName
+                  )}
+                  style={action.labelStyle}
+                >
+                  {action.label}
+                </span>
+                <button
+                  onClick={() => {
+                    action.onClick()
+                    setIsOpen(false)
+                  }}
+                  className={cn(
+                    'w-12 h-12 rounded-full shadow-lg flex items-center justify-center transition-all',
+                    actionVariants[action.variant || 'primary']
+                  )}
+                >
+                  {action.icon}
+                </button>
+              </div>
+            ))}
+          </div>
+        )
+      )}
 
       <motion.button
-        whileTap={{ scale: disabled ? 1 : 0.9 }}
-        whileHover={{ scale: disabled ? 1 : 1.05 }}
+        whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.9 } : undefined}
+        whileHover={shouldAnimate ? { scale: disabled ? 1 : 1.05 } : undefined}
         onClick={handleMainClick}
         disabled={disabled}
         className={cn(

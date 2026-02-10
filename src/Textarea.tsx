@@ -8,15 +8,17 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
   label?: string
   error?: string
   helperText?: string
+  animate?: boolean
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, helperText, className, required, ...props }, ref) => {
+  ({ label, error, helperText, className, required, animate = true, ...props }, ref) => {
+    const shouldAnimate = animate !== false
     return (
       <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
+        {...(shouldAnimate
+          ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } }
+          : {})}
         className="w-full"
       >
         {label && (
@@ -41,8 +43,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         {error && (
           <motion.p
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...(shouldAnimate ? { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 } } : {})}
             className="mt-1 text-sm text-error"
           >
             {error}

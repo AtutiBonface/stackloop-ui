@@ -9,6 +9,7 @@ export interface SpinnerProps {
   variant?: 'primary' | 'secondary' | 'white'
   className?: string
   label?: string
+  animate?: boolean
 }
 
 const sizeClasses = {
@@ -28,22 +29,22 @@ export const Spinner: React.FC<SpinnerProps> = ({
   size = 'md',
   variant = 'primary',
   className,
-  label
+  label,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
+  const SpinnerElement = shouldAnimate ? motion.div : 'div'
   return (
     <div className={cn('inline-flex flex-col items-center gap-2', className)}>
-      <motion.div
+      <SpinnerElement
         className={cn(
           'rounded-full',
           sizeClasses[size],
           variantClasses[variant]
         )}
-        animate={{ rotate: 360 }}
-        transition={{
-          duration: 0.8,
-          repeat: Infinity,
-          ease: 'linear'
-        }}
+        {...(shouldAnimate
+          ? { animate: { rotate: 360 }, transition: { duration: 0.8, repeat: Infinity, ease: 'linear' } }
+          : {})}
         role="status"
         aria-label={label || 'Loading'}
       />

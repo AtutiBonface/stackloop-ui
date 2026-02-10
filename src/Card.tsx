@@ -11,6 +11,7 @@ export interface CardProps {
   className?: string
   onClick?: () => void
   hover?: boolean
+  animate?: boolean
 }
 
 export const Card: React.FC<CardProps> = ({
@@ -19,8 +20,10 @@ export const Card: React.FC<CardProps> = ({
   padding = 'md',
   className,
   onClick,
-  hover = false
+  hover = false,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const variants = {
     default: 'bg-background border border-border',
     outlined: 'bg-transparent border-2 border-border-dark',
@@ -38,11 +41,15 @@ export const Card: React.FC<CardProps> = ({
 
   return (
     <Component
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      whileHover={hover || onClick ? { y: -2, boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' } : undefined}
-      whileTap={onClick ? { scale: 0.98 } : undefined}
+      {...(shouldAnimate
+        ? {
+            initial: { opacity: 0, y: 20 },
+            animate: { opacity: 1, y: 0 },
+            transition: { duration: 0.3 }
+          }
+        : {})}
+      whileHover={shouldAnimate && (hover || onClick) ? { y: -2, boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' } : undefined}
+      whileTap={shouldAnimate && onClick ? { scale: 0.98 } : undefined}
       className={cn(
         'rounded-lg transition-all duration-200',
         variants[variant],

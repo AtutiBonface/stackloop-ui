@@ -21,6 +21,7 @@ export interface TableProps<T> {
   onRowClick?: (item: T) => void
   keyExtractor: (item: T) => string
   className?: string
+  animate?: boolean
 }
 
 export function Table<T>({
@@ -29,8 +30,10 @@ export function Table<T>({
   loading = false,
   onRowClick,
   keyExtractor,
-  className
+  className,
+  animate = true
 }: TableProps<T>) {
+  const shouldAnimate = animate !== false
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
 
@@ -62,7 +65,7 @@ export function Table<T>({
               <tr>
                 {columns.map((_, idx) => (
                   <th key={idx} className="px-6 py-4 text-left">
-                    <div className="h-4 bg-border rounded w-24 animate-pulse"></div>
+                    <div className={cn('h-4 bg-border rounded w-24', shouldAnimate && 'animate-pulse')}></div>
                   </th>
                 ))}
               </tr>
@@ -72,7 +75,7 @@ export function Table<T>({
                 <tr key={idx} className="border-b border-border">
                   {columns.map((_, colIdx) => (
                     <td key={colIdx} className="px-6 py-4">
-                      <div className="h-4 bg-secondary rounded animate-pulse"></div>
+                      <div className={cn('h-4 bg-secondary rounded', shouldAnimate && 'animate-pulse')}></div>
                     </td>
                   ))}
                 </tr>
@@ -86,9 +89,9 @@ export function Table<T>({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      {...(shouldAnimate
+        ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } }
+        : {})}
       className={cn('border border-border rounded-lg overflow-hidden', className)}
     >
       <div className="overflow-x-auto">
@@ -129,9 +132,9 @@ export function Table<T>({
             {sortedData.map((item, idx) => (
               <motion.tr
                 key={keyExtractor(item)}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, delay: idx * 0.05 }}
+                {...(shouldAnimate
+                  ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.2, delay: idx * 0.05 } }
+                  : {})}
                 onClick={() => onRowClick && onRowClick(item)}
                 className={cn(
                   'border-b border-border transition-colors',

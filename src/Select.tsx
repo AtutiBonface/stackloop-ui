@@ -23,6 +23,7 @@ export interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectE
   searchable?: boolean
   clearable?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const Select = forwardRef<HTMLDivElement, SelectProps>(
@@ -40,9 +41,11 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       disabled,
       required,
       className,
+      animate = true,
     },
     ref
   ) => {
+    const shouldAnimate = animate !== false
     const [isOpen, setIsOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
     const selectRef = useRef<HTMLDivElement>(null)
@@ -119,15 +122,96 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             />
           </button>
 
-          <AnimatePresence>
-            {isOpen && (
+          {shouldAnimate ? (
+            <AnimatePresence>
+              {isOpen ? (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  role="listbox"
+                  className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                >
+                {searchable && (
+                  <div className="p-2 border-b border-border">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
+                      <input
+                        type="text"
+                        placeholder="Search..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        aria-label="Search options"
+                      />
+                      {searchQuery && (
+                        <button
+                          type="button"
+                          onClick={() => setSearchQuery('')}
+                          className="absolute right-2 top-1/2 -translate-y-1/2"
+                          aria-label="Clear search"
+                        >
+                          <X className="w-4 h-4 text-primary/50 hover:text-primary" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                <div className="overflow-y-auto max-h-64 p-2 space-y-1">
+                  {clearable && (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={!value}
+                      onClick={() => handleSelect('')}
+                      className={cn(
+                        'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                        'hover:bg-secondary transition-colors',
+                        'text-foreground/70 italic',
+                        !value && 'bg-border text-foreground font-medium'
+                      )}
+                    >
+                      <span>None</span>
+                    </button>
+                  )}
+                  {filteredOptions.length > 0 ? (
+                    filteredOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={option.value === value}
+                        onClick={() => !option.disabled && handleSelect(option.value)}
+                        disabled={option.disabled}
+                        className={cn(
+                          'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                          'hover:bg-secondary transition-colors',
+                          'disabled:opacity-50 disabled:cursor-not-allowed',
+                          option.value === value && 'bg-border text-foreground font-medium'
+                        )}
+                      >
+                        {option.icon && (
+                          <span className="flex-shrink-0">{option.icon}</span>
+                        )}
+                        <span>{option.label}</span>
+                      </button>
+                    ))
+                  ) : (
+                    <div className="px-4 py-6 text-center text-primary/70 text-sm">
+                      No options found
+                    </div>
+                  )}
+                </div>
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
+          ) : (
+            isOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.2 }}
                 role="listbox"
-                className="absolute z-50 w-full mt-2 bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
               >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -201,14 +285,13 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                   )}
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
+            )
+          )}
         </div>
 
         {error && (
           <motion.p
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
+            {...(shouldAnimate ? { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 } } : {})}
             className="text-sm text-error"
           >
             {error}

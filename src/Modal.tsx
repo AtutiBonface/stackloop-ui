@@ -12,6 +12,7 @@ export interface ModalProps {
   title?: string
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full'
   className?: string
+  animate?: boolean
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -20,8 +21,10 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   title,
   size = 'md',
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -48,45 +51,42 @@ export const Modal: React.FC<ModalProps> = ({
     full: 'max-w-full mx-4'
   }
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) onClose()
-          }}
-        >
-          <motion.div
-            ref={modalRef}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className={cn(
-              'bg-background border border-border rounded-lg shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col',
-              sizeClasses[size],
-              className
-            )}
-          >
-            {title && (
-              <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-foreground">{title}</h2>
-                <button
-                  onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                  aria-label="Close modal"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-            <div className="overflow-y-auto flex-1">{children}</div>
-          </motion.div>
-        </div>
-      )}
-    </AnimatePresence>
-  )
+  const modalContent = isOpen ? (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) onClose()
+      }}
+    >
+      <motion.div
+        ref={modalRef}
+        {...(shouldAnimate
+          ? { initial: { opacity: 0, scale: 0.95 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.95 }, transition: { duration: 0.2 } }
+          : {})}
+        className={cn(
+          'bg-background border border-border rounded-lg shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col',
+          sizeClasses[size],
+          className
+        )}
+      >
+        {title && (
+          <div className="px-6 py-4 border-b border-border flex items-center justify-between">
+            <h2 className="text-xl font-semibold text-foreground">{title}</h2>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-secondary transition-colors"
+              aria-label="Close modal"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        )}
+        <div className="overflow-y-auto flex-1">{children}</div>
+      </motion.div>
+    </div>
+  ) : null
+
+  return shouldAnimate ? <AnimatePresence>{modalContent}</AnimatePresence> : modalContent
 }
 
 export const ModalContent: React.FC<{ children: React.ReactNode; className?: string }> = ({

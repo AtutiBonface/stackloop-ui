@@ -9,10 +9,12 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
   label?: string
   description?: string
   onChange?: (checked: boolean) => void
+  animate?: boolean
 }
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-  ({ label, description, className, checked, defaultChecked, onChange, ...props }, ref) => {
+  ({ label, description, className, checked, defaultChecked, onChange, animate = true, ...props }, ref) => {
+    const shouldAnimate = animate !== false
     const [internalChecked, setInternalChecked] = useState(defaultChecked || false)
     
     // Use controlled value if provided, otherwise use internal state
@@ -45,7 +47,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
               isChecked ? 'bg-primary border-primary' : 'border-border bg-secondary',
               className
             )}
-            whileTap={{ scale: 0.95 }}
+            whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
           >
             <Check className={cn(
               'w-4 h-4 text-white transition-opacity duration-200',

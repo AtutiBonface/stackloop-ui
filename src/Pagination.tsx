@@ -13,6 +13,7 @@ export interface PaginationProps {
   totalItems?: number
   itemsPerPage?: number
   className?: string
+  animate?: boolean
 }
 
 export const Pagination: React.FC<PaginationProps> = ({
@@ -21,8 +22,10 @@ export const Pagination: React.FC<PaginationProps> = ({
   onPageChange,
   totalItems,
   itemsPerPage,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
   const showPages = pages.slice(
     Math.max(0, currentPage - 2),
@@ -31,9 +34,9 @@ export const Pagination: React.FC<PaginationProps> = ({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+      {...(shouldAnimate
+        ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } }
+        : {})}
       className={cn('flex items-center justify-between gap-4 flex-wrap', className)}
     >
       <div className="text-sm text-foreground/70">
@@ -51,6 +54,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === 1}
           onClick={() => onPageChange(currentPage - 1)}
           icon={<ChevronLeft className="w-4 h-4" />}
+          animate={animate}
         >
           Previous
         </Button>
@@ -58,8 +62,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           {currentPage > 3 && (
             <>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
+                whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
                 onClick={() => onPageChange(1)}
                 className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
               >
@@ -71,8 +75,8 @@ export const Pagination: React.FC<PaginationProps> = ({
           {showPages.map((page) => (
             <motion.button
               key={page}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
+              whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
               onClick={() => onPageChange(page)}
               className={cn(
                 'w-10 h-10 rounded-md text-sm border transition-all',
@@ -88,8 +92,8 @@ export const Pagination: React.FC<PaginationProps> = ({
             <>
               <span className="text-primary/50 px-1">...</span>
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
+                whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
                 onClick={() => onPageChange(totalPages)}
                 className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
               >
@@ -104,6 +108,7 @@ export const Pagination: React.FC<PaginationProps> = ({
           disabled={currentPage === totalPages}
           onClick={() => onPageChange(currentPage + 1)}
           icon={<ChevronRight className="w-4 h-4" />}
+          animate={animate}
         >
           Next
         </Button>

@@ -400,7 +400,7 @@ function AppContent() {
                 options={selectOptions}
                 value={selectValue}
                 onChange={setSelectValue}
-                searchable
+                
                 placeholder="Select your country"
                 hint="Choose your country of residence"
                 required

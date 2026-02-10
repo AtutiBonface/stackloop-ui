@@ -14,13 +14,16 @@ export interface StepProgressProps {
   steps: Step[]
   currentStep: number
   className?: string
+  animate?: boolean
 }
 
 export const StepProgress: React.FC<StepProgressProps> = ({
   steps,
   currentStep,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const currentStepData = steps[currentStep]
 
   return (
@@ -39,9 +42,7 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                 <div className="flex flex-col items-center relative z-10">
                   <motion.div
                     initial={false}
-                    animate={{
-                      scale: isCurrent ? 1.05 : 1
-                    }}
+                    animate={shouldAnimate ? { scale: isCurrent ? 1.05 : 1 } : undefined}
                     className={cn(
                       'w-12 h-12 rounded-full flex items-center justify-center',
                       'font-semibold text-base transition-all duration-300',
@@ -89,10 +90,9 @@ export const StepProgress: React.FC<StepProgressProps> = ({
                     <div className="h-1.5 bg-border rounded-full overflow-hidden">
                       <motion.div
                         initial={false}
-                        animate={{
-                          width: index < currentStep ? '100%' : '0%'
-                        }}
-                        transition={{ duration: 0.4, ease: 'easeInOut' }}
+                        style={{ width: index < currentStep ? '100%' : '0%' }}
+                        animate={shouldAnimate ? { width: index < currentStep ? '100%' : '0%' } : undefined}
+                        transition={shouldAnimate ? { duration: 0.4, ease: 'easeInOut' } : { duration: 0 }}
                         className="h-full bg-primary rounded-full"
                       />
                     </div>
@@ -116,10 +116,10 @@ export const StepProgress: React.FC<StepProgressProps> = ({
               <motion.div
                 key={index}
                 initial={false}
-                animate={{
-                  scale: isCurrent ? 1.2 : 1,
+                style={{
                   backgroundColor: isCompleted || isCurrent ? 'var(--color-primary)' : 'var(--color-border-dark)'
                 }}
+                animate={shouldAnimate ? { scale: isCurrent ? 1.2 : 1 } : undefined}
                 className={cn(
                   'rounded-full transition-all duration-300',
                   isCurrent ? 'w-3 h-3' : 'w-2 h-2',
@@ -133,9 +133,9 @@ export const StepProgress: React.FC<StepProgressProps> = ({
         {/* Current Step Title Only (No Description) */}
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          {...(shouldAnimate
+            ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } }
+            : {})}
           className="text-center"
         >
           <p className="text-sm font-semibold text-foreground">

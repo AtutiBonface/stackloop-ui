@@ -10,12 +10,14 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   size?: 'sm' | 'md' | 'lg'
   loading?: boolean
   icon?: React.ReactNode
+  animate?: boolean
 }
 
 type MotionButtonProps = Omit<ButtonProps, 'children' | keyof HTMLMotionProps<'button'>> & { children?: React.ReactNode } & HTMLMotionProps<'button'>
 
 export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
-  ({ variant = 'primary', size = 'md', loading, icon, className, children, disabled, ...props }, ref) => {
+  ({ variant = 'primary', size = 'md', loading, icon, animate = true, className, children, disabled, ...props }, ref) => {
+    const shouldAnimate = animate !== false
     const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-all duration-200 touch-target disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex-shrink-0 whitespace-nowrap'
     
     const variants = {
@@ -35,13 +37,13 @@ export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     return (
       <motion.button
         ref={ref}
-        whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
+        whileTap={shouldAnimate ? { scale: disabled || loading ? 1 : 0.98 } : undefined}
         className={cn(baseStyles, variants[variant], sizes[size], className)}
         disabled={disabled || loading}
         {...props}
       >
         {loading ? (
-          <Loader2 className="h-5 w-5 animate-spin" />
+          <Loader2 className={cn('h-5 w-5', shouldAnimate && 'animate-spin')} />
         ) : icon ? (
           <span className="flex-shrink-0">{icon}</span>
         ) : null}

@@ -16,6 +16,7 @@ export interface DualSliderProps {
   unit?: string
   disabled?: boolean
   className?: string
+  animate?: boolean
 }
 
 export const DualSlider: React.FC<DualSliderProps> = ({
@@ -29,8 +30,10 @@ export const DualSlider: React.FC<DualSliderProps> = ({
   step = 1,
   unit = '%',
   disabled,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const total = value1 + value2
   const percentage1 = total > 0 ? (value1 / total) * 100 : 50
   const percentage2 = total > 0 ? (value2 / total) * 100 : 50
@@ -55,8 +58,8 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             <motion.div
               className="h-full bg-primary"
               initial={false}
-              animate={{ width: `${percentage1}%` }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              animate={shouldAnimate ? { width: `${percentage1}%` } : undefined}
+              transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
             />
           </div>
           
@@ -86,8 +89,8 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             <motion.div
               className="h-full bg-success"
               initial={false}
-              animate={{ width: `${percentage2}%` }}
-              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              animate={shouldAnimate ? { width: `${percentage2}%` } : undefined}
+              transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
             />
           </div>
           

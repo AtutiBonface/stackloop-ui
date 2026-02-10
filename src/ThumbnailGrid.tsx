@@ -19,6 +19,7 @@ export interface ThumbnailGridProps {
   onView?: (item: ThumbnailItem) => void
   columns?: 2 | 3 | 4
   className?: string
+  animate?: boolean
 }
 
 export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
@@ -26,8 +27,10 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
   onRemove,
   onView,
   columns = 3,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const gridCols = {
     2: 'grid-cols-2',
     3: 'grid-cols-3',
@@ -60,9 +63,9 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
         {items.map((item) => (
           <motion.div
             key={item.id}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+            {...(shouldAnimate
+              ? { initial: { opacity: 0, scale: 0.8 }, animate: { opacity: 1, scale: 1 }, exit: { opacity: 0, scale: 0.8 } }
+              : {})}
             className="relative group"
           >
             <div
@@ -93,8 +96,7 @@ export const ThumbnailGrid: React.FC<ThumbnailGridProps> = ({
             {/* Remove Button */}
             {onRemove && (
               <motion.button
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 1 }}
+                {...(shouldAnimate ? { initial: { opacity: 0 }, whileHover: { opacity: 1 } } : {})}
                 className="absolute -top-2 -right-2 p-1.5 bg-error text-white rounded-full shadow-lg hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
                 onClick={(e) => {
                   e.stopPropagation()

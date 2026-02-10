@@ -15,6 +15,7 @@ export interface DatePickerProps {
   minDate?: Date
   maxDate?: Date
   className?: string
+  animate?: boolean
 }
 
 export const DatePicker: React.FC<DatePickerProps> = ({
@@ -26,8 +27,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   disabled,
   minDate,
   maxDate,
-  className
+  className,
+  animate = true
 }) => {
+  const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(value || new Date())
   const datePickerRef = useRef<HTMLDivElement>(null)
@@ -152,15 +155,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2 }}
-            className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
-          >
+      {shouldAnimate ? (
+        <AnimatePresence>
+          {isOpen ? (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
+            >
             {/* Month Navigation */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -211,7 +215,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                   <motion.button
                     key={day.toISOString()}
                     type="button"
-                    whileTap={{ scale: isDisabled ? 1 : 0.95 }}
+                    whileTap={shouldAnimate ? { scale: isDisabled ? 1 : 0.95 } : undefined}
                     onClick={() => !isDisabled && handleDateSelect(day)}
                     disabled={isDisabled}
                     className={cn(
@@ -240,14 +244,97 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 Today
               </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          ) : null}
+        </AnimatePresence>
+      ) : (
+        isOpen && (
+          <div className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4">
+            {/* Month Navigation */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                type="button"
+                onClick={handlePreviousMonth}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5 text-primary" />
+              </button>
+              
+              <div className="font-semibold text-foreground">
+                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              </div>
+              
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+              >
+                <ChevronRight className="w-5 h-5 text-primary" />
+              </button>
+            </div>
+
+            {/* Day Names */}
+            <div className="grid grid-cols-7 gap-1 mb-2">
+              {dayNames.map(day => (
+                <div
+                  key={day}
+                  className="text-center text-xs font-medium text-primary/70 py-2"
+                >
+                  {day}
+                </div>
+              ))}
+            </div>
+
+            {/* Calendar Days */}
+            <div className="grid grid-cols-7 gap-1">
+              {days.map((day, index) => {
+                if (!day) {
+                  return <div key={`empty-${index}`} className="aspect-square" />
+                }
+
+                const isSelected = isSameDay(day, value || null)
+                const isCurrentDay = isToday(day)
+                const isDisabled = isDateDisabled(day)
+
+                return (
+                  <button
+                    key={day.toISOString()}
+                    type="button"
+                    onClick={() => !isDisabled && handleDateSelect(day)}
+                    disabled={isDisabled}
+                    className={cn(
+                      'aspect-square rounded-lg flex items-center justify-center',
+                      'text-sm font-medium transition-all duration-200',
+                      'hover:bg-secondary',
+                      isSelected && 'bg-primary text-white hover:bg-primary-dark',
+                      isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
+                      isDisabled && 'text-border-dark cursor-not-allowed hover:bg-transparent',
+                      !isSelected && !isCurrentDay && !isDisabled && 'text-foreground'
+                    )}
+                  >
+                    {day.getDate()}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Today Button */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <button
+                type="button"
+                onClick={() => handleDateSelect(new Date())}
+                className="w-full py-2 text-sm font-medium text-primary hover:bg-secondary rounded-lg transition-colors"
+              >
+                Today
+              </button>
+            </div>
+          </div>
+        )
+      )}
 
       {error && (
         <motion.p
-          initial={{ opacity: 0, y: -5 }}
-          animate={{ opacity: 1, y: 0 }}
+          {...(shouldAnimate ? { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 } } : {})}
           className="mt-1.5 text-sm text-error"
         >
           {error}
