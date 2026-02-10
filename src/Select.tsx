@@ -131,7 +131,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ duration: 0.2 }}
                   role="listbox"
-                  className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                  className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
                 >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -211,7 +211,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             isOpen && (
               <motion.div
                 role="listbox"
-                className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
               >
                 {searchable && (
                   <div className="p-2 border-b border-border">
