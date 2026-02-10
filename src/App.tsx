@@ -185,7 +185,9 @@ function AppContent() {
                 value={phoneValue}
                 onChange={setPhoneValue}
                 searchable
-                autoDetect
+                autoDetect={false}
+                defaultCountry='KE'
+                
               />
               
               <CountrySelect

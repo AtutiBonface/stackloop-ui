@@ -61,6 +61,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   const [internalCountry, setInternalCountry] = useState<string>(defaultCountry)
   const containerRef = useRef<HTMLDivElement>(null)
+  const lastEmittedIso2Ref = useRef<string | null>(null)
 
   useEffect(() => {
     if (country) {
@@ -93,6 +94,13 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     const iso2 = (country || internalCountry || defaultCountry).toUpperCase()
     return countries.find((item) => item.iso2 === iso2) || countries[0]
   }, [country, internalCountry, defaultCountry])
+
+  useEffect(() => {
+    if (!selectedCountry) return
+    if (lastEmittedIso2Ref.current === selectedCountry.iso2) return
+    lastEmittedIso2Ref.current = selectedCountry.iso2
+    onCountryChange?.(selectedCountry)
+  }, [selectedCountry, onCountryChange])
 
   const filteredCountries = useMemo(() => {
     if (!searchable || !searchQuery.trim()) return countries
