@@ -186,7 +186,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.2 }}
                 role="listbox"
-                className="absolute right-0 z-50 mt-2 w-max min-w-56 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
               >
               {searchable && (
                 <div className="p-2 border-b border-border">
@@ -222,7 +222,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     aria-selected={item.iso2 === selectedCountry.iso2}
                     onClick={() => handleCountrySelect(item)}
                     className={cn(
-                      'w-full px-3 py-2 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                      'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
                       'hover:bg-secondary transition-colors',
                       item.iso2 === selectedCountry.iso2 && 'bg-border text-foreground'
                     )}
@@ -232,7 +232,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         {getFlagEmoji(item.iso2)}
                       </span>
                     )}
-                    <span className="text-sm font-medium text-foreground">
+                    <span className="text-sm font-medium text-foreground break-words whitespace-normal">
                       {item.name}
                     </span>
                     <span className="ml-auto text-xs text-primary/70">
@@ -248,7 +248,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           isOpen && (
             <div
               role="listbox"
-              className="absolute right-0 z-50 mt-2 w-max min-w-56 max-w-none bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+              className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
             >
             {searchable && (
               <div className="p-2 border-b border-border">
@@ -284,7 +284,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                   aria-selected={item.iso2 === selectedCountry.iso2}
                   onClick={() => handleCountrySelect(item)}
                   className={cn(
-                    'w-full px-3 py-2 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                    'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
                     'hover:bg-secondary transition-colors',
                     item.iso2 === selectedCountry.iso2 && 'bg-border text-foreground'
                   )}
@@ -294,7 +294,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                       {getFlagEmoji(item.iso2)}
                     </span>
                   )}
-                  <span className="text-sm font-medium text-foreground">
+                  <span className="text-sm font-medium text-foreground break-words whitespace-normal">
                     {item.name}
                   </span>
                   <span className="ml-auto text-xs text-primary/70">

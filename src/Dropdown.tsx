@@ -115,7 +115,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute right-0 z-50 mt-2 w-max min-w-48 max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+              className="absolute right z-50 mt-2 w-max min-w-48 max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
             >
             {searchable && (
               <div className="p-2 border-b border-border">
