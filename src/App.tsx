@@ -11,6 +11,7 @@ import {
   RadioPills,
   Dropdown,
   Select,
+  CountrySelect,
   DatePicker,
   PhoneInput,
   Card,
@@ -61,6 +62,7 @@ function AppContent() {
   const [dropdownValue, setDropdownValue] = useState('')
   const [selectValue, setSelectValue] = useState('')
   const [phoneValue, setPhoneValue] = useState('')
+  const [countryValue, setCountryValue] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -184,6 +186,12 @@ function AppContent() {
                 onChange={setPhoneValue}
                 searchable
                 autoDetect
+              />
+              <CountrySelect
+                label="Country"
+                value={countryValue}
+                onChange={setCountryValue}
+                searchable
               />
               <Textarea
                 label="Message"

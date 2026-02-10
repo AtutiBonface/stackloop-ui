@@ -163,7 +163,7 @@ import { Button, Modal } from '@stackloop/ui'
 
 Components with the `animate` prop:
 
-- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
 **Checkbox**:
 - **Description:** Accessible checkbox with optional label and description.
@@ -254,6 +254,31 @@ Components with the `animate` prop:
     onChange={setPhone}
     searchable
     autoDetect
+  />
+  ```
+
+**CountrySelect**:
+- **Description:** Country selector built on `Select` with optional flags and search.
+- **Props:**
+  - **`value`**: `string` — optional (ISO2, e.g. `US`).
+  - **`onChange`**: `(value: string) => void` — optional.
+  - **`onCountryChange`**: `(country: Country) => void` — optional.
+  - **`label`**: `string` — optional.
+  - **`placeholder`**: `string` — optional.
+  - **`searchable`**: `boolean` — default: `true`.
+  - **`clearable`**: `boolean` — default: `true`.
+  - **`showFlags`**: `boolean` — default: `true`.
+  - **`animate`**: `boolean` — default: `true`.
+- **Usage:**
+
+  ```jsx
+  import { CountrySelect } from '@stackloop/ui'
+
+  <CountrySelect
+    label="Country"
+    value={country}
+    onChange={setCountry}
+    searchable
   />
   ```
 
