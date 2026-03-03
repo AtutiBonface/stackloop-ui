@@ -166,7 +166,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
             >
             {/* Month Navigation */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between  border-border ">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
@@ -193,7 +193,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-xs font-medium text-primary/70 py-2"
+                  className="text-center text-xs font-bold text-foreground/70 py-2"
                 >
                   {day}
                 </div>
@@ -219,7 +219,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => !isDisabled && handleDateSelect(day)}
                     disabled={isDisabled}
                     className={cn(
-                      'aspect-square rounded-lg flex items-center justify-center',
+                      'aspect-square cursor-pointer rounded-lg flex items-center justify-center',
                       'text-sm font-medium transition-all duration-200',
                       'hover:bg-secondary',
                       isSelected && 'bg-primary text-white hover:bg-primary-dark',
@@ -235,11 +235,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-4 pt-4 border-t border-border">
+            <div className="mt-2 pt-2 border-t border-border">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}
-                className="w-full py-2 text-sm font-medium text-primary hover:bg-secondary rounded-lg transition-colors"
+                className="w-full py-2 text-sm font-medium text-primary cursor-pointer hover:bg-secondary rounded-lg transition-colors"
               >
                 Today
               </button>

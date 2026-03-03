@@ -419,12 +419,12 @@ function AppContent() {
                 label="Country"
                 options={selectOptions}
                 value={selectValue}
-                onChange={setSelectValue}
-                
+                onChange={setSelectValue}                
                 placeholder="Select your country"
                 hint="Choose your country of residence"
                 required
               />
+              <CountrySelect/>
             </div>
           </CardContent>
         </Card>
