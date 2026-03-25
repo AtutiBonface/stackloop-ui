@@ -52,6 +52,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   showFlags = true,
   animate = true,
   disabled,
+  required,
   className,
   placeholder,
   ...inputProps
@@ -128,6 +129,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       {label && (
         <label className="block text-sm font-medium text-foreground">
           {label}
+          {required && <span className="text-error ml-1">*</span>}
         </label>
       )}
 
@@ -176,6 +178,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             onChange={(event) => onChange?.(selectedCountry.dialCode, event.target.value)}
             placeholder={placeholder || 'Phone number'}
             disabled={disabled}
+            required={required}
             className={cn(
               'flex-1 px-4 py-2.5 text-base bg-transparent text-foreground',
               'placeholder:text-foreground/50 focus:outline-none',

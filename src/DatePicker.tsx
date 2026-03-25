@@ -2,15 +2,17 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from './utils'
 
 export interface DatePickerProps {
   value?: Date
   onChange: (date: Date) => void
   label?: string
+  required?: boolean
   placeholder?: string
   error?: string
+  hint?: string
   disabled?: boolean
   minDate?: Date
   maxDate?: Date
@@ -22,8 +24,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   value,
   onChange,
   label,
+  required,
   placeholder = 'Select date',
   error,
+  hint,
   disabled,
   minDate,
   maxDate,
@@ -32,13 +36,23 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
+  const [isMonthMenuOpen, setIsMonthMenuOpen] = useState(false)
+  const [monthMenuPosition, setMonthMenuPosition] = useState<'bottom' | 'top'>('bottom')
+  const [isYearMenuOpen, setIsYearMenuOpen] = useState(false)
+  const [yearMenuPosition, setYearMenuPosition] = useState<'bottom' | 'top'>('bottom')
   const [currentMonth, setCurrentMonth] = useState(value || new Date())
   const datePickerRef = useRef<HTMLDivElement>(null)
+  const monthMenuTriggerRef = useRef<HTMLButtonElement>(null)
+  const monthMenuRef = useRef<HTMLDivElement>(null)
+  const yearMenuTriggerRef = useRef<HTMLButtonElement>(null)
+  const yearMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (datePickerRef.current && !datePickerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
+        setIsMonthMenuOpen(false)
+        setIsYearMenuOpen(false)
       }
     }
 
@@ -50,6 +64,27 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) {
+      setIsMonthMenuOpen(false)
+      setIsYearMenuOpen(false)
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isMonthMenuOpen) return
+    const selectedMonth = currentMonth.getMonth()
+    const selectedMonthElement = monthMenuRef.current?.querySelector<HTMLButtonElement>(`button[data-month="${selectedMonth}"]`)
+    selectedMonthElement?.scrollIntoView({ block: 'center' })
+  }, [isMonthMenuOpen, currentMonth])
+
+  useEffect(() => {
+    if (!isYearMenuOpen) return
+    const selectedYear = currentMonth.getFullYear()
+    const selectedYearElement = yearMenuRef.current?.querySelector<HTMLButtonElement>(`button[data-year="${selectedYear}"]`)
+    selectedYearElement?.scrollIntoView({ block: 'center' })
+  }, [isYearMenuOpen, currentMonth])
 
   const monthNames = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -89,6 +124,38 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 1))
   }
 
+  const handleMonthChange = (nextMonth: number) => {
+    setCurrentMonth(new Date(currentMonth.getFullYear(), nextMonth, 1))
+    setIsMonthMenuOpen(false)
+  }
+
+  const handleYearChange = (nextYear: number) => {
+    setCurrentMonth(new Date(nextYear, currentMonth.getMonth(), 1))
+    setIsYearMenuOpen(false)
+  }
+
+  const toggleYearMenu = () => {
+    setIsMonthMenuOpen(false)
+    if (!isYearMenuOpen && yearMenuTriggerRef.current) {
+      const triggerRect = yearMenuTriggerRef.current.getBoundingClientRect()
+      const availableBottom = window.innerHeight - triggerRect.bottom
+      const availableTop = triggerRect.top
+      setYearMenuPosition(availableBottom < 220 && availableTop > availableBottom ? 'top' : 'bottom')
+    }
+    setIsYearMenuOpen((previous) => !previous)
+  }
+
+  const toggleMonthMenu = () => {
+    setIsYearMenuOpen(false)
+    if (!isMonthMenuOpen && monthMenuTriggerRef.current) {
+      const triggerRect = monthMenuTriggerRef.current.getBoundingClientRect()
+      const availableBottom = window.innerHeight - triggerRect.bottom
+      const availableTop = triggerRect.top
+      setMonthMenuPosition(availableBottom < 220 && availableTop > availableBottom ? 'top' : 'bottom')
+    }
+    setIsMonthMenuOpen((previous) => !previous)
+  }
+
   const handleDateSelect = (date: Date) => {
     onChange(date)
     setIsOpen(false)
@@ -125,12 +192,35 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }
 
   const days = getDaysInMonth(currentMonth)
+  const currentYear = currentMonth.getFullYear()
+  const currentMonthIndex = currentMonth.getMonth()
+
+  const startYear = minDate ? minDate.getFullYear() : currentYear - 100
+  const endYear = maxDate ? maxDate.getFullYear() : currentYear + 20
+  const yearOptions = Array.from({ length: endYear - startYear + 1 }, (_, index) => startYear + index)
+
+  const isMonthOutOfRange = (monthIndex: number) => {
+    if (minDate) {
+      const minYear = minDate.getFullYear()
+      const minMonth = minDate.getMonth()
+      if (currentYear === minYear && monthIndex < minMonth) return true
+    }
+
+    if (maxDate) {
+      const maxYear = maxDate.getFullYear()
+      const maxMonth = maxDate.getMonth()
+      if (currentYear === maxYear && monthIndex > maxMonth) return true
+    }
+
+    return false
+  }
 
   return (
     <div ref={datePickerRef} className={cn('relative w-full', className)}>
       {label && (
         <label className="block mb-1.5 text-sm font-medium text-foreground">
           {label}
+          {required && <span className="text-error ml-1">*</span>}
         </label>
       )}
 
@@ -138,6 +228,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
+        aria-required={required}
         className={cn(
           'w-full px-4 py-3 rounded-md border transition-all duration-200',
           'bg-background text-left flex items-center justify-between gap-2',
@@ -166,7 +257,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
             >
             {/* Month Navigation */}
-            <div className="flex items-center justify-between  border-border ">
+            <div className="flex items-center justify-between gap-2 border-border">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
@@ -175,8 +266,98 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 <ChevronLeft className="w-5 h-5 text-primary" />
               </button>
               
-              <div className="font-semibold text-foreground">
-                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <button
+                    ref={monthMenuTriggerRef}
+                    type="button"
+                    onClick={toggleMonthMenu}
+                    className="h-9 min-w-28 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    aria-label="Select month"
+                    aria-haspopup="listbox"
+                    aria-expanded={isMonthMenuOpen}
+                  >
+                    <span>{monthNames[currentMonthIndex]}</span>
+                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
+                  </button>
+
+                  {isMonthMenuOpen && (
+                    <div
+                      ref={monthMenuRef}
+                      role="listbox"
+                      className={cn(
+                        'absolute z-60 w-36 rounded-md border border-border bg-background shadow-lg py-1 max-h-56 overflow-y-auto',
+                        monthMenuPosition === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
+                      )}
+                    >
+                      {monthNames.map((monthName, monthIndex) => {
+                        const isDisabled = isMonthOutOfRange(monthIndex)
+                        return (
+                          <button
+                            key={monthName}
+                            type="button"
+                            role="option"
+                            data-month={monthIndex}
+                            aria-selected={monthIndex === currentMonthIndex}
+                            onClick={() => !isDisabled && handleMonthChange(monthIndex)}
+                            disabled={isDisabled}
+                            className={cn(
+                              'w-full px-3 py-2 text-sm text-left transition-colors',
+                              !isDisabled && 'hover:bg-secondary',
+                              monthIndex === currentMonthIndex && 'bg-border text-foreground font-medium',
+                              isDisabled && 'text-border-dark cursor-not-allowed'
+                            )}
+                          >
+                            {monthName}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <button
+                    ref={yearMenuTriggerRef}
+                    type="button"
+                    onClick={toggleYearMenu}
+                    className="h-9 min-w-24 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    aria-label="Select year"
+                    aria-haspopup="listbox"
+                    aria-expanded={isYearMenuOpen}
+                  >
+                    <span>{currentYear}</span>
+                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
+                  </button>
+
+                  {isYearMenuOpen && (
+                    <div
+                      ref={yearMenuRef}
+                      role="listbox"
+                      className={cn(
+                        'absolute z-60 w-28 rounded-md border border-border bg-background shadow-lg py-1 max-h-56 overflow-y-auto',
+                        yearMenuPosition === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
+                      )}
+                    >
+                      {yearOptions.map((yearOption) => (
+                        <button
+                          key={yearOption}
+                          type="button"
+                          role="option"
+                          data-year={yearOption}
+                          aria-selected={yearOption === currentYear}
+                          onClick={() => handleYearChange(yearOption)}
+                          className={cn(
+                            'w-full px-3 py-2 text-sm text-left hover:bg-secondary transition-colors',
+                            yearOption === currentYear && 'bg-border text-foreground font-medium'
+                          )}
+                        >
+                          {yearOption}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               
               <button
@@ -251,7 +432,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         isOpen && (
           <div className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4">
             {/* Month Navigation */}
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between gap-2 mb-4">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
@@ -260,8 +441,98 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 <ChevronLeft className="w-5 h-5 text-primary" />
               </button>
               
-              <div className="font-semibold text-foreground">
-                {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
+              <div className="flex items-center gap-2">
+                <div className="relative">
+                  <button
+                    ref={monthMenuTriggerRef}
+                    type="button"
+                    onClick={toggleMonthMenu}
+                    className="h-9 min-w-28 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    aria-label="Select month"
+                    aria-haspopup="listbox"
+                    aria-expanded={isMonthMenuOpen}
+                  >
+                    <span>{monthNames[currentMonthIndex]}</span>
+                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
+                  </button>
+
+                  {isMonthMenuOpen && (
+                    <div
+                      ref={monthMenuRef}
+                      role="listbox"
+                      className={cn(
+                        'absolute z-60 w-36 rounded-md border border-border bg-background shadow-lg py-1 max-h-56 overflow-y-auto',
+                        monthMenuPosition === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
+                      )}
+                    >
+                      {monthNames.map((monthName, monthIndex) => {
+                        const isDisabled = isMonthOutOfRange(monthIndex)
+                        return (
+                          <button
+                            key={monthName}
+                            type="button"
+                            role="option"
+                            data-month={monthIndex}
+                            aria-selected={monthIndex === currentMonthIndex}
+                            onClick={() => !isDisabled && handleMonthChange(monthIndex)}
+                            disabled={isDisabled}
+                            className={cn(
+                              'w-full px-3 py-2 text-sm text-left transition-colors',
+                              !isDisabled && 'hover:bg-secondary',
+                              monthIndex === currentMonthIndex && 'bg-border text-foreground font-medium',
+                              isDisabled && 'text-border-dark cursor-not-allowed'
+                            )}
+                          >
+                            {monthName}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <button
+                    ref={yearMenuTriggerRef}
+                    type="button"
+                    onClick={toggleYearMenu}
+                    className="h-9 min-w-24 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    aria-label="Select year"
+                    aria-haspopup="listbox"
+                    aria-expanded={isYearMenuOpen}
+                  >
+                    <span>{currentYear}</span>
+                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
+                  </button>
+
+                  {isYearMenuOpen && (
+                    <div
+                      ref={yearMenuRef}
+                      role="listbox"
+                      className={cn(
+                        'absolute z-60 w-28 rounded-md border border-border bg-background shadow-lg py-1 max-h-56 overflow-y-auto',
+                        yearMenuPosition === 'bottom' ? 'top-full mt-1' : 'bottom-full mb-1'
+                      )}
+                    >
+                      {yearOptions.map((yearOption) => (
+                        <button
+                          key={yearOption}
+                          type="button"
+                          role="option"
+                          data-year={yearOption}
+                          aria-selected={yearOption === currentYear}
+                          onClick={() => handleYearChange(yearOption)}
+                          className={cn(
+                            'w-full px-3 py-2 text-sm text-left hover:bg-secondary transition-colors',
+                            yearOption === currentYear && 'bg-border text-foreground font-medium'
+                          )}
+                        >
+                          {yearOption}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
               
               <button
@@ -339,6 +610,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         >
           {error}
         </motion.p>
+      )}
+
+      {hint && !error && (
+        <p className="mt-1.5 text-sm text-primary/70">{hint}</p>
       )}
     </div>
   )

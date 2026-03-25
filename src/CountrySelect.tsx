@@ -11,7 +11,10 @@ export interface CountrySelectProps {
   onChange?: (value: string) => void
   onCountryChange?: (country: Country) => void
   label?: string
+  required?: boolean
   placeholder?: string
+  error?: string
+  hint?: string
   searchable?: boolean
   clearable?: boolean
   showFlags?: boolean
@@ -33,7 +36,10 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   onChange,
   onCountryChange,
   label = 'Country',
+  required,
   placeholder = 'Select country',
+  error,
+  hint,
   searchable = true,
   clearable = true,
   showFlags = true,
@@ -90,6 +96,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
       {label && (
         <label className="block text-sm font-medium text-foreground">
           {label}
+          {required && <span className="text-error ml-1">*</span>}
         </label>
       )}
 
@@ -100,14 +107,17 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
+          aria-required={required}
           className={cn(
             'w-full px-4 py-3 rounded-md border transition-all duration-200',
             'bg-background text-left flex items-center justify-between gap-2',
             'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
             'disabled:bg-secondary disabled:cursor-not-allowed',
             'touch-target text-base',
+            error && 'border-error focus:ring-error',
             isOpen && 'ring-2 ring-primary',
-            disabled ? 'opacity-50' : 'border-border'
+            !error && (disabled ? 'opacity-50' : 'border-border'),
+            error && disabled && 'opacity-50'
           )}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
@@ -290,6 +300,19 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           )
         )}
       </div>
+
+      {error && (
+        <motion.p
+          {...(shouldAnimate ? { initial: { opacity: 0, y: -5 }, animate: { opacity: 1, y: 0 } } : {})}
+          className="text-sm text-error"
+        >
+          {error}
+        </motion.p>
+      )}
+
+      {hint && !error && (
+        <p className="text-sm text-primary/70">{hint}</p>
+      )}
     </div>
   )
 }
