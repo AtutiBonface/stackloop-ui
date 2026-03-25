@@ -239,9 +239,14 @@ Components with the `animate` prop:
   - **`defaultCountry`**: `string` — default: `'US'`.
   - **`autoDetect`**: `boolean` — default: `true`. Uses `navigator.language` to select a country.
   - **`onCountryChange`**: `(country: Country) => void` — optional.
+  - **`label`**: `string` — optional.
+  - **`required`**: `boolean` — optional. Shows a required marker (`*`) on label and passes `required` to the inner input.
+  - **`error`**: `string` — optional. Shows error state and helper text.
+  - **`hint`**: `string` — optional. Shown only when `error` is not present.
   - **`searchable`**: `boolean` — default: `true`.
   - **`showFlags`**: `boolean` — default: `true`.
   - **`animate`**: `boolean` — default: `true`.
+  - **`className`**: `string` — optional.
   - Inherits standard `input` HTML attributes.
 - **Usage:**
 
@@ -252,6 +257,8 @@ Components with the `animate` prop:
     label="Phone"
     value={phone}
     onChange={(dialCode, value) => setPhone(`${dialCode}${value}`)}
+    required
+    hint="Include area code"
     searchable
     autoDetect
   />
@@ -264,11 +271,16 @@ Components with the `animate` prop:
   - **`onChange`**: `(value: string) => void` — optional.
   - **`onCountryChange`**: `(country: Country) => void` — optional.
   - **`label`**: `string` — optional.
+  - **`required`**: `boolean` — optional. Shows a required marker (`*`) and `aria-required` on trigger.
   - **`placeholder`**: `string` — optional.
+  - **`error`**: `string` — optional. Adds error border/ring and error message.
+  - **`hint`**: `string` — optional. Shown only when `error` is not present.
   - **`searchable`**: `boolean` — default: `true`.
   - **`clearable`**: `boolean` — default: `true`.
   - **`showFlags`**: `boolean` — default: `true`.
+  - **`disabled`**: `boolean` — optional.
   - **`animate`**: `boolean` — default: `true`.
+  - **`className`**: `string` — optional.
 - **Usage:**
 
   ```jsx
@@ -278,6 +290,8 @@ Components with the `animate` prop:
     label="Country"
     value={country}
     onChange={setCountry}
+    required
+    hint="Used for regional formatting"
     searchable
   />
   ```
@@ -644,17 +658,35 @@ Components with the `animate` prop:
   ```
 
 **DatePicker**:
-- **Description:** Date picker with month navigation and min/max options.
+- **Description:** Date picker with day grid, min/max date constraints, and fast custom month/year pickers.
 - **Props:**
   - **`value`**: `Date` — optional.
   - **`onChange`**: `(date: Date) => void` — required.
-  - **`label`**, **`placeholder`** (default `'Select date'`), **`error`**, **`disabled`**, **`minDate`**, **`maxDate`**, **`className`**.
+  - **`label`**: `string` — optional.
+  - **`required`**: `boolean` — optional. Shows required marker (`*`) and `aria-required`.
+  - **`placeholder`**: `string` — default: `'Select date'`.
+  - **`error`**: `string` — optional.
+  - **`hint`**: `string` — optional. Shown only when `error` is not present.
+  - **`disabled`**: `boolean` — optional.
+  - **`minDate`** / **`maxDate`**: `Date` — optional.
+  - **`animate`**: `boolean` — default: `true`.
+  - **`className`**: `string` — optional.
+- **Features:**
+  - **Custom Month Menu:** Scrollable month dropdown/dropup (no native browser select).
+  - **Custom Year Menu:** Scrollable year dropdown/dropup that supports quick jumps across many years.
+  - **Adaptive Positioning:** Month/year menus open upward when there is insufficient viewport space below.
 - **Usage:**
 
   ```jsx
   import { DatePicker } from '@stackloop/ui'
 
-  <DatePicker value={date} onChange={setDate} />
+  <DatePicker
+    label="Date of birth"
+    value={date}
+    onChange={setDate}
+    required
+    hint="Choose month/year quickly from the menu"
+  />
   ```
 
 **DualSlider**:
