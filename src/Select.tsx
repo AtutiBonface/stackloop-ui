@@ -48,6 +48,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     const shouldAnimate = animate !== false
     const [isOpen, setIsOpen] = useState(false)
     const [searchQuery, setSearchQuery] = useState('')
+    const [dropdownPlacement, setDropdownPlacement] = useState<'top' | 'bottom'>('bottom')
     const selectRef = useRef<HTMLDivElement>(null)
 
     const selectedOption = options.find((opt) => opt.value === value)
@@ -70,11 +71,53 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       return () => document.removeEventListener('mousedown', handleClickOutside)
     }, [])
 
+    useEffect(() => {
+      if (!isOpen) return
+
+      const updatePlacement = () => {
+        if (!selectRef.current) return
+
+        const rect = selectRef.current.getBoundingClientRect()
+        const estimatedMenuHeight = searchable ? 360 : 300
+        const availableBelow = window.innerHeight - rect.bottom - 8
+        const availableAbove = rect.top - 8
+
+        if (availableBelow >= estimatedMenuHeight) {
+          setDropdownPlacement('bottom')
+          return
+        }
+
+        if (availableAbove >= estimatedMenuHeight) {
+          setDropdownPlacement('top')
+          return
+        }
+
+        setDropdownPlacement('bottom')
+      }
+
+      updatePlacement()
+      window.addEventListener('resize', updatePlacement)
+      window.addEventListener('scroll', updatePlacement, true)
+
+      return () => {
+        window.removeEventListener('resize', updatePlacement)
+        window.removeEventListener('scroll', updatePlacement, true)
+      }
+    }, [isOpen, searchable])
+
     const handleSelect = (optionValue: string) => {
       onChange(optionValue)
       setIsOpen(false)
       setSearchQuery('')
     }
+
+    const dropdownPositionClass =
+      dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+
+    const dropdownAnimation =
+      dropdownPlacement === 'top'
+        ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
+        : { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 } }
 
     
 
@@ -108,7 +151,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           >
             <div className="flex items-center gap-2 flex-1 min-w-0">
               {selectedOption?.icon && (
-                <span className="flex-shrink-0">{selectedOption.icon}</span>
+                <span className="shrink-0">{selectedOption.icon}</span>
               )}
               <span className={cn('truncate', !selectedOption && 'text-foreground/50')}>
                 {selectedOption?.label || placeholder}
@@ -116,7 +159,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             </div>
             <ChevronDown
               className={cn(
-                'w-5 h-5 text-primary transition-transform flex-shrink-0',
+                'w-5 h-5 text-primary transition-transform shrink-0',
                 isOpen && 'rotate-180'
               )}
             />
@@ -126,12 +169,15 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             <AnimatePresence>
               {isOpen ? (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
+                  initial={dropdownAnimation.initial}
+                  animate={dropdownAnimation.animate}
+                  exit={dropdownAnimation.exit}
                   transition={{ duration: 0.2 }}
                   role="listbox"
-                  className="absolute right-0 z-50 mt-2 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                  className={cn(
+                    'absolute right-0 z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden',
+                    dropdownPositionClass
+                  )}
                 >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -193,7 +239,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                         )}
                       >
                         {option.icon && (
-                          <span className="flex-shrink-0">{option.icon}</span>
+                          <span className="shrink-0">{option.icon}</span>
                         )}
                         <span>{option.label}</span>
                       </button>
@@ -211,7 +257,10 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             isOpen && (
               <motion.div
                 role="listbox"
-                className="absolute right-0 z-50 mt-2 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+                className={cn(
+                  'absolute right-0 z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden',
+                  dropdownPositionClass
+                )}
               >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -273,7 +322,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                         )}
                       >
                         {option.icon && (
-                          <span className="flex-shrink-0">{option.icon}</span>
+                          <span className="shrink-0">{option.icon}</span>
                         )}
                         <span>{option.label}</span>
                       </button>

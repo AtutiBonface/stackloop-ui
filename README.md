@@ -199,16 +199,25 @@ Components with the `animate` prop:
   ```
 
 **Input**:
-- **Description:** Text input with label, error and optional icons. Includes automatic password visibility toggle for password inputs.
+- **Description:** Unified input API with smart type routing. Supports native text/password/email/etc plus `phone`, `country`, and `date` while keeping a consistent `value` + `onChange` pattern.
 - **Props:**
+  - **`type`**: Native HTML input types plus `'phone' | 'country'`.
+    - `type="date"` renders the library `DatePicker`.
+    - `type="country"` renders `CountrySelect`.
+    - `type="phone"` renders `PhoneInput`.
+  - **`value`**: `string | number | readonly string[] | Date`.
+  - **`onChange`**: `(value: string | Date) => void` — value-based callback used consistently across smart/native modes.
+  - **`onValueChange`**: `(value: string | Date) => void` — optional backward-compatible alias.
   - **`label`**: `string` — optional.
   - **`error`**: `string` — optional.
   - **`hint`**: `string` — optional.
   - **`leftIcon`** / **`rightIcon`**: `ReactNode` — optional.
   - **`className`**: `string` — optional.
-  - Inherits `input` HTML attributes.
+  - Inherits most `input` HTML attributes.
 - **Features:**
   - **Password Toggle:** When `type="password"`, automatically displays an Eye/EyeOff icon to toggle password visibility. This overrides any custom `rightIcon`.
+  - **Consistent Value API:** Same controlled pattern for text, phone, country, and date.
+  - **Lightweight Composition:** Smart types reuse existing specialized components instead of duplicating logic.
   - **Icon Support:** Display icons on left or right side of input
   - **Validation:** Built-in error and hint display
   - **Accessibility:** Proper labels and ARIA attributes
@@ -221,6 +230,32 @@ Components with the `animate` prop:
   
   // Password with automatic toggle
   <Input label="Password" type="password" placeholder="Enter password" />
+
+  // Phone (single combined value)
+  <Input
+    label="Phone"
+    type="phone"
+    value={phone}
+    onChange={(nextValue) => setPhone(String(nextValue))}
+  />
+
+  // Country
+  <Input
+    label="Country"
+    type="country"
+    value={country}
+    onChange={(nextValue) => setCountry(String(nextValue))}
+  />
+
+  // Date
+  <Input
+    label="Date"
+    type="date"
+    value={selectedDate}
+    onChange={(nextValue) => {
+      if (nextValue instanceof Date) setSelectedDate(nextValue)
+    }}
+  />
   
   // With icons
   <Input 
@@ -231,10 +266,10 @@ Components with the `animate` prop:
   ```
 
 **PhoneInput**:
-- **Description:** Phone number input with a country calling code selector and optional locale-based default.
+- **Description:** Phone input with country selector and a single editable value field (country code + number in the same input).
 - **Props:**
   - **`value`**: `string` — optional.
-  - **`onChange`**: `(dialCode: string, value: string) => void` — optional.
+  - **`onChange`**: `(value: string) => void` — optional.
   - **`country`**: `string` — optional ISO2 override (e.g. `US`).
   - **`defaultCountry`**: `string` — default: `'US'`.
   - **`autoDetect`**: `boolean` — default: `true`. Uses `navigator.language` to select a country.
@@ -248,6 +283,10 @@ Components with the `animate` prop:
   - **`animate`**: `boolean` — default: `true`.
   - **`className`**: `string` — optional.
   - Inherits standard `input` HTML attributes.
+- **Behavior:**
+  - Default selected country auto-fills dial code when the input is empty.
+  - User can edit/delete the dial code directly in the same input.
+  - Dropdown opens up or down based on available viewport space.
 - **Usage:**
 
   ```jsx
@@ -256,7 +295,7 @@ Components with the `animate` prop:
   <PhoneInput
     label="Phone"
     value={phone}
-    onChange={(dialCode, value) => setPhone(`${dialCode}${value}`)}
+    onChange={setPhone}
     required
     hint="Include area code"
     searchable

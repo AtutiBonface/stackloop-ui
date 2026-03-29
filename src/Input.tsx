@@ -4,8 +4,17 @@ import React, { forwardRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
 import { cn } from './utils'
+import { DatePicker } from './DatePicker'
+import { CountrySelect } from './CountrySelect'
+import { PhoneInput } from './PhoneInput'
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+type SmartInputType = React.HTMLInputTypeAttribute | 'country' | 'phone'
+
+export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'onChange'> {
+  type?: SmartInputType
+  value?: string | number | readonly string[] | Date
+  onChange?: (value: string | Date) => void
+  onValueChange?: (value: string | Date) => void
   label?: string
   error?: string
   hint?: string
@@ -15,9 +24,85 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, error, hint, leftIcon, rightIcon, animate = true, className, type, ...props }, ref) => {
+  (
+    {
+      label,
+      error,
+      hint,
+      leftIcon,
+      rightIcon,
+      animate = true,
+      className,
+      type,
+      value,
+      placeholder,
+      disabled,
+      required,
+      onChange,
+      onValueChange,
+      ...props
+    },
+    ref
+  ) => {
     const shouldAnimate = animate !== false
     const [showPassword, setShowPassword] = useState(false)
+
+    const emitValueChange = (nextValue: string | Date) => {
+      onChange?.(nextValue)
+      onValueChange?.(nextValue)
+    }
+
+    if (type === 'phone') {
+      return (
+        <PhoneInput
+          label={label}
+          error={error}
+          hint={hint}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          animate={animate}
+          value={typeof value === 'string' ? value : ''}
+          onChange={(nextValue) => emitValueChange(nextValue)}
+          className={className}
+        />
+      )
+    }
+
+    if (type === 'country') {
+      return (
+        <CountrySelect
+          label={label}
+          error={error}
+          hint={hint}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          animate={animate}
+          value={typeof value === 'string' ? value : ''}
+          onChange={(nextValue) => emitValueChange(nextValue)}
+          className={className}
+        />
+      )
+    }
+
+    if (type === 'date') {
+      return (
+        <DatePicker
+          label={label}
+          error={error}
+          hint={hint}
+          placeholder={placeholder}
+          disabled={disabled}
+          required={required}
+          animate={animate}
+          value={value instanceof Date ? value : undefined}
+          onChange={(nextValue) => emitValueChange(nextValue)}
+          className={className}
+        />
+      )
+    }
+
     const isPassword = type === 'password'
     const inputType = isPassword && showPassword ? 'text' : type
 
@@ -26,7 +111,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label className="block text-sm font-medium text-foreground">
             {label}
-            {props.required && <span className="text-error ml-1">*</span>}
+            {required && <span className="text-error ml-1">*</span>}
           </label>
         )}
         
@@ -56,6 +141,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               paddingLeft: leftIcon ? '44px' : '16px',
               paddingRight: (rightIcon || isPassword) ? '44px' : '16px',
             }}
+            value={value as string | number | readonly string[] | undefined}
+            onChange={(event) => emitValueChange(event.target.value)}
+            placeholder={placeholder}
+            disabled={disabled}
+            required={required}
             {...props}
           />
           

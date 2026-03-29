@@ -50,7 +50,9 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [dropdownPlacement, setDropdownPlacement] = useState<'top' | 'bottom'>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
 
   const selectedCountry = useMemo(
     () => countries.find((country) => country.iso2 === value),
@@ -81,6 +83,40 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  useEffect(() => {
+    if (!isOpen) return
+
+    const updatePlacement = () => {
+      if (!triggerRef.current) return
+
+      const rect = triggerRef.current.getBoundingClientRect()
+      const estimatedMenuHeight = searchable ? 360 : 300
+      const availableBelow = window.innerHeight - rect.bottom - 8
+      const availableAbove = rect.top - 8
+
+      if (availableBelow >= estimatedMenuHeight) {
+        setDropdownPlacement('bottom')
+        return
+      }
+
+      if (availableAbove >= estimatedMenuHeight) {
+        setDropdownPlacement('top')
+        return
+      }
+
+      setDropdownPlacement('bottom')
+    }
+
+    updatePlacement()
+    window.addEventListener('resize', updatePlacement)
+    window.addEventListener('scroll', updatePlacement, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePlacement)
+      window.removeEventListener('scroll', updatePlacement, true)
+    }
+  }, [isOpen, searchable])
+
   const handleChange = (iso2: string) => {
     onChange?.(iso2)
     const selected = countries.find((item) => item.iso2 === iso2)
@@ -91,6 +127,14 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
     setSearchQuery('')
   }
 
+  const dropdownPositionClass =
+    dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+
+  const dropdownAnimation =
+    dropdownPlacement === 'top'
+      ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
+      : { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 } }
+
   return (
     <div ref={containerRef} className={cn('w-full space-y-1.5', className)}>
       {label && (
@@ -100,7 +144,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
         </label>
       )}
 
-      <div className="relative">
+      <div ref={triggerRef} className="relative">
         <button
           type="button"
           onClick={() => !disabled && setIsOpen(!isOpen)}
@@ -132,7 +176,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           </div>
           <ChevronDown
             className={cn(
-              'w-5 h-5 text-primary transition-transform flex-shrink-0',
+              'w-5 h-5 text-primary transition-transform shrink-0',
               isOpen && 'rotate-180'
             )}
           />
@@ -142,12 +186,15 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           <AnimatePresence>
             {isOpen ? (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={dropdownAnimation.initial}
+                animate={dropdownAnimation.animate}
+                exit={dropdownAnimation.exit}
                 transition={{ duration: 0.2 }}
                 role="listbox"
-                className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+                className={cn(
+                  'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
+                  dropdownPositionClass
+                )}
               >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -209,7 +256,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                           {getFlagEmoji(country.iso2)}
                         </span>
                       )}
-                      <span className="text-sm font-medium text-foreground break-words whitespace-normal">
+                      <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                         {country.name}
                       </span>
                       <span className="ml-auto text-xs text-primary/70">
@@ -225,7 +272,10 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           isOpen && (
             <div
               role="listbox"
-              className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+              className={cn(
+                'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
+                dropdownPositionClass
+              )}
             >
               {searchable && (
                 <div className="p-2 border-b border-border">
@@ -287,7 +337,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                         {getFlagEmoji(country.iso2)}
                       </span>
                     )}
-                    <span className="text-sm font-medium text-foreground break-words whitespace-normal">
+                    <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                       {country.name}
                     </span>
                     <span className="ml-auto text-xs text-primary/70">

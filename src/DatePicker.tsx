@@ -36,12 +36,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 }) => {
   const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
+  const [pickerPosition, setPickerPosition] = useState<'bottom' | 'top'>('bottom')
   const [isMonthMenuOpen, setIsMonthMenuOpen] = useState(false)
   const [monthMenuPosition, setMonthMenuPosition] = useState<'bottom' | 'top'>('bottom')
   const [isYearMenuOpen, setIsYearMenuOpen] = useState(false)
   const [yearMenuPosition, setYearMenuPosition] = useState<'bottom' | 'top'>('bottom')
   const [currentMonth, setCurrentMonth] = useState(value || new Date())
   const datePickerRef = useRef<HTMLDivElement>(null)
+  const pickerTriggerRef = useRef<HTMLButtonElement>(null)
   const monthMenuTriggerRef = useRef<HTMLButtonElement>(null)
   const monthMenuRef = useRef<HTMLDivElement>(null)
   const yearMenuTriggerRef = useRef<HTMLButtonElement>(null)
@@ -69,6 +71,40 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     if (!isOpen) {
       setIsMonthMenuOpen(false)
       setIsYearMenuOpen(false)
+    }
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const updatePlacement = () => {
+      if (!pickerTriggerRef.current) return
+
+      const rect = pickerTriggerRef.current.getBoundingClientRect()
+      const estimatedMenuHeight = 430
+      const availableBottom = window.innerHeight - rect.bottom - 8
+      const availableTop = rect.top - 8
+
+      if (availableBottom >= estimatedMenuHeight) {
+        setPickerPosition('bottom')
+        return
+      }
+
+      if (availableTop >= estimatedMenuHeight) {
+        setPickerPosition('top')
+        return
+      }
+
+      setPickerPosition('bottom')
+    }
+
+    updatePlacement()
+    window.addEventListener('resize', updatePlacement)
+    window.addEventListener('scroll', updatePlacement, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePlacement)
+      window.removeEventListener('scroll', updatePlacement, true)
     }
   }, [isOpen])
 
@@ -215,6 +251,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     return false
   }
 
+  const panelPositionClass = pickerPosition === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
+
+  const panelAnimation =
+    pickerPosition === 'bottom'
+      ? { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 } }
+      : { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
+
   return (
     <div ref={datePickerRef} className={cn('relative w-full', className)}>
       {label && (
@@ -225,6 +268,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       )}
 
       <button
+        ref={pickerTriggerRef}
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
@@ -243,41 +287,44 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         <span className={cn('truncate', !value && 'text-foreground/50')}>
           {value ? formatDate(value) : placeholder}
         </span>
-        <Calendar className="w-5 h-5 text-primary flex-shrink-0" />
+        <Calendar className="w-5 h-5 text-primary shrink-0" />
       </button>
 
       {shouldAnimate ? (
         <AnimatePresence>
           {isOpen ? (
             <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+              initial={panelAnimation.initial}
+              animate={panelAnimation.animate}
+              exit={panelAnimation.exit}
               transition={{ duration: 0.2 }}
-              className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4"
+              className={cn(
+                'absolute left-0 z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3',
+                panelPositionClass
+              )}
             >
             {/* Month Navigation */}
-            <div className="flex items-center justify-between gap-2 border-border">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 border-border mb-3">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
-                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5 text-primary" />
               </button>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-1 min-w-0">
                 <div className="relative">
                   <button
                     ref={monthMenuTriggerRef}
                     type="button"
                     onClick={toggleMonthMenu}
-                    className="h-9 min-w-28 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    className="h-8 min-w-24 max-w-28 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select month"
                     aria-haspopup="listbox"
                     aria-expanded={isMonthMenuOpen}
                   >
-                    <span>{monthNames[currentMonthIndex]}</span>
+                    <span className="truncate">{monthNames[currentMonthIndex]}</span>
                     <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
                   </button>
 
@@ -321,7 +368,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={yearMenuTriggerRef}
                     type="button"
                     onClick={toggleYearMenu}
-                    className="h-9 min-w-24 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    className="h-8 min-w-20 max-w-24 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select year"
                     aria-haspopup="listbox"
                     aria-expanded={isYearMenuOpen}
@@ -363,18 +410,18 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5 text-primary" />
               </button>
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="grid grid-cols-7 gap-1 mb-1 pb-1 border-b border-border">
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-xs font-bold text-foreground/70 py-2"
+                  className="text-center text-[11px] font-medium text-foreground/70 py-1"
                 >
                   {day}
                 </div>
@@ -401,7 +448,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     disabled={isDisabled}
                     className={cn(
                       'aspect-square cursor-pointer rounded-lg flex items-center justify-center',
-                      'text-sm font-medium transition-all duration-200',
+                      'text-[11px] font-medium transition-all duration-200',
                       'hover:bg-secondary',
                       isSelected && 'bg-primary text-white hover:bg-primary-dark',
                       isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
@@ -416,11 +463,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-2 pt-2 border-t border-border">
+            <div className="mt-1.5 pt-1.5 border-t border-border">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}
-                className="w-full py-2 text-sm font-medium text-primary cursor-pointer hover:bg-secondary rounded-lg transition-colors"
+                className="w-full py-1.5 text-xs font-medium text-primary cursor-pointer hover:bg-secondary rounded-lg transition-colors"
               >
                 Today
               </button>
@@ -430,29 +477,34 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </AnimatePresence>
       ) : (
         isOpen && (
-          <div className="absolute z-50 w-80 mt-2 bg-background rounded-md border border-border shadow-lg p-4">
+          <div
+            className={cn(
+              'absolute left-0 z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3',
+              panelPositionClass
+            )}
+          >
             {/* Month Navigation */}
-            <div className="flex items-center justify-between gap-2 mb-4">
+            <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 mb-3">
               <button
                 type="button"
                 onClick={handlePreviousMonth}
-                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
                 <ChevronLeft className="w-5 h-5 text-primary" />
               </button>
               
-              <div className="flex items-center gap-2">
+              <div className="flex items-center justify-center gap-1 min-w-0">
                 <div className="relative">
                   <button
                     ref={monthMenuTriggerRef}
                     type="button"
                     onClick={toggleMonthMenu}
-                    className="h-9 min-w-28 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    className="h-8 min-w-24 max-w-28 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select month"
                     aria-haspopup="listbox"
                     aria-expanded={isMonthMenuOpen}
                   >
-                    <span>{monthNames[currentMonthIndex]}</span>
+                    <span className="truncate">{monthNames[currentMonthIndex]}</span>
                     <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
                   </button>
 
@@ -496,7 +548,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={yearMenuTriggerRef}
                     type="button"
                     onClick={toggleYearMenu}
-                    className="h-9 min-w-24 rounded-md border border-border bg-background px-2 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-2"
+                    className="h-8 min-w-20 max-w-24 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select year"
                     aria-haspopup="listbox"
                     aria-expanded={isYearMenuOpen}
@@ -538,18 +590,18 @@ export const DatePicker: React.FC<DatePickerProps> = ({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-2 hover:bg-secondary rounded-lg transition-colors"
+                className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
                 <ChevronRight className="w-5 h-5 text-primary" />
               </button>
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-2">
+            <div className="grid grid-cols-7 gap-1 mb-1 pb-1 border-b border-border">
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-xs font-medium text-primary/70 py-2"
+                  className="text-center text-[11px] font-medium text-primary/70 py-1"
                 >
                   {day}
                 </div>
@@ -575,7 +627,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     disabled={isDisabled}
                     className={cn(
                       'aspect-square rounded-lg flex items-center justify-center',
-                      'text-sm font-medium transition-all duration-200',
+                      'text-[11px] font-medium transition-all duration-200',
                       'hover:bg-secondary',
                       isSelected && 'bg-primary text-white hover:bg-primary-dark',
                       isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
@@ -590,11 +642,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-4 pt-4 border-t border-border">
+            <div className="mt-1.5 pt-1.5 border-t border-border">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}
-                className="w-full py-2 text-sm font-medium text-primary hover:bg-secondary rounded-lg transition-colors"
+                className="w-full py-1.5 text-xs font-medium text-primary hover:bg-secondary rounded-lg transition-colors"
               >
                 Today
               </button>

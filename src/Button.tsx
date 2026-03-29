@@ -23,7 +23,7 @@ export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     const variants = {
       primary: 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark/90 shadow-sm',
       secondary: 'bg-secondary text-foreground hover:bg-border active:bg-border-dark',
-      outline: 'bg-transparent text-primary border-2 border-primary hover:bg-secondary active:bg-border',
+      outline: 'bg-transparent text-primary border-1 border-primary hover:bg-secondary active:bg-border',
       ghost: 'bg-transparent text-primary hover:bg-secondary active:bg-border',
       danger: 'bg-error text-white hover:bg-red-600 active:bg-red-700 shadow-sm'
     }
@@ -45,7 +45,7 @@ export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
         {loading ? (
           <Loader2 className={cn('h-5 w-5', shouldAnimate && 'animate-spin')} />
         ) : icon ? (
-          <span className="flex-shrink-0">{icon}</span>
+          <span className="shrink-0">{icon}</span>
         ) : null}
         {children}
       </motion.button>

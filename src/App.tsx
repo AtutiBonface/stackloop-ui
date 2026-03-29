@@ -13,7 +13,6 @@ import {
   Select,
   CountrySelect,
   DatePicker,
-  PhoneInput,
   Card,
   CardHeader,
   CardTitle,
@@ -180,21 +179,29 @@ function AppContent() {
                 rightIcon={<Lock className="w-5 h-5" />}
                 hint="Must be at least 8 characters"
               />
-              <PhoneInput
+              <Input
                 label="Phone"
+                type="phone"
                 value={phoneValue}
-                onChange={(_, value) => setPhoneValue(value)}
-                searchable
-                autoDetect={false}
-                defaultCountry='KE'
-                
+                onChange={(nextValue) => setPhoneValue(String(nextValue))}
               />
               
-              <CountrySelect
+              <Input
                 label="Country"
+                type="country"
                 value={countryValue}
-                onChange={setCountryValue}
-                searchable
+                onChange={(nextValue) => setCountryValue(String(nextValue))}
+              />
+
+              <Input
+                label="Date"
+                type="date"
+                value={selectedDate}
+                onChange={(nextValue) => {
+                  if (nextValue instanceof Date) {
+                    setSelectedDate(nextValue)
+                  }
+                }}
               />
               <Textarea
                 label="Message"
@@ -311,7 +318,7 @@ function AppContent() {
                   setIsLoading(true)
                   addToast({
                     message: 'Processing your request...',
-                    variant: 'default',
+                    variant: 'loading',
                     duration: 2000
                   })
                   setTimeout(() => {

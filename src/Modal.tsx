@@ -2,7 +2,6 @@
 
 import React, { useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
 import { cn } from './utils'
 
 export interface ModalProps {
@@ -74,10 +73,10 @@ export const Modal: React.FC<ModalProps> = ({
             <h2 className="text-xl font-semibold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-secondary transition-colors"
+              className="px-3 py-1.5 rounded-md border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors"
               aria-label="Close modal"
             >
-              <X className="w-5 h-5" />
+              Esc
             </button>
           </div>
         )}

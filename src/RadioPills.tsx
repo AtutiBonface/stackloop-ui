@@ -42,10 +42,11 @@ export const RadioPills: React.FC<RadioPillsProps> = ({
             />
             
             <motion.div
+              data-ripple="true"
               whileTap={shouldAnimate ? { scale: disabled ? 1 : 0.95 } : undefined}
               className={cn(
                 'px-4 py-2.5 rounded-full border-2 transition-all duration-200',
-                'flex items-center gap-2 min-h-[2.75rem]',
+                'flex items-center gap-2 min-h-11',
                 'peer-focus:ring-2 peer-focus:ring-primary peer-focus:ring-offset-2',
                 'peer-disabled:opacity-50 peer-disabled:cursor-not-allowed',
                 isSelected
@@ -53,7 +54,7 @@ export const RadioPills: React.FC<RadioPillsProps> = ({
                   : 'bg-background border-border text-primary hover:border-border-dark'
               )}
             >
-              {option.icon && <span className="flex-shrink-0">{option.icon}</span>}
+              {option.icon && <span className="shrink-0">{option.icon}</span>}
               <span className="font-medium text-base">{option.label}</span>
             </motion.div>
           </label>

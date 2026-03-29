@@ -2,7 +2,6 @@
 
 import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X } from 'lucide-react'
 import { cn } from './utils'
 
 export interface BottomSheetProps {
@@ -26,15 +25,23 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 }) => {
   const shouldAnimate = animate !== false
   useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose()
+    }
+
     if (isOpen) {
+      document.addEventListener('keydown', handleEscape)
       document.body.style.overflow = 'hidden'
     } else {
+      document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
+
     return () => {
+      document.removeEventListener('keydown', handleEscape)
       document.body.style.overflow = 'unset'
     }
-  }, [isOpen])
+  }, [isOpen, onClose])
 
   const sheetContent = isOpen ? (
     <>
@@ -71,9 +78,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             {showCloseButton && (
               <button
                 onClick={onClose}
-                className="p-2 rounded-full hover:bg-secondary transition-colors"
+                className="px-3 py-1.5 rounded-md border border-border text-sm font-medium text-foreground hover:bg-secondary transition-colors"
+                aria-label="Close bottom sheet"
               >
-                <X className="w-5 h-5 text-primary" />
+                Esc
               </button>
             )}
           </div>

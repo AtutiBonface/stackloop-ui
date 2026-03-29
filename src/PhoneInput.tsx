@@ -9,7 +9,7 @@ import { countries, type Country } from './countries'
 export interface PhoneInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
   value?: string
-  onChange?: (dialCode: string, value: string) => void
+  onChange?: (value: string) => void
   country?: string
   defaultCountry?: string
   autoDetect?: boolean
@@ -38,6 +38,22 @@ const getLocaleCountry = () => {
   return match ? match[1].toUpperCase() : null
 }
 
+const normalizeDialCode = (dialCode: string) => dialCode.replace(/\s/g, '')
+
+const findCountryByDialCodePrefix = (inputValue: string) => {
+  const compactValue = inputValue.replace(/\s/g, '')
+  if (!compactValue.startsWith('+')) return undefined
+
+  const sortedCountries = [...countries].sort(
+    (left, right) => normalizeDialCode(right.dialCode).length - normalizeDialCode(left.dialCode).length
+  )
+
+  return sortedCountries.find((item) => {
+    const dialCode = normalizeDialCode(item.dialCode)
+    return compactValue.startsWith(dialCode)
+  })
+}
+
 export const PhoneInput: React.FC<PhoneInputProps> = ({
   value,
   onChange,
@@ -61,8 +77,11 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   const [isOpen, setIsOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [internalCountry, setInternalCountry] = useState<string>(defaultCountry)
+  const [dropdownPlacement, setDropdownPlacement] = useState<'top' | 'bottom'>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLDivElement>(null)
   const lastEmittedIso2Ref = useRef<string | null>(null)
+  const didInitValueRef = useRef(false)
 
   useEffect(() => {
     if (country) {
@@ -92,9 +111,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   }, [])
 
   const selectedCountry = useMemo(() => {
+    const inferredCountry = value ? findCountryByDialCodePrefix(value) : undefined
     const iso2 = (country || internalCountry || defaultCountry).toUpperCase()
-    return countries.find((item) => item.iso2 === iso2) || countries[0]
-  }, [country, internalCountry, defaultCountry])
+    return countries.find((item) => item.iso2 === iso2) || inferredCountry || countries[0]
+  }, [country, internalCountry, defaultCountry, value])
 
   useEffect(() => {
     if (!selectedCountry) return
@@ -102,6 +122,49 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     lastEmittedIso2Ref.current = selectedCountry.iso2
     onCountryChange?.(selectedCountry)
   }, [selectedCountry, onCountryChange])
+
+  useEffect(() => {
+    if (didInitValueRef.current) return
+    if (!onChange) return
+    if ((value ?? '').trim() !== '') return
+
+    didInitValueRef.current = true
+    onChange(selectedCountry.dialCode)
+  }, [onChange, selectedCountry.dialCode, value])
+
+  useEffect(() => {
+    if (!isOpen) return
+
+    const updatePlacement = () => {
+      if (!triggerRef.current) return
+
+      const rect = triggerRef.current.getBoundingClientRect()
+      const estimatedMenuHeight = searchable ? 360 : 300
+      const availableBelow = window.innerHeight - rect.bottom - 8
+      const availableAbove = rect.top - 8
+
+      if (availableBelow >= estimatedMenuHeight) {
+        setDropdownPlacement('bottom')
+        return
+      }
+
+      if (availableAbove >= estimatedMenuHeight) {
+        setDropdownPlacement('top')
+        return
+      }
+
+      setDropdownPlacement('bottom')
+    }
+
+    updatePlacement()
+    window.addEventListener('resize', updatePlacement)
+    window.addEventListener('scroll', updatePlacement, true)
+
+    return () => {
+      window.removeEventListener('resize', updatePlacement)
+      window.removeEventListener('scroll', updatePlacement, true)
+    }
+  }, [isOpen, searchable])
 
   const filteredCountries = useMemo(() => {
     if (!searchable || !searchQuery.trim()) return countries
@@ -120,9 +183,36 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
       setInternalCountry(item.iso2)
     }
     onCountryChange?.(item)
+
+    const currentValue = (value ?? '').replace(/\s/g, '')
+    const detectedCountry = findCountryByDialCodePrefix(currentValue)
+    const detectedDialCode = detectedCountry ? normalizeDialCode(detectedCountry.dialCode) : ''
+
+    let nextValue = item.dialCode
+
+    if (currentValue) {
+      if (detectedDialCode && currentValue.startsWith(detectedDialCode)) {
+        nextValue = `${item.dialCode}${currentValue.slice(detectedDialCode.length)}`
+      } else if (currentValue.startsWith('+')) {
+        nextValue = `${item.dialCode}${currentValue.replace(/^\+[\d-]*/, '')}`
+      } else {
+        nextValue = `${item.dialCode}${currentValue}`
+      }
+    }
+
+    onChange?.(nextValue)
+
     setIsOpen(false)
     setSearchQuery('')
   }
+
+  const dropdownPositionClass =
+    dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
+
+  const dropdownAnimation =
+    dropdownPlacement === 'top'
+      ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
+      : { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 } }
 
   return (
     <div ref={containerRef} className={cn('w-full space-y-1.5', className)}>
@@ -133,10 +223,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         </label>
       )}
 
-      <div className="relative">
+      <div ref={triggerRef} className="relative">
         <div
           className={cn(
-            'flex items-stretch rounded-md border transition-all duration-200 bg-background',
+            'flex items-stretch rounded-md border transition-all duration-200 bg-background overflow-hidden',
             'focus-within:ring-2 focus-within:ring-primary focus-within:border-transparent',
             'disabled:bg-secondary disabled:cursor-not-allowed',
             error ? 'border-error' : 'border-border'
@@ -147,7 +237,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             onClick={() => !disabled && setIsOpen(!isOpen)}
             disabled={disabled}
             className={cn(
-              'flex items-center gap-2 px-3 py-2 text-left',
+              'flex items-center  gap-2 px-3 py-2 text-left',
               'border-r border-border/70',
               'hover:bg-secondary transition-colors',
               'disabled:opacity-50 disabled:cursor-not-allowed'
@@ -161,7 +251,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
               </span>
             )}
             <span className="text-sm font-medium text-foreground">
-              {selectedCountry.dialCode}
+              {selectedCountry.iso2}
             </span>
             <ChevronDown
               className={cn(
@@ -175,8 +265,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             type="tel"
             inputMode="tel"
             value={value ?? ''}
-            onChange={(event) => onChange?.(selectedCountry.dialCode, event.target.value)}
-            placeholder={placeholder || 'Phone number'}
+            onChange={(event) => onChange?.(event.target.value)}
+            placeholder={placeholder || `${selectedCountry.dialCode} Phone number`}
             disabled={disabled}
             required={required}
             className={cn(
@@ -192,12 +282,15 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           <AnimatePresence>
             {isOpen ? (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={dropdownAnimation.initial}
+                animate={dropdownAnimation.animate}
+                exit={dropdownAnimation.exit}
                 transition={{ duration: 0.2 }}
                 role="listbox"
-                className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+                className={cn(
+                  'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
+                  dropdownPositionClass
+                )}
               >
               {searchable && (
                 <div className="p-2 border-b border-border">
@@ -243,7 +336,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                         {getFlagEmoji(item.iso2)}
                       </span>
                     )}
-                    <span className="text-sm font-medium text-foreground break-words whitespace-normal">
+                    <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                       {item.name}
                     </span>
                     <span className="ml-auto text-xs text-primary/70">
@@ -259,7 +352,10 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
           isOpen && (
             <div
               role="listbox"
-              className="absolute left-0 z-50 mt-2 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+              className={cn(
+                'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
+                dropdownPositionClass
+              )}
             >
             {searchable && (
               <div className="p-2 border-b border-border">
@@ -305,7 +401,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                       {getFlagEmoji(item.iso2)}
                     </span>
                   )}
-                  <span className="text-sm font-medium text-foreground break-words whitespace-normal">
+                  <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                     {item.name}
                   </span>
                   <span className="ml-auto text-xs text-primary/70">

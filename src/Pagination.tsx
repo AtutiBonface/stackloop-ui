@@ -1,8 +1,8 @@
 'use client'
 
 import React from 'react'
-import { motion } from 'framer-motion'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { ChevronLeft, ChevronRight, House } from 'lucide-react'
 import { Button } from './Button'
 import { cn } from './utils'
 
@@ -26,11 +26,31 @@ export const Pagination: React.FC<PaginationProps> = ({
   animate = true
 }) => {
   const shouldAnimate = animate !== false
-  const pages = Array.from({ length: totalPages }, (_, i) => i + 1)
-  const showPages = pages.slice(
-    Math.max(0, currentPage - 2),
-    Math.min(totalPages, currentPage + 1)
-  )
+  const pageItems = React.useMemo(() => {
+    const maxVisible = 5
+
+    if (totalPages <= maxVisible) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1)
+    }
+
+    const half = Math.floor(maxVisible / 2)
+    let start = Math.max(1, currentPage - half)
+    let end = start + maxVisible - 1
+
+    if (end > totalPages) {
+      end = totalPages
+      start = Math.max(1, end - maxVisible + 1)
+    }
+
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i)
+  }, [currentPage, totalPages])
+
+  const goToPage = (page: number) => {
+    const nextPage = Math.max(1, Math.min(totalPages, page))
+    if (nextPage !== currentPage) {
+      onPageChange(nextPage)
+    }
+  }
 
   return (
     <motion.div
@@ -52,61 +72,53 @@ export const Pagination: React.FC<PaginationProps> = ({
           variant="secondary"
           size="sm"
           disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => goToPage(currentPage - 1)}
           icon={<ChevronLeft className="w-4 h-4" />}
           animate={animate}
         >
           Previous
         </Button>
-        <div className="flex items-center gap-1">
-          {currentPage > 3 && (
-            <>
-              <motion.button
-                whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
-                whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
-                onClick={() => onPageChange(1)}
-                className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
-              >
-                1
-              </motion.button>
-              <span className="text-primary/50 px-1">...</span>
-            </>
-          )}
-          {showPages.map((page) => (
-            <motion.button
-              key={page}
-              whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
-              whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
-              onClick={() => onPageChange(page)}
-              className={cn(
-                'w-10 h-10 rounded-md text-sm border transition-all',
-                page === currentPage
-                  ? 'bg-primary text-white border-primary shadow-sm'
-                  : 'hover:bg-secondary border-border'
-              )}
-            >
-              {page}
-            </motion.button>
-          ))}
-          {currentPage < totalPages - 2 && (
-            <>
-              <span className="text-primary/50 px-1">...</span>
-              <motion.button
-                whileHover={shouldAnimate ? { scale: 1.05 } : undefined}
-                whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
-                onClick={() => onPageChange(totalPages)}
-                className="w-10 h-10 rounded-md hover:bg-secondary border border-border text-sm transition-colors"
-              >
-                {totalPages}
-              </motion.button>
-            </>
-          )}
-        </div>
+        {!pageItems.includes(1) && (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => goToPage(1)}
+            icon={<House className="w-4 h-4 text-primary" />}
+            animate={animate}
+            aria-label="Go to first page"
+          />
+        )}
+        <motion.div layout className="flex items-center justify-center gap-1 min-w-56">
+          <AnimatePresence initial={false} mode="popLayout">
+            {pageItems.map((item) => {
+              const isActive = item === currentPage
+
+              return (
+                <motion.button
+                  key={item}
+                  layout
+                  whileHover={shouldAnimate ? { y: -1 } : undefined}
+                  whileTap={shouldAnimate ? { scale: 0.96 } : undefined}
+                  onClick={() => goToPage(item)}
+                  className={cn(
+                    'w-10 h-10 rounded-md border text-sm font-medium tabular-nums leading-none inline-flex items-center justify-center transition-all duration-200',
+                    isActive
+                      ? 'bg-primary text-white border-primary shadow-sm'
+                      : 'hover:bg-secondary border-border text-foreground'
+                  )}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {item}
+                </motion.button>
+              )
+            })}
+          </AnimatePresence>
+        </motion.div>
         <Button
           variant="secondary"
           size="sm"
           disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => goToPage(currentPage + 1)}
           icon={<ChevronRight className="w-4 h-4" />}
           animate={animate}
         >
