@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
 import { cn } from './utils'
 import { FloatingPortal } from './FloatingPortal'
+import { Checkbox } from './Checkbox'
 
 export interface MultiSelectOption {
   value: string
@@ -269,43 +270,36 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                       {filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => {
                           const isSelected = value.includes(option.value)
+                          const isDisabled = option.disabled || (maxItems !== undefined && value.length >= maxItems && !isSelected)
                           return (
-                            <button
+                              <div
                               key={option.value}
-                              type="button"
                               role="option"
                               aria-selected={isSelected}
-                              onClick={() => !option.disabled && handleSelect(option.value)}
-                              disabled={option.disabled || (maxItems !== undefined && value.length >= maxItems && !isSelected)}
+                                aria-disabled={isDisabled}
+                                onClick={() => !isDisabled && handleSelect(option.value)}
                               className={cn(
                                 'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
                                 'hover:bg-secondary transition-colors',
                                 'disabled:opacity-50 disabled:cursor-not-allowed',
+                                  isDisabled && 'opacity-50 cursor-not-allowed',
                                 isSelected && 'bg-border text-foreground font-medium'
                               )}
                             >
-                              <div className="flex items-center w-4 h-4 rounded border border-primary">
-                                {isSelected && (
-                                  <div className="w-full h-full flex items-center justify-center bg-primary rounded text-xs">
-                                    <svg
-                                      className="w-3 h-3 text-background"
-                                      fill="currentColor"
-                                      viewBox="0 0 20 20"
-                                    >
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                        clipRule="evenodd"
-                                      />
-                                    </svg>
-                                  </div>
-                                )}
-                              </div>
+                                <Checkbox
+                                  checked={isSelected}
+                                  disabled={isDisabled}
+                                  onChange={() => !isDisabled && handleSelect(option.value)}
+                                  onClick={(e) => e.stopPropagation()}
+                                  animate={shouldAnimate}
+                                  className="w-5 h-5"
+                                  aria-label={option.label}
+                                />
                               {option.icon && (
                                 <span className="shrink-0">{option.icon}</span>
                               )}
                               <span>{option.label}</span>
-                            </button>
+                              </div>
                           )
                         })
                       ) : (
@@ -369,43 +363,36 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                     {filteredOptions.length > 0 ? (
                       filteredOptions.map((option) => {
                         const isSelected = value.includes(option.value)
+                          const isDisabled = option.disabled || (maxItems !== undefined && value.length >= maxItems && !isSelected)
                         return (
-                          <button
+                            <div
                             key={option.value}
-                            type="button"
                             role="option"
                             aria-selected={isSelected}
-                            onClick={() => !option.disabled && handleSelect(option.value)}
-                            disabled={option.disabled || (maxItems !== undefined && value.length >= maxItems && !isSelected)}
+                              aria-disabled={isDisabled}
+                              onClick={() => !isDisabled && handleSelect(option.value)}
                             className={cn(
                               'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
                               'hover:bg-secondary transition-colors',
                               'disabled:opacity-50 disabled:cursor-not-allowed',
+                                isDisabled && 'opacity-50 cursor-not-allowed',
                               isSelected && 'bg-border text-foreground font-medium'
                             )}
                           >
-                            <div className="flex items-center w-4 h-4 rounded border border-primary">
-                              {isSelected && (
-                                <div className="w-full h-full flex items-center justify-center bg-primary rounded text-xs">
-                                  <svg
-                                    className="w-3 h-3 text-background"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
+                              <Checkbox
+                                checked={isSelected}
+                                disabled={isDisabled}
+                                onChange={() => !isDisabled && handleSelect(option.value)}
+                                onClick={(e) => e.stopPropagation()}
+                                animate={shouldAnimate}
+                                className="w-5 h-5"
+                                aria-label={option.label}
+                              />
                             {option.icon && (
                               <span className="shrink-0">{option.icon}</span>
                             )}
                             <span>{option.label}</span>
-                          </button>
+                            </div>
                         )
                       })
                     ) : (
