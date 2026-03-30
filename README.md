@@ -167,7 +167,16 @@ Components with the `animate` prop:
 
 ## Ripple Behavior
 
-Ripple effects are initialized automatically when you import the library package. By default, ripple can apply to host app interactive elements too (`button`, `a`, `[role="button"]`, and elements with `data-ripple="true"`).
+Ripple effects are **opt-in**. Initialize them once in your app entry file.
+
+```tsx
+// main.tsx or index.tsx
+import { setupRippleEffects } from '@stackloop/ui'
+
+setupRippleEffects()
+```
+
+After setup, ripple can apply to interactive elements (`button`, `a`, `[role="button"]`, and elements with `data-ripple="true"`).
 
 - Disable ripple for a specific element:
 
@@ -181,7 +190,7 @@ Ripple effects are initialized automatically when you import the library package
   <div role="button" data-ripple="true">Ripple enabled</div>
   ```
 
-You can also call `setupRippleEffects()` manually if you want explicit initialization control.
+Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avoid duplicate global listeners.
 
 **Checkbox**:
 - **Description:** Accessible checkbox with optional label and description.
