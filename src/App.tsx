@@ -11,6 +11,7 @@ import {
   RadioPills,
   Dropdown,
   Select,
+  MultiSelect,
   CountrySelect,
   DatePicker,
   Card,
@@ -44,6 +45,7 @@ import {
   Settings,
   Lock,
   Globe,
+  User,
 } from 'lucide-react'
 
 function AppContent() {
@@ -60,6 +62,7 @@ function AppContent() {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
   const [dropdownValue, setDropdownValue] = useState('')
   const [selectValue, setSelectValue] = useState('')
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>([])
   const [phoneValue, setPhoneValue] = useState('')
   const [countryValue, setCountryValue] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
@@ -76,6 +79,14 @@ function AppContent() {
     { label: 'United Kingdom', value: 'uk', icon: <Globe className="w-4 h-4" /> },
     { label: 'Canada', value: 'ca', icon: <Globe className="w-4 h-4" /> },
     { label: 'Australia', value: 'au', icon: <Globe className="w-4 h-4" />, disabled: true }
+  ]
+
+  const multiSelectOptions = [
+    { label: 'John Doe', value: 'john', icon: <User className="w-4 h-4" /> },
+    { label: 'Jane Smith', value: 'jane', icon: <User className="w-4 h-4" /> },
+    { label: 'Bob Johnson', value: 'bob', icon: <User className="w-4 h-4" /> },
+    { label: 'Alice Williams', value: 'alice', icon: <User className="w-4 h-4" /> },
+    { label: 'Charlie Brown', value: 'charlie', icon: <User className="w-4 h-4" /> }
   ]
 
   const radioOptions = [
@@ -430,6 +441,15 @@ function AppContent() {
                 placeholder="Select your country"
                 hint="Choose your country of residence"
                 required
+              />
+              <MultiSelect
+                label="Select Staff Members"
+                options={multiSelectOptions}
+                value={multiSelectValue}
+                onChange={setMultiSelectValue}
+                placeholder="Choose team members..."
+                hint="You can select multiple staff members"
+                searchable
               />
               <CountrySelect/>
             </div>

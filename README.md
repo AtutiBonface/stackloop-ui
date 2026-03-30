@@ -163,7 +163,7 @@ import { Button, Modal } from '@stackloop/ui'
 
 Components with the `animate` prop:
 
-- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `MultiSelect`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
 ## Ripple Behavior
 
@@ -700,6 +700,108 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
         value={field.value}
         onChange={field.onChange}
         error={errors.category?.message}
+        required
+      />
+    )}
+  />
+  ```
+
+**MultiSelect**:
+- **Description:** Multi-select component that allows selecting multiple items with chips display. Each selected item appears as a removable chip with an X button. Perfect for selecting multiple options like staff members, tags, skills, etc.
+- **Props:**
+  - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required. Array of selectable options with optional icons and disabled state.
+  - **`value`**: `string[]` — optional. Array of currently selected values (default: `[]`).
+  - **`onChange`**: `(values: string[]) => void` — required. Callback fired when selections change, receives array of selected values.
+  - **`placeholder`**: `string` — default: `'Select options...'`. Shown when no items are selected.
+  - **`label`**: `string` — optional. Label displayed above the multi-select.
+  - **`error`**: `string` — optional. Error message displayed below with error styling.
+  - **`hint`**: `string` — optional. Helper text displayed below when no error is present.
+  - **`searchable`**: `boolean` — default: `false`. Enables search input to filter options.
+  - **`clearable`**: `boolean` — default: `true`. Shows "Clear all" option in dropdown when items are selected.
+  - **`maxItems`**: `number` — optional. Maximum number of items that can be selected.
+  - **`chipVariant`**: `'default' | 'primary' | 'success' | 'warning' | 'danger' | 'info'` — default: `'primary'`. Styles for the selected item chips.
+  - **`required`**: `boolean` — optional. Displays asterisk (*) next to label and sets aria-required.
+  - **`disabled`**: `boolean` — optional. Disables the multi-select.
+  - **`className`**: `string` — optional. Additional CSS classes for the wrapper.
+- **Features:**
+  - **Chips Display:** Selected items show as removable chips with X buttons inline in the button
+  - **Multi-Select:** Choose multiple items from a list with checkboxes in the dropdown
+  - **Form Integration:** Works seamlessly with form libraries (React Hook Form, Formik, etc.)
+  - **Validation Support:** Built-in error and hint display with animated transitions
+  - **Accessibility:** Full ARIA attributes, keyboard navigation, and screen reader support
+  - **Search:** Optional searchable mode with real-time filtering across all options
+  - **Icons:** Support for icons in options for better visual recognition
+  - **Disabled Options:** Individual options can be disabled
+  - **Max Items:** Optional limit on the number of items that can be selected
+  - **Clear All:** "Clear all" button in dropdown to remove all selected items at once
+  - **Remove Individual:** Click X on any chip to remove just that item
+  - **Touch-Friendly:** Optimized for mobile with proper touch targets
+- **Usage:**
+
+  ```jsx
+  import { MultiSelect } from '@stackloop/ui'
+  import { Users, Award, Code } from 'lucide-react'
+
+  // Basic multi-select for team members
+  const [selectedStaff, setSelectedStaff] = useState<string[]>([])
+
+  <MultiSelect 
+    label="Select Staff Members"
+    options={[
+      { value: 'john', label: 'John Doe' },
+      { value: 'jane', label: 'Jane Smith' },
+      { value: 'bob', label: 'Bob Johnson' }
+    ]} 
+    value={selectedStaff}
+    onChange={setSelectedStaff}
+    placeholder="Choose staff members..."
+    required
+  />
+
+  // With icons and search
+  <MultiSelect 
+    label="Skills"
+    options={[
+      { value: 'react', label: 'React', icon: <Code /> },
+      { value: 'vue', label: 'Vue.js', icon: <Code /> },
+      { value: 'angular', label: 'Angular', icon: <Code /> },
+      { value: 'node', label: 'Node.js', icon: <Code /> }
+    ]}
+    value={skills}
+    onChange={setSkills}
+    searchable
+    placeholder="Select your skills"
+  />
+
+  // With max items limit and chip styling
+  <MultiSelect 
+    label="Team Members (Max 5)"
+    options={teamMembers}
+    value={selectedTeam}
+    onChange={setSelectedTeam}
+    maxItems={5}
+    chipVariant="primary"
+    error={errors.team}
+    hint="Select up to 5 team members for this project"
+  />
+
+  // With React Hook Form
+  import { useForm, Controller } from 'react-hook-form'
+
+  const { control, formState: { errors } } = useForm()
+
+  <Controller
+    name="assignees"
+    control={control}
+    rules={{ validate: (v) => v?.length > 0 || 'Please select at least one assignee' }}
+    render={({ field }) => (
+      <MultiSelect
+        label="Assign to"
+        options={users}
+        value={field.value || []}
+        onChange={field.onChange}
+        error={errors.assignees?.message}
+        searchable
         required
       />
     )}
