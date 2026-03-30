@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Calendar, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from './utils'
+import { FloatingPortal } from './FloatingPortal'
 
 export interface DatePickerProps {
   value?: Date
@@ -251,8 +252,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     return false
   }
 
-  const panelPositionClass = pickerPosition === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2'
-
   const panelAnimation =
     pickerPosition === 'bottom'
       ? { initial: { opacity: 0, y: -10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: -10 } }
@@ -293,16 +292,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       {shouldAnimate ? (
         <AnimatePresence>
           {isOpen ? (
-            <motion.div
-              initial={panelAnimation.initial}
-              animate={panelAnimation.animate}
-              exit={panelAnimation.exit}
-              transition={{ duration: 0.2 }}
-              className={cn(
-                'absolute left-0 z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3',
-                panelPositionClass
-              )}
-            >
+            <FloatingPortal open={isOpen} anchorRef={pickerTriggerRef} placement={pickerPosition} matchWidth={false}>
+              <motion.div
+                initial={panelAnimation.initial}
+                animate={panelAnimation.animate}
+                exit={panelAnimation.exit}
+                transition={{ duration: 0.2 }}
+                className="z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3"
+              >
             {/* Month Navigation */}
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 border-border mb-3">
               <button
@@ -472,17 +469,14 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 Today
               </button>
             </div>
-            </motion.div>
+              </motion.div>
+            </FloatingPortal>
           ) : null}
         </AnimatePresence>
       ) : (
         isOpen && (
-          <div
-            className={cn(
-              'absolute left-0 z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3',
-              panelPositionClass
-            )}
-          >
+          <FloatingPortal open={isOpen} anchorRef={pickerTriggerRef} placement={pickerPosition} matchWidth={false}>
+            <div className="z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3">
             {/* Month Navigation */}
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 mb-3">
               <button
@@ -651,7 +645,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 Today
               </button>
             </div>
-          </div>
+            </div>
+          </FloatingPortal>
         )
       )}
 

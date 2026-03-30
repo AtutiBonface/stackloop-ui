@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
 import { cn } from './utils'
+import { FloatingPortal } from './FloatingPortal'
 
 export interface DropdownOption {
   value: string
@@ -105,9 +106,6 @@ export const Dropdown: React.FC<DropdownProps> = ({
     setSearchQuery('')
   }
 
-  const dropdownPositionClass =
-    dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
-
   const dropdownAnimation =
     dropdownPlacement === 'top'
       ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
@@ -155,16 +153,81 @@ export const Dropdown: React.FC<DropdownProps> = ({
       {shouldAnimate ? (
         <AnimatePresence>
           {isOpen ? (
-            <motion.div
-              initial={dropdownAnimation.initial}
-              animate={dropdownAnimation.animate}
-              exit={dropdownAnimation.exit}
-              transition={{ duration: 0.2 }}
-              className={cn(
-                'absolute right-0 z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden',
-                dropdownPositionClass
+            <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+              <motion.div
+                initial={dropdownAnimation.initial}
+                animate={dropdownAnimation.animate}
+                exit={dropdownAnimation.exit}
+                transition={{ duration: 0.2 }}
+                className="z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden"
+              >
+              {searchable && (
+                <div className="p-2 border-b border-border">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                      >
+                        <X className="w-4 h-4 text-primary/50 hover:text-primary" />
+                      </button>
+                    )}
+                  </div>
+                </div>
               )}
-            >
+
+              <div className="overflow-y-auto max-h-64 p-2 space-y-1">
+                {clearable && (
+                  <button
+                    type="button"
+                    onClick={() => handleSelect('')}
+                    className={cn(
+                      'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                      'hover:bg-secondary transition-colors',
+                      'text-foreground/70 italic',
+                      !value && 'bg-border text-foreground'
+                    )}
+                  >
+                    <span>None</span>
+                  </button>
+                )}
+                {filteredOptions.length > 0 ? (
+                  filteredOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => handleSelect(option.value)}
+                      className={cn(
+                        'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
+                        'hover:bg-secondary transition-colors',
+                        option.value === value && 'bg-border text-foreground'
+                      )}
+                    >
+                      {option.icon && <span className="shrink-0">{option.icon}</span>}
+                      <span>{option.label}</span>
+                    </button>
+                  ))
+                ) : (
+                  <div className="px-4 py-6 text-center text-primary/70 text-sm">
+                    No options found
+                  </div>
+                )}
+              </div>
+              </motion.div>
+            </FloatingPortal>
+          ) : null}
+        </AnimatePresence>
+      ) : (
+        isOpen && (
+          <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+            <motion.div className="z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden">
             {searchable && (
               <div className="p-2 border-b border-border">
                 <div className="relative">
@@ -225,76 +288,7 @@ export const Dropdown: React.FC<DropdownProps> = ({
               )}
             </div>
             </motion.div>
-          ) : null}
-        </AnimatePresence>
-      ) : (
-        isOpen && (
-          <motion.div
-            className={cn(
-              'absolute right-0 z-50 w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden',
-              dropdownPositionClass
-            )}
-          >
-            {searchable && (
-              <div className="p-2 border-b border-border">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-2 top-1/2 -translate-y-1/2"
-                    >
-                      <X className="w-4 h-4 text-primary/50 hover:text-primary" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            <div className="overflow-y-auto max-h-64 p-2 space-y-1">
-              {clearable && (
-                <button
-                  type="button"
-                  onClick={() => handleSelect('')}
-                  className={cn(
-                    'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
-                    'hover:bg-secondary transition-colors',
-                    'text-foreground/70 italic',
-                    !value && 'bg-border text-foreground'
-                  )}
-                >
-                  <span>None</span>
-                </button>
-              )}
-              {filteredOptions.length > 0 ? (
-                filteredOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleSelect(option.value)}
-                    className={cn(
-                      'w-full px-4 py-3 text-left flex items-center gap-2 rounded-sm cursor-pointer',
-                      'hover:bg-secondary transition-colors',
-                      option.value === value && 'bg-border text-foreground'
-                    )}
-                  >
-                    {option.icon && <span className="shrink-0">{option.icon}</span>}
-                    <span>{option.label}</span>
-                  </button>
-                ))
-              ) : (
-                <div className="px-4 py-6 text-center text-primary/70 text-sm">
-                  No options found
-                </div>
-              )}
-            </div>
-          </motion.div>
+          </FloatingPortal>
         )
       )}
 

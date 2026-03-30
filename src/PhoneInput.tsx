@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
 import { cn } from './utils'
 import { countries, type Country } from './countries'
+import { FloatingPortal } from './FloatingPortal'
 
 export interface PhoneInputProps
   extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
@@ -206,9 +207,6 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     setSearchQuery('')
   }
 
-  const dropdownPositionClass =
-    dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
-
   const dropdownAnimation =
     dropdownPlacement === 'top'
       ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
@@ -281,17 +279,15 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
         {shouldAnimate ? (
           <AnimatePresence>
             {isOpen ? (
-              <motion.div
-                initial={dropdownAnimation.initial}
-                animate={dropdownAnimation.animate}
-                exit={dropdownAnimation.exit}
-                transition={{ duration: 0.2 }}
-                role="listbox"
-                className={cn(
-                  'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
-                  dropdownPositionClass
-                )}
-              >
+              <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+                <motion.div
+                  initial={dropdownAnimation.initial}
+                  animate={dropdownAnimation.animate}
+                  exit={dropdownAnimation.exit}
+                  transition={{ duration: 0.2 }}
+                  role="listbox"
+                  className="z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+                >
               {searchable && (
                 <div className="p-2 border-b border-border">
                   <div className="relative">
@@ -345,18 +341,17 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                   </button>
                 ))}
               </div>
-            </motion.div>
+                </motion.div>
+              </FloatingPortal>
           ) : null}
           </AnimatePresence>
         ) : (
           isOpen && (
-            <div
-              role="listbox"
-              className={cn(
-                'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
-                dropdownPositionClass
-              )}
-            >
+            <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+              <div
+                role="listbox"
+                className="z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+              >
             {searchable && (
               <div className="p-2 border-b border-border">
                 <div className="relative">
@@ -410,7 +405,8 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                 </button>
               ))}
             </div>
-            </div>
+              </div>
+            </FloatingPortal>
           )
         )}
       </div>

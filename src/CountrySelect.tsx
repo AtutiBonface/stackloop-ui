@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
 import { cn } from './utils'
 import { countries, type Country } from './countries'
+import { FloatingPortal } from './FloatingPortal'
 
 export interface CountrySelectProps {
   value?: string
@@ -45,7 +46,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   showFlags = true,
   disabled,
   animate = true,
-  className
+  className,
 }) => {
   const shouldAnimate = animate !== false
   const [isOpen, setIsOpen] = useState(false)
@@ -54,10 +55,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
 
-  const selectedCountry = useMemo(
-    () => countries.find((country) => country.iso2 === value),
-    [value]
-  )
+  const selectedCountry = useMemo(() => countries.find((country) => country.iso2 === value), [value])
 
   const filteredCountries = useMemo(() => {
     if (!searchable || !searchQuery.trim()) return countries
@@ -127,9 +125,6 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
     setSearchQuery('')
   }
 
-  const dropdownPositionClass =
-    dropdownPlacement === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'
-
   const dropdownAnimation =
     dropdownPlacement === 'top'
       ? { initial: { opacity: 0, y: 10 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 10 } }
@@ -185,16 +180,92 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
         {shouldAnimate ? (
           <AnimatePresence>
             {isOpen ? (
-              <motion.div
-                initial={dropdownAnimation.initial}
-                animate={dropdownAnimation.animate}
-                exit={dropdownAnimation.exit}
-                transition={{ duration: 0.2 }}
+              <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+                <motion.div
+                  initial={dropdownAnimation.initial}
+                  animate={dropdownAnimation.animate}
+                  exit={dropdownAnimation.exit}
+                  transition={{ duration: 0.2 }}
+                  role="listbox"
+                  className="z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
+                >
+                  {searchable && (
+                    <div className="p-2 border-b border-border">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
+                        <input
+                          type="text"
+                          placeholder="Search country or code"
+                          value={searchQuery}
+                          onChange={(event) => setSearchQuery(event.target.value)}
+                          className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        />
+                        {searchQuery && (
+                          <button
+                            type="button"
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-2 top-1/2 -translate-y-1/2"
+                            aria-label="Clear search"
+                          >
+                            <X className="w-4 h-4 text-primary/50 hover:text-primary" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="overflow-y-auto max-h-64 p-2 space-y-1">
+                    {clearable && (
+                      <button
+                        type="button"
+                        role="option"
+                        aria-selected={!value}
+                        onClick={() => handleChange('')}
+                        className={cn(
+                          'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
+                          'hover:bg-secondary transition-colors',
+                          'text-foreground/70 italic',
+                          !value && 'bg-border text-foreground'
+                        )}
+                      >
+                        <span>None</span>
+                      </button>
+                    )}
+                    {filteredCountries.map((countryOption) => (
+                      <button
+                        key={countryOption.iso2}
+                        type="button"
+                        role="option"
+                        aria-selected={countryOption.iso2 === selectedCountry?.iso2}
+                        onClick={() => handleChange(countryOption.iso2)}
+                        className={cn(
+                          'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
+                          'hover:bg-secondary transition-colors',
+                          countryOption.iso2 === selectedCountry?.iso2 && 'bg-border text-foreground'
+                        )}
+                      >
+                        {showFlags && (
+                          <span className="text-base" aria-hidden>
+                            {getFlagEmoji(countryOption.iso2)}
+                          </span>
+                        )}
+                        <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
+                          {countryOption.name}
+                        </span>
+                        <span className="ml-auto text-xs text-primary/70">{countryOption.dialCode}</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              </FloatingPortal>
+            ) : null}
+          </AnimatePresence>
+        ) : (
+          isOpen && (
+            <FloatingPortal open={isOpen} anchorRef={triggerRef} placement={dropdownPlacement}>
+              <div
                 role="listbox"
-                className={cn(
-                  'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
-                  dropdownPositionClass
-                )}
+                className="z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden"
               >
                 {searchable && (
                   <div className="p-2 border-b border-border">
@@ -238,115 +309,33 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                       <span>None</span>
                     </button>
                   )}
-                  {filteredCountries.map((country) => (
+                  {filteredCountries.map((countryOption) => (
                     <button
-                      key={country.iso2}
+                      key={countryOption.iso2}
                       type="button"
                       role="option"
-                      aria-selected={country.iso2 === selectedCountry?.iso2}
-                      onClick={() => handleChange(country.iso2)}
+                      aria-selected={countryOption.iso2 === selectedCountry?.iso2}
+                      onClick={() => handleChange(countryOption.iso2)}
                       className={cn(
                         'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
                         'hover:bg-secondary transition-colors',
-                        country.iso2 === selectedCountry?.iso2 && 'bg-border text-foreground'
+                        countryOption.iso2 === selectedCountry?.iso2 && 'bg-border text-foreground'
                       )}
                     >
                       {showFlags && (
                         <span className="text-base" aria-hidden>
-                          {getFlagEmoji(country.iso2)}
+                          {getFlagEmoji(countryOption.iso2)}
                         </span>
                       )}
                       <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
-                        {country.name}
+                        {countryOption.name}
                       </span>
-                      <span className="ml-auto text-xs text-primary/70">
-                        {country.dialCode}
-                      </span>
+                      <span className="ml-auto text-xs text-primary/70">{countryOption.dialCode}</span>
                     </button>
                   ))}
                 </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
-        ) : (
-          isOpen && (
-            <div
-              role="listbox"
-              className={cn(
-                'absolute left-0 z-50 w-full max-w-full bg-background rounded-md border border-border shadow-lg max-h-80 overflow-hidden overflow-x-hidden',
-                dropdownPositionClass
-              )}
-            >
-              {searchable && (
-                <div className="p-2 border-b border-border">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
-                    <input
-                      type="text"
-                      placeholder="Search country or code"
-                      value={searchQuery}
-                      onChange={(event) => setSearchQuery(event.target.value)}
-                      className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                    />
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-2 top-1/2 -translate-y-1/2"
-                        aria-label="Clear search"
-                      >
-                        <X className="w-4 h-4 text-primary/50 hover:text-primary" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )}
-
-              <div className="overflow-y-auto max-h-64 p-2 space-y-1">
-                {clearable && (
-                  <button
-                    type="button"
-                    role="option"
-                    aria-selected={!value}
-                    onClick={() => handleChange('')}
-                    className={cn(
-                      'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
-                      'hover:bg-secondary transition-colors',
-                      'text-foreground/70 italic',
-                      !value && 'bg-border text-foreground'
-                    )}
-                  >
-                    <span>None</span>
-                  </button>
-                )}
-                {filteredCountries.map((country) => (
-                  <button
-                    key={country.iso2}
-                    type="button"
-                    role="option"
-                    aria-selected={country.iso2 === selectedCountry?.iso2}
-                    onClick={() => handleChange(country.iso2)}
-                    className={cn(
-                      'w-full px-3 py-2 text-left flex items-start gap-2 rounded-sm cursor-pointer',
-                      'hover:bg-secondary transition-colors',
-                      country.iso2 === selectedCountry?.iso2 && 'bg-border text-foreground'
-                    )}
-                  >
-                    {showFlags && (
-                      <span className="text-base" aria-hidden>
-                        {getFlagEmoji(country.iso2)}
-                      </span>
-                    )}
-                    <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
-                      {country.name}
-                    </span>
-                    <span className="ml-auto text-xs text-primary/70">
-                      {country.dialCode}
-                    </span>
-                  </button>
-                ))}
               </div>
-            </div>
+            </FloatingPortal>
           )
         )}
       </div>
@@ -360,9 +349,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
         </motion.p>
       )}
 
-      {hint && !error && (
-        <p className="text-sm text-primary/70">{hint}</p>
-      )}
+      {hint && !error && <p className="text-sm text-primary/70">{hint}</p>}
     </div>
   )
 }

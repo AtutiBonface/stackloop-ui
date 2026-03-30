@@ -21,12 +21,12 @@
   --color-info: #3b82f6;
 
   /* StackLoop unified border radius */
-  --radius-stackloop: 0.875rem;
-  --radius-sm: var(--radius-stackloop);
-  --radius-md: var(--radius-stackloop);
-  --radius-lg: var(--radius-stackloop);
-  --radius-xl: var(--radius-stackloop);
-  --radius-full: 9999px;
+  --radius-stackloop: 0.875rem !important;
+  --radius-sm: var(--radius-stackloop) !important;
+  --radius-md: var(--radius-stackloop) !important;
+  --radius-lg: var(--radius-stackloop) !important;
+  --radius-xl: var(--radius-stackloop) !important;
+  --radius-full: 9999px !important;
 
   /* Unified shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
@@ -121,21 +121,21 @@ button:disabled {
 
 @keyframes buttonRipple {
   from {
-    transform: scale(0);
-    opacity: 0.3;
+    transform: scale(0) !important;
+    opacity: 0.3 !important;
   }
   to {
-    transform: scale(1);
-    opacity: 0;
+    transform: scale(1) !important;
+    opacity: 0 !important;
   }
 }
 
 .button-ripple {
-  position: absolute;
-  border-radius: 9999px;
-  background-color: currentColor;
-  opacity: 0;
-  transform: scale(0);
-  animation: buttonRipple 500ms ease-out;
+  position: absolute !important;
+  border-radius: 9999px !important;
+  background-color: currentColor !important;
+  opacity: 0 !important;
+  transform: scale(0) !important;
+  animation: buttonRipple 500ms ease-out !important;
 }
 
