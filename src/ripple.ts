@@ -27,6 +27,20 @@ export function setupRippleEffects() {
     return
   }
 
+  const cleanupRipple = (interactiveElement: HTMLElement, ripple: HTMLSpanElement) => {
+    ripple.remove()
+
+    if (interactiveElement.dataset.ripplePositioned === 'true' && !interactiveElement.querySelector('.button-ripple')) {
+      interactiveElement.style.position = ''
+      delete interactiveElement.dataset.ripplePositioned
+    }
+
+    if (interactiveElement.dataset.rippleOverflow === 'true' && !interactiveElement.querySelector('.button-ripple')) {
+      interactiveElement.style.overflow = ''
+      delete interactiveElement.dataset.rippleOverflow
+    }
+  }
+
   const createRipple = (event: PointerEvent) => {
     const target = event.target as HTMLElement | null
     if (!target) {
@@ -62,19 +76,14 @@ export function setupRippleEffects() {
 
     interactiveElement.appendChild(ripple)
 
+    const fallbackCleanup = window.setTimeout(() => {
+      cleanupRipple(interactiveElement, ripple)
+    }, 700)
+
     ripple.addEventListener('animationend', () => {
-      ripple.remove()
-
-      if (interactiveElement.dataset.ripplePositioned === 'true' && !interactiveElement.querySelector('.button-ripple')) {
-        interactiveElement.style.position = ''
-        delete interactiveElement.dataset.ripplePositioned
-      }
-
-      if (interactiveElement.dataset.rippleOverflow === 'true' && !interactiveElement.querySelector('.button-ripple')) {
-        interactiveElement.style.overflow = ''
-        delete interactiveElement.dataset.rippleOverflow
-      }
-    })
+      window.clearTimeout(fallbackCleanup)
+      cleanupRipple(interactiveElement, ripple)
+    }, { once: true })
   }
 
   document.addEventListener('pointerdown', createRipple)

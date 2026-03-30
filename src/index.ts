@@ -93,4 +93,5 @@ export type { CreditBarProps } from './CreditBar'
 
 // Utilities
 export { cn } from './utils'
+export { setupRippleEffects } from './ripple'
 
