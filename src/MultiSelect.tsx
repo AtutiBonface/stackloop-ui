@@ -153,18 +153,26 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
         )}
 
         <div ref={selectRef} className="relative">
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={disabled ? -1 : 0}
             onClick={() => !disabled && setIsOpen(!isOpen)}
-            disabled={disabled}
+            onKeyDown={(e) => {
+              if (disabled) return
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setIsOpen((prev) => !prev)
+              }
+            }}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-required={required}
+            aria-disabled={disabled}
             className={cn(
               'w-full px-4 py-3 rounded-md border transition-all duration-200',
               'bg-background text-left flex items-start justify-between gap-2 flex-wrap',
               'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
-              'disabled:bg-secondary disabled:cursor-not-allowed',
+              disabled && 'bg-secondary cursor-not-allowed',
               'touch-target text-base min-h-12',
               error && 'border-error focus:ring-error',
               !error && 'border-border',
@@ -212,7 +220,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                 isOpen && 'rotate-180'
               )}
             />
-          </button>
+          </div>
 
           {shouldAnimate ? (
             <AnimatePresence>
