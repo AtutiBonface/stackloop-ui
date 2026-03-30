@@ -165,6 +165,24 @@ Components with the `animate` prop:
 
 - `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
+## Ripple Behavior
+
+Ripple effects are initialized automatically when you import the library package. By default, ripple can apply to host app interactive elements too (`button`, `a`, `[role="button"]`, and elements with `data-ripple="true"`).
+
+- Disable ripple for a specific element:
+
+  ```html
+  <button data-ripple="false">No ripple</button>
+  ```
+
+- Force ripple on a custom/non-button element:
+
+  ```html
+  <div role="button" data-ripple="true">Ripple enabled</div>
+  ```
+
+You can also call `setupRippleEffects()` manually if you want explicit initialization control.
+
 **Checkbox**:
 - **Description:** Accessible checkbox with optional label and description.
 - **Props:**

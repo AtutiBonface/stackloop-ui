@@ -18,6 +18,10 @@ function isElementDisabled(element: HTMLElement): boolean {
   return false
 }
 
+function isRippleDisabled(element: HTMLElement): boolean {
+  return element.getAttribute('data-ripple') === 'false'
+}
+
 export function setupRippleEffects() {
   if (typeof window === 'undefined' || window.__uiRippleInitialized) {
     return
@@ -30,7 +34,7 @@ export function setupRippleEffects() {
     }
 
     const interactiveElement = target.closest<HTMLElement>(RIPPLE_SELECTOR)
-    if (!interactiveElement || isElementDisabled(interactiveElement)) {
+    if (!interactiveElement || isElementDisabled(interactiveElement) || isRippleDisabled(interactiveElement)) {
       return
     }
 
