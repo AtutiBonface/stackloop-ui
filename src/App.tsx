@@ -12,6 +12,7 @@ import {
   Dropdown,
   Select,
   MultiSelect,
+  Tooltip,
   CountrySelect,
   DatePicker,
   Card,
@@ -46,6 +47,7 @@ import {
   Lock,
   Globe,
   User,
+  Info,
 } from 'lucide-react'
 
 function AppContent() {
@@ -377,7 +379,9 @@ function AppContent() {
         <Card>
           <CardHeader>
             <CardTitle>Sliders</CardTitle>
+            
             <CardDescription>Range controls with animations</CardDescription>
+
           </CardHeader>
           <CardContent>
             <div className="space-y-8">
@@ -452,6 +456,41 @@ function AppContent() {
                 searchable
               />
               <CountrySelect/>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Tooltip Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Tooltip</CardTitle>
+            <Tooltip content="This is a tooltip for the sliders section" side="top" showArrow>
+              <CardDescription>
+                Hover or focus a trigger to show a portal-based tooltip with auto side placement
+              </CardDescription>
+
+            </Tooltip>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap items-center gap-4">
+              <Tooltip content="Default placement is bottom. It flips to another side when needed.">
+                <Button variant="outline" icon={<Info className="w-4 h-4" />}>
+                  Bottom (default)
+                </Button>
+              </Tooltip>
+
+              <Tooltip
+                side="left"
+                offset={14}
+                arrowSize={12}
+                content="Custom side, offset and arrow size."
+              >
+                <Button variant="ghost">Left preferred</Button>
+              </Tooltip>
+
+              <Tooltip side="right" content="Right preferred with auto fallback.">
+                <Button variant="secondary">Right preferred</Button>
+              </Tooltip>
             </div>
           </CardContent>
         </Card>

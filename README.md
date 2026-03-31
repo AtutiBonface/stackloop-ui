@@ -616,6 +616,32 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   <Dropdown options={[{value:'a',label:'A'}]} value={val} onChange={setVal} searchable />
   ```
 
+**Tooltip**:
+- **Description:** Portal-based tooltip for short hints and context text. It renders outside normal layout flow (so it does not affect element positioning), supports top/bottom/left/right placement, auto-flips when space is limited, and stays visible above overflow-clipped containers.
+- **Props:**
+  - **`children`**: `ReactNode` — required. Trigger element.
+  - **`content`**: `ReactNode` — required. Tooltip body.
+  - **`side`**: `'top' | 'bottom' | 'left' | 'right'` — preferred side (default: `'bottom'`).
+  - **`offset`**: `number` — gap between trigger and tooltip (default: `10`).
+  - **`delay`**: `number` — open delay in ms (default: `120`).
+  - **`showArrow`**: `boolean` — default: `true`.
+  - **`arrowSize`**: `number` — default: `10`.
+  - **`open`**, **`defaultOpen`**, **`onOpenChange`** — controlled/uncontrolled visibility.
+  - **`className`**, **`arrowClassName`**, **`disabled`** — optional styling/behavior controls.
+- **Usage:**
+
+  ```jsx
+  import { Tooltip, Button } from '@stackloop/ui'
+
+  <Tooltip content="More actions">
+    <Button variant="ghost">Hover me</Button>
+  </Tooltip>
+
+  <Tooltip content="Delete item" side="top" showArrow>
+    <Button variant="danger">Delete</Button>
+  </Tooltip>
+  ```
+
 **Select**:
 - **Description:** **Form-specific** select component with label, error, hint, and validation support. Specifically designed for use in forms with proper semantics, accessibility, and validation integration. Use this component when building forms. For general UI selections (navigation, filters, etc.), use the **Dropdown** component instead. Based on Dropdown but includes form-specific features like `required` prop, hint text, and better integration with form libraries (React Hook Form, Formik, etc.).
 - **Props:**

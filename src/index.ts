@@ -34,6 +34,9 @@ export type { SelectProps, SelectOption } from './Select'
 export { MultiSelect } from './MultiSelect'
 export type { MultiSelectProps, MultiSelectOption } from './MultiSelect'
 
+export { Tooltip } from './Tooltip'
+export type { TooltipProps } from './Tooltip'
+
 export { CountrySelect } from './CountrySelect'
 export type { CountrySelectProps } from './CountrySelect' 
 
