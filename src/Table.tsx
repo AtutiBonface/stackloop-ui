@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from './utils'
+import { Checkbox } from './Checkbox'
 
 export interface Column<T> {
   key: keyof T | string
@@ -20,6 +21,10 @@ export interface TableProps<T> {
   loading?: boolean
   onRowClick?: (item: T) => void
   keyExtractor: (item: T) => string
+  selectable?: boolean
+  selectedKeys?: string[]
+  defaultSelectedKeys?: string[]
+  onSelectionChange?: (selectedKeys: string[], selectedItems: T[]) => void
   className?: string
   animate?: boolean
 }
@@ -30,12 +35,31 @@ export function Table<T>({
   loading = false,
   onRowClick,
   keyExtractor,
+  selectable = false,
+  selectedKeys,
+  defaultSelectedKeys = [],
+  onSelectionChange,
   className,
   animate = true
 }: TableProps<T>) {
   const shouldAnimate = animate !== false
   const [sortKey, setSortKey] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc')
+  const [internalSelectedKeys, setInternalSelectedKeys] = useState<string[]>(defaultSelectedKeys)
+
+  const isSelectionControlled = selectedKeys !== undefined
+  const effectiveSelectedKeys = isSelectionControlled ? selectedKeys : internalSelectedKeys
+  const selectedKeySet = new Set(effectiveSelectedKeys)
+
+  const updateSelection = (nextSelectedKeys: string[]) => {
+    if (!isSelectionControlled) {
+      setInternalSelectedKeys(nextSelectedKeys)
+    }
+
+    const nextKeySet = new Set(nextSelectedKeys)
+    const nextSelectedItems = data.filter((item) => nextKeySet.has(keyExtractor(item)))
+    onSelectionChange?.(nextSelectedKeys, nextSelectedItems)
+  }
 
   const handleSort = (key: string) => {
     if (sortKey === key) {
@@ -56,6 +80,30 @@ export function Table<T>({
       })
     : data
 
+  const allSelected = data.length > 0 && data.every((item) => selectedKeySet.has(keyExtractor(item)))
+
+  const handleToggleAll = (checked: boolean) => {
+    if (checked) {
+      updateSelection(data.map((item) => keyExtractor(item)))
+      return
+    }
+
+    updateSelection([])
+  }
+
+  const handleToggleItem = (item: T, checked: boolean) => {
+    const itemKey = keyExtractor(item)
+
+    if (checked) {
+      if (!selectedKeySet.has(itemKey)) {
+        updateSelection([...effectiveSelectedKeys, itemKey])
+      }
+      return
+    }
+
+    updateSelection(effectiveSelectedKeys.filter((key) => key !== itemKey))
+  }
+
   if (loading) {
     return (
       <div className={cn('border border-border rounded-lg overflow-hidden', className)}>
@@ -63,6 +111,18 @@ export function Table<T>({
           <table className="w-full">
             <thead className="border-b border-border">
               <tr>
+                {selectable && (
+                  <th className="px-4 py-4 text-left w-14">
+                    <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={allSelected}
+                        onChange={handleToggleAll}
+                        className="w-5 h-5"
+                        aria-label="Select all rows"
+                      />
+                    </div>
+                  </th>
+                )}
                 {columns.map((_, idx) => (
                   <th key={idx} className="px-6 py-4 text-left">
                     <div className={cn('h-4 bg-border rounded w-24', shouldAnimate && 'animate-pulse')}></div>
@@ -73,6 +133,11 @@ export function Table<T>({
             <tbody>
               {[...Array(5)].map((_, idx) => (
                 <tr key={idx} className="border-b border-border">
+                  {selectable && (
+                    <td className="px-4 py-4 w-14">
+                      <div className={cn('h-4 bg-secondary rounded', shouldAnimate && 'animate-pulse')}></div>
+                    </td>
+                  )}
                   {columns.map((_, colIdx) => (
                     <td key={colIdx} className="px-6 py-4">
                       <div className={cn('h-4 bg-secondary rounded', shouldAnimate && 'animate-pulse')}></div>
@@ -98,6 +163,18 @@ export function Table<T>({
         <table className="w-full">
           <thead className="border-b border-border">
             <tr>
+              {selectable && (
+                <th className="px-4 py-4 text-left w-14">
+                  <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={allSelected}
+                      onChange={handleToggleAll}
+                      className="w-5 h-5"
+                      aria-label="Select all rows"
+                    />
+                  </div>
+                </th>
+              )}
               {columns.map((col, idx) => (
                 <th
                   key={idx}
@@ -141,6 +218,18 @@ export function Table<T>({
                   onRowClick && 'cursor-pointer hover:bg-secondary'
                 )}
               >
+                {selectable && (
+                  <td className="px-4 py-4 w-14" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center">
+                      <Checkbox
+                        checked={selectedKeySet.has(keyExtractor(item))}
+                        onChange={(checked) => handleToggleItem(item, checked)}
+                        className="w-5 h-5"
+                        aria-label={`Select row ${idx + 1}`}
+                      />
+                    </div>
+                  </td>
+                )}
                 {columns.map((col, colIdx) => (
                   <td 
                     key={colIdx} 

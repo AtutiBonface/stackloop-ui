@@ -393,6 +393,10 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   - **`loading`**: `boolean` — optional. Shows animated skeleton loading state when true.
   - **`onRowClick`**: `(item: T) => void` — optional. Callback fired when a row is clicked. Adds hover effect and pointer cursor to rows.
   - **`keyExtractor`**: `(item: T) => string` — required. Function to extract unique key from each data item for React reconciliation.
+  - **`selectable`**: `boolean` — optional (default: `false`). Adds a checkbox column with header-level select all and per-row selection.
+  - **`selectedKeys`**: `string[]` — optional. Controlled selected row keys.
+  - **`defaultSelectedKeys`**: `string[]` — optional. Initial selected row keys for uncontrolled mode.
+  - **`onSelectionChange`**: `(selectedKeys: string[], selectedItems: T[]) => void` — optional. Fires whenever selection changes.
   - **`className`**: `string` — optional. Additional CSS classes for the table wrapper.
 
 - **Column Interface:**
@@ -597,6 +601,25 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
     keyExtractor={(user) => String(user.id)}
     onRowClick={(user) => navigate(`/users/${user.id}`)}
     loading={isLoading}
+  />
+  ```
+
+- **Selection Example:**
+
+  ```jsx
+  const [selectedRows, setSelectedRows] = useState([])
+
+  <Table
+    data={users}
+    columns={columns}
+    keyExtractor={(user) => String(user.id)}
+    selectable
+    selectedKeys={selectedRows}
+    onSelectionChange={(keys, items) => {
+      setSelectedRows(keys)
+      console.log('Selected row IDs:', keys)
+      console.log('Selected row objects:', items)
+    }}
   />
   ```
 

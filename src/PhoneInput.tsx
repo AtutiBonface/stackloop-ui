@@ -43,7 +43,11 @@ const normalizeDialCode = (dialCode: string) => dialCode.replace(/\s/g, '')
 
 const findCountryByDialCodePrefix = (inputValue: string) => {
   const compactValue = inputValue.replace(/\s/g, '')
-  if (!compactValue.startsWith('+')) return undefined
+  const normalizedValue = compactValue.startsWith('00')
+    ? `+${compactValue.slice(2)}`
+    : compactValue
+
+  if (!normalizedValue.startsWith('+')) return undefined
 
   const sortedCountries = [...countries].sort(
     (left, right) => normalizeDialCode(right.dialCode).length - normalizeDialCode(left.dialCode).length
@@ -51,7 +55,7 @@ const findCountryByDialCodePrefix = (inputValue: string) => {
 
   return sortedCountries.find((item) => {
     const dialCode = normalizeDialCode(item.dialCode)
-    return compactValue.startsWith(dialCode)
+    return normalizedValue.startsWith(dialCode)
   })
 }
 
@@ -113,9 +117,31 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
 
   const selectedCountry = useMemo(() => {
     const inferredCountry = value ? findCountryByDialCodePrefix(value) : undefined
-    const iso2 = (country || internalCountry || defaultCountry).toUpperCase()
-    return countries.find((item) => item.iso2 === iso2) || inferredCountry || countries[0]
+
+    if (country) {
+      const controlledCountry = countries.find((item) => item.iso2 === country.toUpperCase())
+      return controlledCountry || inferredCountry || countries[0]
+    }
+
+    if (inferredCountry) {
+      return inferredCountry
+    }
+
+    const iso2 = (internalCountry || defaultCountry).toUpperCase()
+    return countries.find((item) => item.iso2 === iso2) || countries[0]
   }, [country, internalCountry, defaultCountry, value])
+
+  useEffect(() => {
+    if (country) return
+    if (!value) return
+
+    const inferredCountry = findCountryByDialCodePrefix(value)
+    if (!inferredCountry) return
+
+    if (inferredCountry.iso2 !== internalCountry) {
+      setInternalCountry(inferredCountry.iso2)
+    }
+  }, [country, value, internalCountry])
 
   useEffect(() => {
     if (!selectedCountry) return

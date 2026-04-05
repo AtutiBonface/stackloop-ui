@@ -146,6 +146,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             placeholder={placeholder}
             disabled={disabled}
             required={required}
+            
             {...props}
           />
           

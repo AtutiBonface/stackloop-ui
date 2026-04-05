@@ -69,6 +69,7 @@ function AppContent() {
   const [countryValue, setCountryValue] = useState('')
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
+  const [selectedTableRows, setSelectedTableRows] = useState<string[]>([])
 
   const dropdownOptions = [
     { label: 'Option 1', value: 'opt1' },
@@ -542,14 +543,18 @@ function AppContent() {
         <Card>
           <CardHeader>
             <CardTitle>Data Table</CardTitle>
-            <CardDescription>Sortable data display</CardDescription>
+            <CardDescription>
+              Sortable data display with optional row selection ({selectedTableRows.length} selected)
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <Table
               data={tableData}
               columns={tableColumns}
               keyExtractor={(item) => item.id.toString()}
-              
+              selectable
+              selectedKeys={selectedTableRows}
+              onSelectionChange={(keys) => setSelectedTableRows(keys)}
             />
           </CardContent>
         </Card>

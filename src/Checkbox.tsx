@@ -50,7 +50,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
             whileTap={shouldAnimate ? { scale: 0.95 } : undefined}
           >
             <Check className={cn(
-              'w-4 h-4 text-white transition-opacity duration-200',
+              'w-3 h-3 text-white transition-opacity duration-200',
               isChecked ? 'opacity-100' : 'opacity-0'
             )} />
           </motion.div>
