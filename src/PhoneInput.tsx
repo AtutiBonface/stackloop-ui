@@ -41,7 +41,7 @@ const getLocaleCountry = () => {
 
 const normalizeDialCode = (dialCode: string) => dialCode.replace(/\s/g, '')
 
-const findCountryByDialCodePrefix = (inputValue: string) => {
+const findCountryByDialCodePrefix = (inputValue: string, preferredIso2?: string) => {
   const compactValue = inputValue.replace(/\s/g, '')
   const normalizedValue = compactValue.startsWith('00')
     ? `+${compactValue.slice(2)}`
@@ -49,21 +49,29 @@ const findCountryByDialCodePrefix = (inputValue: string) => {
 
   if (!normalizedValue.startsWith('+')) return undefined
 
-  const sortedCountries = [...countries].sort(
-    (left, right) => normalizeDialCode(right.dialCode).length - normalizeDialCode(left.dialCode).length
-  )
-
-  return sortedCountries.find((item) => {
+  const matchingCountries = countries.filter((item) => {
     const dialCode = normalizeDialCode(item.dialCode)
     return normalizedValue.startsWith(dialCode)
   })
+
+  const preferredCountry = preferredIso2
+    ? matchingCountries.find((item) => item.iso2 === preferredIso2.toUpperCase())
+    : undefined
+
+  if (preferredCountry) {
+    return preferredCountry
+  }
+
+  return [...matchingCountries].sort(
+    (left, right) => normalizeDialCode(right.dialCode).length - normalizeDialCode(left.dialCode).length
+  )[0]
 }
 
 export const PhoneInput: React.FC<PhoneInputProps> = ({
   value,
   onChange,
   country,
-  defaultCountry = 'US',
+  defaultCountry = 'KE',
   autoDetect = true,
   onCountryChange,
   label,
@@ -116,7 +124,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   }, [])
 
   const selectedCountry = useMemo(() => {
-    const inferredCountry = value ? findCountryByDialCodePrefix(value) : undefined
+    const inferredCountry = value ? findCountryByDialCodePrefix(value, country || internalCountry) : undefined
 
     if (country) {
       const controlledCountry = countries.find((item) => item.iso2 === country.toUpperCase())
@@ -135,7 +143,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     if (country) return
     if (!value) return
 
-    const inferredCountry = findCountryByDialCodePrefix(value)
+    const inferredCountry = findCountryByDialCodePrefix(value, internalCountry)
     if (!inferredCountry) return
 
     if (inferredCountry.iso2 !== internalCountry) {
@@ -212,7 +220,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
     onCountryChange?.(item)
 
     const currentValue = (value ?? '').replace(/\s/g, '')
-    const detectedCountry = findCountryByDialCodePrefix(currentValue)
+    const detectedCountry = findCountryByDialCodePrefix(currentValue, country || internalCountry)
     const detectedDialCode = detectedCountry ? normalizeDialCode(detectedCountry.dialCode) : ''
 
     let nextValue = item.dialCode

@@ -67,6 +67,7 @@ function AppContent() {
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([])
   const [phoneValue, setPhoneValue] = useState('')
   const [countryValue, setCountryValue] = useState('')
+  const [quantityValue, setQuantityValue] = useState('12')
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTableRows, setSelectedTableRows] = useState<string[]>([])
@@ -205,6 +206,14 @@ function AppContent() {
                 type="country"
                 value={countryValue}
                 onChange={(nextValue) => setCountryValue(String(nextValue))}
+              />
+
+              <Input
+                label="Quantity"
+                type="number"
+                value={quantityValue}
+                onChange={(nextValue) => setQuantityValue(String(nextValue))}
+                hint="Spinner controls are hidden and wheel scrolling is disabled"
               />
 
               <Input

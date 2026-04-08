@@ -228,10 +228,10 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
 **Input**:
 - **Description:** Unified input API with smart type routing. Supports native text/password/email/etc plus `phone`, `country`, and `date` while keeping a consistent `value` + `onChange` pattern.
 - **Props:**
-  - **`type`**: Native HTML input types plus `'phone' | 'country'`.
+  - **`type`**: Native HTML input types plus `'phone' | 'tel' | 'country'`.
     - `type="date"` renders the library `DatePicker`.
     - `type="country"` renders `CountrySelect`.
-    - `type="phone"` renders `PhoneInput`.
+    - `type="phone"` and `type="tel"` render `PhoneInput`.
   - **`value`**: `string | number | readonly string[] | Date`.
   - **`onChange`**: `(value: string | Date) => void` — value-based callback used consistently across smart/native modes.
   - **`onValueChange`**: `(value: string | Date) => void` — optional backward-compatible alias.
@@ -254,10 +254,14 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   import { Input } from '@stackloop/ui'
 
   <Input label="Email" placeholder="you@example.com" />
+  <Input label="Phone" type="phone" value={phone} onChange={setPhone} />
+  <Input label="Telephone" type="tel" value={phone} onChange={setPhone} />
   
   // Password with automatic toggle
   <Input label="Password" type="password" placeholder="Enter password" />
 
+
+- **Compatibility note:** Regular HTML input types still render a native `<input />`, so existing usage such as `type="email"`, `type="number"`, and `type="text"` remains unchanged.
   // Phone (single combined value)
   <Input
     label="Phone"

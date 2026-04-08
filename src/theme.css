@@ -63,6 +63,17 @@ button:disabled {
   cursor: not-allowed;  
 }
 
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 /* Touch-friendly utilities */
 .touch-target {
   min-height: 2.75rem;
