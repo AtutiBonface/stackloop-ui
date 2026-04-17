@@ -72,7 +72,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
   onChange,
   country,
   defaultCountry = 'KE',
-  autoDetect = true,
+  autoDetect = false,
   onCountryChange,
   label,
   error,

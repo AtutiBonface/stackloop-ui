@@ -47,7 +47,6 @@ If using Tailwind CSS v4 with `@theme`, the library's theme variables are alread
 @theme {
   /* Override library colors */
   --color-primary: #your-color;
-  --color-primary-dark: #your-darker-color;
   --color-border: #your-border-color;
   --color-border-dark: #your-darker-border;
   --color-secondary: #your-secondary-bg;
@@ -88,7 +87,6 @@ The library uses a simplified color system with semantic variables:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `--color-primary` | `#525252` | Primary brand color |
-| `--color-primary-dark` | `#404040` | Darker primary variant |
 | `--color-border` | `#e5e5e5` | Default border color |
 | `--color-border-dark` | `#d4d4d4` | Darker border variant |
 | `--color-secondary` | `#fafafa` | Secondary background |
@@ -110,7 +108,6 @@ Create a custom theme file or extend the existing one:
 @theme {
   /* Brand colors */
   --color-primary: #3b82f6;
-  --color-primary-dark: #2563eb;
   
   /* Borders */
   --color-border: #e2e8f0;

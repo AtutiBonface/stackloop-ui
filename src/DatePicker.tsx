@@ -149,6 +149,11 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     for (let day = 1; day <= daysInMonth; day++) {
       days.push(new Date(year, month, day))
     }
+
+    // Fill trailing cells so the grid always renders full weeks.
+    while (days.length % 7 !== 0) {
+      days.push(null)
+    }
     
     return days
   }
@@ -275,12 +280,12 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         className={cn(
           'w-full px-4 py-3 rounded-md border transition-all duration-200',
           'bg-background text-left flex items-center justify-between gap-2',
-          'focus:outline-none focus:ring-2 focus:ring-primary',
+          'focus:outline-none focus:ring-1 focus:ring-primary',
           'disabled:bg-secondary disabled:cursor-not-allowed',
           'touch-target',
           error && 'border-error',
           !error && 'border-border',
-          isOpen && 'ring-2 ring-primary'
+          isOpen && 'ring-1 ring-primary'
         )}
       >
         <span className={cn('truncate', !value && 'text-foreground/50')}>
@@ -298,7 +303,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 animate={panelAnimation.animate}
                 exit={panelAnimation.exit}
                 transition={{ duration: 0.2 }}
-                className="z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3"
+                className="z-50 w-72 bg-background rounded-md border border-border shadow-lg p-2.5"
               >
             {/* Month Navigation */}
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 border-border mb-3">
@@ -307,7 +312,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onClick={handlePreviousMonth}
                 className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-primary" />
+                <ChevronLeft className="w-4 h-4 text-primary" />
               </button>
               
               <div className="flex items-center justify-center gap-1 min-w-0">
@@ -316,13 +321,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={monthMenuTriggerRef}
                     type="button"
                     onClick={toggleMonthMenu}
-                    className="h-8 min-w-24 max-w-28 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
+                    className="h-7 w-20 shrink-0 rounded-md border border-border bg-background px-2 text-[10px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select month"
                     aria-haspopup="listbox"
                     aria-expanded={isMonthMenuOpen}
                   >
-                    <span className="truncate">{monthNames[currentMonthIndex]}</span>
-                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
+                    <span className="min-w-0 flex-1 truncate text-left">{monthNames[currentMonthIndex]}</span>
+                    <ChevronDown className={cn('w-3 h-3 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
                   </button>
 
                   {isMonthMenuOpen && (
@@ -346,7 +351,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                             onClick={() => !isDisabled && handleMonthChange(monthIndex)}
                             disabled={isDisabled}
                             className={cn(
-                              'w-full px-3 py-2 text-sm text-left transition-colors',
+                              'w-full px-3 py-2 text-xs text-left transition-colors',
                               !isDisabled && 'hover:bg-secondary',
                               monthIndex === currentMonthIndex && 'bg-border text-foreground font-medium',
                               isDisabled && 'text-border-dark cursor-not-allowed'
@@ -365,13 +370,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={yearMenuTriggerRef}
                     type="button"
                     onClick={toggleYearMenu}
-                    className="h-8 min-w-20 max-w-24 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
+                    className="h-7 w-14 shrink-0 rounded-md border border-border bg-background px-2 text-[10px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select year"
                     aria-haspopup="listbox"
                     aria-expanded={isYearMenuOpen}
                   >
-                    <span>{currentYear}</span>
-                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
+                    <span className="min-w-0 flex-1 truncate text-left">{currentYear}</span>
+                    <ChevronDown className={cn('w-3 h-3 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
                   </button>
 
                   {isYearMenuOpen && (
@@ -392,7 +397,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                           aria-selected={yearOption === currentYear}
                           onClick={() => handleYearChange(yearOption)}
                           className={cn(
-                            'w-full px-3 py-2 text-sm text-left hover:bg-secondary transition-colors',
+                            'w-full px-3 py-2 text-xs text-left hover:bg-secondary transition-colors',
                             yearOption === currentYear && 'bg-border text-foreground font-medium'
                           )}
                         >
@@ -409,16 +414,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onClick={handleNextMonth}
                 className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronRight className="w-5 h-5 text-primary" />
+                <ChevronRight className="w-4 h-4 text-primary" />
               </button>
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-1 pb-1 border-b border-border">
+            <div className="grid grid-cols-7 gap-0 mb-1">
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-[11px] font-medium text-foreground/70 py-1"
+                  className="text-center text-[10px] font-medium text-foreground/70 py-1"
                 >
                   {day}
                 </div>
@@ -426,10 +431,22 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0 border border-border rounded-md overflow-hidden">
               {days.map((day, index) => {
+                const isLastColumn = (index + 1) % 7 === 0
+                const isLastRow = Math.floor(index / 7) === Math.floor((days.length - 1) / 7)
+
                 if (!day) {
-                  return <div key={`empty-${index}`} className="aspect-square" />
+                  return (
+                    <div
+                      key={`empty-${index}`}
+                      className={cn(
+                        'h-8 bg-background',
+                        !isLastColumn && 'border-r border-border',
+                        !isLastRow && 'border-b border-border'
+                      )}
+                    />
+                  )
                 }
 
                 const isSelected = isSameDay(day, value || null)
@@ -444,11 +461,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => !isDisabled && handleDateSelect(day)}
                     disabled={isDisabled}
                     className={cn(
-                      'aspect-square cursor-pointer rounded-lg flex items-center justify-center',
-                      'text-[11px] font-medium transition-all duration-200',
+                      'h-8 w-full cursor-pointer rounded-none flex items-center justify-center',
+                      'text-[10px] font-medium transition-all duration-200',
+                      !isLastColumn && 'border-r border-border',
+                      !isLastRow && 'border-b border-border',
                       'hover:bg-secondary',
-                      isSelected && 'bg-primary text-white hover:bg-primary-dark',
-                      isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
+                      isSelected && 'bg-primary text-white hover:bg-primary/80',
+                      isCurrentDay && !isSelected && 'border border-primary text-primary',
                       isDisabled && 'text-border-dark cursor-not-allowed hover:bg-transparent',
                       !isSelected && !isCurrentDay && !isDisabled && 'text-foreground'
                     )}
@@ -460,7 +479,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-1.5 pt-1.5 border-t border-border">
+            <div className="mt-1.5">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}
@@ -476,7 +495,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       ) : (
         isOpen && (
           <FloatingPortal open={isOpen} anchorRef={pickerTriggerRef} placement={pickerPosition} matchWidth={false}>
-            <div className="z-50 w-80 bg-background rounded-md border border-border shadow-lg p-3">
+            <div className="z-50 w-72 bg-background rounded-md border border-border shadow-lg p-2.5">
             {/* Month Navigation */}
             <div className="grid grid-cols-[auto_1fr_auto] items-center gap-1.5 mb-3">
               <button
@@ -484,7 +503,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onClick={handlePreviousMonth}
                 className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronLeft className="w-5 h-5 text-primary" />
+                <ChevronLeft className="w-4 h-4 text-primary" />
               </button>
               
               <div className="flex items-center justify-center gap-1 min-w-0">
@@ -493,13 +512,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={monthMenuTriggerRef}
                     type="button"
                     onClick={toggleMonthMenu}
-                    className="h-8 min-w-24 max-w-28 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
+                    className="h-7 w-20 shrink-0 rounded-md border border-border bg-background px-2 text-[10px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select month"
                     aria-haspopup="listbox"
                     aria-expanded={isMonthMenuOpen}
                   >
-                    <span className="truncate">{monthNames[currentMonthIndex]}</span>
-                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
+                    <span className="min-w-0 flex-1 truncate text-left">{monthNames[currentMonthIndex]}</span>
+                    <ChevronDown className={cn('w-3 h-3 text-primary transition-transform', isMonthMenuOpen && 'rotate-180')} />
                   </button>
 
                   {isMonthMenuOpen && (
@@ -523,7 +542,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                             onClick={() => !isDisabled && handleMonthChange(monthIndex)}
                             disabled={isDisabled}
                             className={cn(
-                              'w-full px-3 py-2 text-sm text-left transition-colors',
+                              'w-full px-3 py-2 text-xs text-left transition-colors',
                               !isDisabled && 'hover:bg-secondary',
                               monthIndex === currentMonthIndex && 'bg-border text-foreground font-medium',
                               isDisabled && 'text-border-dark cursor-not-allowed'
@@ -542,13 +561,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     ref={yearMenuTriggerRef}
                     type="button"
                     onClick={toggleYearMenu}
-                    className="h-8 min-w-20 max-w-24 rounded-md border border-border bg-background px-2 text-xs font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-primary flex items-center justify-between gap-1"
+                    className="h-7 w-14 shrink-0 rounded-md border border-border bg-background px-2 text-[10px] font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-primary flex items-center justify-between gap-1"
                     aria-label="Select year"
                     aria-haspopup="listbox"
                     aria-expanded={isYearMenuOpen}
                   >
-                    <span>{currentYear}</span>
-                    <ChevronDown className={cn('w-4 h-4 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
+                    <span className="min-w-0 flex-1 truncate text-left">{currentYear}</span>
+                    <ChevronDown className={cn('w-3 h-3 text-primary transition-transform', isYearMenuOpen && 'rotate-180')} />
                   </button>
 
                   {isYearMenuOpen && (
@@ -569,7 +588,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                           aria-selected={yearOption === currentYear}
                           onClick={() => handleYearChange(yearOption)}
                           className={cn(
-                            'w-full px-3 py-2 text-sm text-left hover:bg-secondary transition-colors',
+                            'w-full px-3 py-2 text-xs text-left hover:bg-secondary transition-colors',
                             yearOption === currentYear && 'bg-border text-foreground font-medium'
                           )}
                         >
@@ -586,16 +605,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 onClick={handleNextMonth}
                 className="h-8 w-8 inline-flex items-center justify-center hover:bg-secondary rounded-lg transition-colors"
               >
-                <ChevronRight className="w-5 h-5 text-primary" />
+                <ChevronRight className="w-4 h-4 text-primary" />
               </button>
             </div>
 
             {/* Day Names */}
-            <div className="grid grid-cols-7 gap-1 mb-1 pb-1 border-b border-border">
+            <div className="grid grid-cols-7 gap-0 mb-1">
               {dayNames.map(day => (
                 <div
                   key={day}
-                  className="text-center text-[11px] font-medium text-primary/70 py-1"
+                  className="text-center text-[10px] font-medium text-primary/70 py-1"
                 >
                   {day}
                 </div>
@@ -603,10 +622,22 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Calendar Days */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-0 border border-border rounded-md overflow-hidden">
               {days.map((day, index) => {
+                const isLastColumn = (index + 1) % 7 === 0
+                const isLastRow = Math.floor(index / 7) === Math.floor((days.length - 1) / 7)
+
                 if (!day) {
-                  return <div key={`empty-${index}`} className="aspect-square" />
+                  return (
+                    <div
+                      key={`empty-${index}`}
+                      className={cn(
+                        'h-8 bg-background',
+                        !isLastColumn && 'border-r border-border',
+                        !isLastRow && 'border-b border-border'
+                      )}
+                    />
+                  )
                 }
 
                 const isSelected = isSameDay(day, value || null)
@@ -620,11 +651,13 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => !isDisabled && handleDateSelect(day)}
                     disabled={isDisabled}
                     className={cn(
-                      'aspect-square rounded-lg flex items-center justify-center',
-                      'text-[11px] font-medium transition-all duration-200',
+                      'h-8 w-full rounded-none flex items-center justify-center',
+                      'text-[10px] font-medium transition-all duration-200',
+                      !isLastColumn && 'border-r border-border',
+                      !isLastRow && 'border-b border-border',
                       'hover:bg-secondary',
-                      isSelected && 'bg-primary text-white hover:bg-primary-dark',
-                      isCurrentDay && !isSelected && 'border-2 border-primary text-primary',
+                      isSelected && 'bg-primary text-white hover:bg-primary/80',
+                      isCurrentDay && !isSelected && 'border border-primary text-primary',
                       isDisabled && 'text-border-dark cursor-not-allowed hover:bg-transparent',
                       !isSelected && !isCurrentDay && !isDisabled && 'text-foreground'
                     )}
@@ -636,7 +669,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Today Button */}
-            <div className="mt-1.5 pt-1.5 border-t border-border">
+            <div className="mt-1.5 pt-1.5">
               <button
                 type="button"
                 onClick={() => handleDateSelect(new Date())}

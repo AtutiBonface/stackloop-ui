@@ -132,7 +132,7 @@ export const AudioRecorder: React.FC<AudioRecorderProps> = ({
                   'disabled:opacity-50 disabled:cursor-not-allowed',
                   isRecording
                     ? cn('bg-warning text-white', shouldAnimate && 'animate-pulse')
-                    : 'bg-primary text-white hover:bg-primary-dark'
+                    : 'bg-primary text-white hover:bg-primary/80'
                 )}
               >
                 {isRecording ? (

@@ -21,7 +21,7 @@ export const Button = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-md transition-all duration-200 touch-target disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] flex-shrink-0 whitespace-nowrap'
     
     const variants = {
-      primary: 'bg-primary text-white hover:bg-primary-dark active:bg-primary-dark/90 shadow-sm',
+      primary: 'bg-primary text-white hover:bg-primary/80 active:bg-primary/80 shadow-sm',
       secondary: 'bg-secondary text-foreground hover:bg-border active:bg-border-dark',
       outline: 'bg-transparent text-primary border-1 border-primary hover:bg-secondary active:bg-border',
       ghost: 'bg-transparent text-primary hover:bg-secondary active:bg-border',

@@ -47,7 +47,7 @@ export const FloatingActionButton: React.FC<FloatingActionButtonProps> = ({
   }
 
   const variants = {
-    primary: 'bg-primary text-white hover:bg-primary-dark shadow-lg',
+    primary: 'bg-primary text-white hover:bg-primary/80 shadow-lg',
     secondary: 'bg-background text-primary border-2 border-primary hover:bg-secondary shadow-md'
   }
 

@@ -168,7 +168,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
             <motion.button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute text-primary hover:text-primary-dark transition-colors"
+              className="absolute text-primary hover:text-primary/80 transition-colors"
               style={{ 
                 right: '14px', 
                 top: '50%',
