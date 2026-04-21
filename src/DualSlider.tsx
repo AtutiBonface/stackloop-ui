@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { cn } from './utils'
 
@@ -34,6 +34,8 @@ export const DualSlider: React.FC<DualSliderProps> = ({
   animate = true
 }) => {
   const shouldAnimate = animate !== false
+  const [isDraggingFirst, setIsDraggingFirst] = useState(false)
+  const [isDraggingSecond, setIsDraggingSecond] = useState(false)
   const total = value1 + value2
   const percentage1 = total > 0 ? (value1 / total) * 100 : 50
   const percentage2 = total > 0 ? (value2 / total) * 100 : 50
@@ -53,10 +55,10 @@ export const DualSlider: React.FC<DualSliderProps> = ({
           </span>
         </div>
         
-        <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-border rounded-full overflow-hidden">
+        <div className="relative h-12 flex items-center">
+          <div className="relative w-full h-2 bg-border rounded-none overflow-hidden">
             <motion.div
-              className="h-full bg-primary"
+              className="absolute left-0 top-0 h-full bg-primary rounded-none"
               initial={false}
               animate={shouldAnimate ? { width: `${percentage1}%` } : undefined}
               transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
@@ -70,8 +72,24 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             step={step}
             value={value1}
             onChange={(e) => handleSliderChange(Number(e.target.value))}
+            onMouseDown={() => setIsDraggingFirst(true)}
+            onMouseUp={() => setIsDraggingFirst(false)}
+            onTouchStart={() => setIsDraggingFirst(true)}
+            onTouchEnd={() => setIsDraggingFirst(false)}
             disabled={disabled}
-            className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            style={{ zIndex: 10 }}
+          />
+
+          <motion.div
+            className={cn(
+              'absolute w-5 h-5 bg-background border-2 border-primary rounded-full shadow-md',
+              'pointer-events-none',
+              disabled && 'opacity-50'
+            )}
+            style={{ left: `calc(${percentage1}% - 10px)` }}
+            animate={shouldAnimate ? { scale: isDraggingFirst ? 1.15 : 1 } : undefined}
+            transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 20 } : { duration: 0 }}
           />
         </div>
       </div>
@@ -84,10 +102,10 @@ export const DualSlider: React.FC<DualSliderProps> = ({
           </span>
         </div>
         
-        <div className="relative h-10 flex items-center">
-          <div className="w-full h-2 bg-border rounded-full overflow-hidden">
+        <div className="relative h-12 flex items-center">
+          <div className="relative w-full h-2 bg-border rounded-none overflow-hidden">
             <motion.div
-              className="h-full bg-success"
+              className="absolute left-0 top-0 h-full bg-success rounded-none"
               initial={false}
               animate={shouldAnimate ? { width: `${percentage2}%` } : undefined}
               transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
@@ -101,8 +119,24 @@ export const DualSlider: React.FC<DualSliderProps> = ({
             step={step}
             value={value2}
             onChange={(e) => handleSliderChange(max - Number(e.target.value))}
+            onMouseDown={() => setIsDraggingSecond(true)}
+            onMouseUp={() => setIsDraggingSecond(false)}
+            onTouchStart={() => setIsDraggingSecond(true)}
+            onTouchEnd={() => setIsDraggingSecond(false)}
             disabled={disabled}
-            className="absolute inset-0 w-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed"
+            style={{ zIndex: 10 }}
+          />
+
+          <motion.div
+            className={cn(
+              'absolute w-5 h-5 bg-background border-2 border-success rounded-full shadow-md',
+              'pointer-events-none',
+              disabled && 'opacity-50'
+            )}
+            style={{ left: `calc(${percentage2}% - 10px)` }}
+            animate={shouldAnimate ? { scale: isDraggingSecond ? 1.15 : 1 } : undefined}
+            transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 20 } : { duration: 0 }}
           />
         </div>
       </div>
