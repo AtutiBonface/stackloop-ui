@@ -34,7 +34,8 @@ import {
   Spinner,
   ToastProvider,
   useToast,
-  CreditBar
+  CreditBar,
+  Accordion
 } from './index'
 
 import {
@@ -636,6 +637,63 @@ function AppContent() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Accordion Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Accordion</CardTitle>
+            <CardDescription>Smooth expand/collapse animations with accordion controls</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium text-foreground mb-3">Single Open Accordion</h3>
+              <Accordion
+                items={[
+                  {
+                    id: 'item1',
+                    title: 'What is an accordion?',
+                    content: 'An accordion is a UI component that expands and collapses content sections. Only one section can be open at a time in this default mode.'
+                  },
+                  {
+                    id: 'item2',
+                    title: 'How do animations work?',
+                    content: 'The accordion uses Framer Motion for smooth height and opacity animations during expand and collapse transitions, providing a polished user experience.'
+                  },
+                  {
+                    id: 'item3',
+                    title: 'Can I customize the styling?',
+                    content: 'Yes! The accordion component accepts className props and uses Tailwind CSS, making it easy to customize colors, spacing, and other visual properties.'
+                  }
+                ]}
+                defaultOpen={['item1']}
+              />
+            </div>
+            <div className="space-y-4 mt-8">
+              <h3 className="text-sm font-medium text-foreground mb-3">Multiple Open Accordion</h3>
+              <Accordion
+                items={[
+                  {
+                    id: 'multi1',
+                    title: 'Feature One',
+                    content: 'This accordion allows multiple items to be open simultaneously. Click different items to expand or collapse them independently.'
+                  },
+                  {
+                    id: 'multi2',
+                    title: 'Feature Two',
+                    content: 'Multiple sections can be expanded at the same time, providing flexibility for users who want to compare or review multiple sections.'
+                  },
+                  {
+                    id: 'multi3',
+                    title: 'Feature Three',
+                    content: 'The onChange callback notifies you whenever the open state changes, allowing you to track and respond to user interactions.'
+                  }
+                ]}
+                allowMultiple={true}
+                defaultOpen={['multi1', 'multi2']}
+              />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Floating Action Button */}

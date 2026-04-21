@@ -44,6 +44,9 @@ export { DatePicker } from './DatePicker'
 export type { DatePickerProps } from './DatePicker'
 
 // Layout Components
+export { Accordion } from './Accordion'
+export type { AccordionProps, AccordionItemProps } from './Accordion'
+
 export { Card, CardHeader, CardTitle, CardDescription, CardContent } from './Card'
 export type { CardProps } from './Card'
 

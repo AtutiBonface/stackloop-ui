@@ -160,7 +160,7 @@ import { Button, Modal } from '@stackloop/ui'
 
 Components with the `animate` prop:
 
-- `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `MultiSelect`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+- `Accordion`, `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `MultiSelect`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
 ## Ripple Behavior
 
@@ -1240,6 +1240,64 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   import { ThumbnailGrid } from '@stackloop/ui'
 
   <ThumbnailGrid items={items} onRemove={(id)=>{}} />
+  ```
+
+**Accordion**:
+- **Description:** Expandable/collapsible content sections with smooth animations. Supports single or multiple open items with customizable styling.
+- **Props:**
+  - **`items`**: `{ id: string; title: string|ReactNode; content: string|ReactNode; disabled?: boolean; icon?: ReactNode }[]` — required.
+  - **`variant`**: `'default'|'bordered'` — default: `'default'`. Controls border styling (top border only for default, full border for bordered).
+  - **`allowMultiple`**: `boolean` — default: `false`. When `false`, only one item can be open at a time. When `true`, multiple items can be open.
+  - **`defaultOpen`**: `string[]` — default: `[]`. Array of item IDs that should be open initially.
+  - **`onChange`**: `(openItems: string[]) => void` — optional. Called whenever the open state changes.
+  - **`className`**: `string` — optional.
+- **Features:**
+  - Smooth height and opacity animations on expand/collapse using Framer Motion.
+  - No rounded borders, only border-top styling for clean appearance.
+  - Optional icons support for each accordion item.
+  - Disabled state support for individual items.
+  - Hover effects and smooth transitions.
+- **Usage:**
+
+  ```jsx
+  import { Accordion } from '@stackloop/ui'
+
+  // Single open mode (default)
+  <Accordion
+    items={[
+      {
+        id: 'item1',
+        title: 'Question 1',
+        content: 'Answer 1'
+      },
+      {
+        id: 'item2',
+        title: 'Question 2',
+        content: 'Answer 2'
+      }
+    ]}
+    defaultOpen={['item1']}
+  />
+
+  // Multiple open mode
+  <Accordion
+    items={[
+      {
+        id: 'section1',
+        title: 'Section 1',
+        content: 'Content 1',
+        icon: <Icon />
+      },
+      {
+        id: 'section2',
+        title: 'Section 2',
+        content: 'Content 2'
+      }
+    ]}
+    allowMultiple={true}
+    defaultOpen={['section1']}
+    onChange={(openItems) => console.log(openItems)}
+  />
   ```
 
 **Card**:
