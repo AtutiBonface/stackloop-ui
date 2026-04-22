@@ -5,7 +5,6 @@ import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from './utils'
 import { Checkbox } from './Checkbox'
-import { div } from 'framer-motion/client'
 
 export interface Column<T> {
   key: keyof T | string
