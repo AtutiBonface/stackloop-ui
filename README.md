@@ -73,7 +73,7 @@ import '@stackloop/ui/theme.css'
 Import components from the package root:
 
 ```tsx
-import { Button, Modal, Input } from '@stackloop/ui'
+import { Button, ButtonGroup, Modal, Input } from '@stackloop/ui'
 ```
 
 All components are **client-side** components with `'use client'` directive, making them compatible with Next.js App Router.
@@ -160,7 +160,7 @@ import { Button, Modal } from '@stackloop/ui'
 
 Components with the `animate` prop:
 
-- `Accordion`, `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `MultiSelect`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
+- `Accordion`, `AudioRecorder`, `Badge`, `BottomSheet`, `Button`, `ButtonGroup`, `Card`, `CameraCapture`, `Checkbox`, `CountrySelect`, `DatePicker`, `Drawer`, `Dropdown`, `DualSlider`, `FileUploader`, `FloatingActionButton`, `Input`, `Modal`, `MultiSelect`, `Pagination`, `PhoneInput`, `RadioPills`, `Select`, `Slider`, `Spinner`, `StepProgress`, `Table`, `Textarea`, `ThumbnailGrid`, `Toggle`, `ToastProvider`
 
 ## Ripple Behavior
 
@@ -220,6 +220,34 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   import { Button } from '@stackloop/ui'
 
   <Button variant="outline" size="lg" onClick={() => {}}>Save</Button>
+  ```
+
+**ButtonGroup**:
+- **Description:** Segmented button group with a rounded outer container and separate buttons divided by borders.
+- **Props:**
+  - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required.
+  - **`value`**: `string` — optional selected value.
+  - **`onChange`**: `(value: string) => void` — optional change callback.
+  - **`size`**: `'sm' | 'md' | 'lg'` — default: `'md'`.
+  - **`disabled`**: `boolean` — default: `false`.
+  - **`className`**: `string` — optional.
+  - **`animate`**: `boolean` — default: `true`.
+- **Usage:**
+
+  ```jsx
+  import { ButtonGroup } from '@stackloop/ui'
+
+  const options = [
+    { label: 'Day', value: 'day' },
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' }
+  ]
+
+  <ButtonGroup
+    options={options}
+    value={selectedRange}
+    onChange={setSelectedRange}
+  />
   ```
 
 **Input**:

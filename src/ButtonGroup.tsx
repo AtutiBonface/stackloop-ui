@@ -43,7 +43,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
       role="group"
       aria-disabled={disabled}
       className={cn(
-        'inline-flex overflow-hidden rounded-md border border-border bg-background shadow-sm',
+        'inline-flex overflow-hidden rounded-md border border-border bg-background',
         disabled && 'opacity-60',
         className
       )}
