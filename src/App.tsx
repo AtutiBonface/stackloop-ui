@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import {
   Button,
+  ButtonGroup,
   Input,
   Textarea,
   Checkbox,
@@ -72,6 +73,7 @@ function AppContent() {
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTableRows, setSelectedTableRows] = useState<string[]>([])
+  const [groupedButtonValue, setGroupedButtonValue] = useState('day')
 
   const dropdownOptions = [
     { label: 'Option 1', value: 'opt1' },
@@ -100,15 +102,26 @@ function AppContent() {
     { label: 'Option 3', value: 'option3' }
   ]
 
+  const groupedButtonOptions = [
+    { label: 'Day', value: 'day' },
+    { label: 'Week', value: 'week' },
+    { label: 'Month', value: 'month' }
+  ]
+
   const tableData = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin' },
+    { id: 1, name: 'John Doe', email: 'john@example.com', role: 'Admin'  },
     { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'User' },
     { id: 3, name: 'Bob Johnson', email: 'bob@example.com', role: 'User' }
   ]
 
   const tableColumns = [
     { key: 'name', header: 'Name', sortable: true },
-    { key: 'email', header: 'Email', sortable: true },
+    { key: 'email', header: 'Email', render: (row: any) => (
+        <div className="text-sm">
+          <p>{row.email} properties</p>
+          <p className="text-muted">{row.email} units</p>
+        </div>
+      ), sortable: true },
     { key: 'role', header: 'Role', sortable: false }
   ]
 
@@ -160,6 +173,14 @@ function AppContent() {
               <Button variant="primary" loading>
                 Loading...
               </Button>
+            </div>
+            <div className="mt-5">
+              <p className="text-sm text-foreground/70 mb-2">Grouped Buttons (rounded outer border + inner dividers)</p>
+              <ButtonGroup
+                options={groupedButtonOptions}
+                value={groupedButtonValue}
+                onChange={setGroupedButtonValue}
+              />
             </div>
           </CardContent>
         </Card>
@@ -576,11 +597,12 @@ function AppContent() {
             <CardDescription>Page navigation controls</CardDescription>
           </CardHeader>
           <CardContent>
+
             <Pagination
               currentPage={currentPage}
               totalPages={10}
               onPageChange={setCurrentPage}
-              totalItems={100}
+              totalItems={20}
               itemsPerPage={10}
             />
           </CardContent>

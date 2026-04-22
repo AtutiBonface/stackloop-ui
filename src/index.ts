@@ -4,6 +4,9 @@
 export { Button } from './Button'
 export type { ButtonProps } from './Button'
 
+export { ButtonGroup } from './ButtonGroup'
+export type { ButtonGroupProps, ButtonGroupOption } from './ButtonGroup'
+
 export { Input } from './Input'
 export type { InputProps } from './Input'
 

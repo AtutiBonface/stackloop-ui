@@ -56,9 +56,9 @@ export const DualSlider: React.FC<DualSliderProps> = ({
         </div>
         
         <div className="relative h-12 flex items-center">
-          <div className="relative w-full h-2 bg-border rounded-none overflow-hidden">
+          <div className="relative w-full h-2 bg-border rounded-full overflow-hidden">
             <motion.div
-              className="absolute left-0 top-0 h-full bg-primary rounded-none"
+              className="absolute left-0 top-0 h-full bg-primary rounded-full"
               initial={false}
               animate={shouldAnimate ? { width: `${percentage1}%` } : undefined}
               transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}
@@ -103,9 +103,9 @@ export const DualSlider: React.FC<DualSliderProps> = ({
         </div>
         
         <div className="relative h-12 flex items-center">
-          <div className="relative w-full h-2 bg-border rounded-none overflow-hidden">
+          <div className="relative w-full h-2 bg-border rounded-full overflow-hidden">
             <motion.div
-              className="absolute left-0 top-0 h-full bg-success rounded-none"
+              className="absolute left-0 top-0 h-full bg-success rounded-full"
               initial={false}
               animate={shouldAnimate ? { width: `${percentage2}%` } : undefined}
               transition={shouldAnimate ? { type: 'spring', stiffness: 300, damping: 30 } : { duration: 0 }}

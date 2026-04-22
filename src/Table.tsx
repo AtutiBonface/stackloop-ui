@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { ArrowUp, ArrowDown, ChevronsUpDown } from 'lucide-react'
 import { cn } from './utils'
 import { Checkbox } from './Checkbox'
+import { div } from 'framer-motion/client'
 
 export interface Column<T> {
   key: keyof T | string
@@ -245,7 +246,9 @@ export function Table<T>({
                         {String((item as any)[col.key] ?? '')}
                       </div>
                     ) : col.render ? (
-                      col.render(item)
+                      <div className="truncate">
+                        {col.render(item)}
+                      </div>
                     ) : (
                       String((item as any)[col.key] ?? '')
                     )}

@@ -88,7 +88,7 @@ export const Pagination: React.FC<PaginationProps> = ({
             aria-label="Go to first page"
           />
         )}
-        <motion.div layout className="flex items-center justify-center gap-1 min-w-56">
+        <motion.div layout className="flex items-center justify-center gap-1">
           <AnimatePresence initial={false} mode="popLayout">
             {pageItems.map((item) => {
               const isActive = item === currentPage
