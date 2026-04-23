@@ -1,24 +1,26 @@
-
 @import "tailwindcss";
-
 @theme {
-  /* Primary Colors */
-  --color-primary: #2e7d32;
-  
-  /* Border Colors */
-  --color-border: #e5e5e5;
-  --color-border-dark: #d4d4d4;
-  
-  /* Background & Foreground */
-  --color-secondary: #fafafa;
-  --color-background: #ffffff;
-  --color-foreground: #171717;
+  /* Primary — Violet accent */
+  --color-primary: #7c3aed;
+  --color-primary-hover: #6d28d9;
+  --color-primary-subtle: #1e1030;
+  --color-primary-muted: #4c1d95;
+  --color-primary-foreground: #ffffff;
 
-  /* Semantic colors derived from primary */
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-  --color-info: #3b82f6;
+  /* Border Colors */
+  --color-border: #262626;
+  --color-border-dark: #333333;
+
+  /* Background & Foreground */
+  --color-secondary: #141414;
+  --color-background: #0a0a0a;
+  --color-foreground: #fafafa;
+
+  /* Semantic colors */
+  --color-success: #86efac;
+  --color-warning: #fcd34d;
+  --color-error: #fca5a5;
+  --color-info: #93c5fd;
 
   /* StackLoop unified border radius */
   --radius-stackloop: 0.875rem !important;
@@ -28,12 +30,13 @@
   --radius-xl: var(--radius-stackloop) !important;
   --radius-full: 9999px !important;
 
-  /* Unified shadows */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-  --shadow-card: 0 2px 8px rgb(0 0 0 / 0.06);
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6);
+  --shadow-card: 0 2px 8px rgb(0 0 0 / 0.3);
+  --shadow-primary: 0 4px 14px rgb(124 58 237 / 0.35);
 
   /* Spacing scale */
   --spacing-xs: 0.5rem;
@@ -45,6 +48,11 @@
   /* Border widths */
   --border-width: 1px;
   --border-width-thick: 2px;
+}
+
+input:focus, button:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 /* Base mobile-first styles */
@@ -149,3 +157,6 @@ input[type='number']::-webkit-inner-spin-button {
   transform: scale(0) ;
   animation: buttonRipple 500ms ease-out ;
 }
+
+
+

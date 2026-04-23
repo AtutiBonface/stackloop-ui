@@ -225,9 +225,18 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
 **ButtonGroup**:
 - **Description:** Segmented button group with a rounded outer container and separate buttons divided by borders.
 - **Props:**
-  - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required.
+  - **`options`**: `ButtonGroupOption[]` — required.
+    - `value`: `string` — required unique option value.
+    - `label`: `string` — required fallback text label.
+    - `icon`: `ReactNode` — optional leading icon.
+    - `disabled`: `boolean` — optional per-option disabled state.
+    - `className`: `string` — optional per-option class override.
+    - `ariaLabel`: `string` — optional aria-label for accessibility.
+    - `render`: `(option, state) => ReactNode` — optional custom content renderer. If omitted, the default icon + label layout is used.
+    - `onClick`: `(option, event) => void` — optional per-option click callback.
   - **`value`**: `string` — optional selected value.
   - **`onChange`**: `(value: string) => void` — optional change callback.
+  - **`onOptionClick`**: `(option, index) => void` — optional group-level callback for any option click.
   - **`size`**: `'sm' | 'md' | 'lg'` — default: `'md'`.
   - **`disabled`**: `boolean` — default: `false`.
   - **`className`**: `string` — optional.
@@ -247,6 +256,32 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
     options={options}
     value={selectedRange}
     onChange={setSelectedRange}
+  />
+
+  // Custom render + per-option and group-level click hooks
+  const customOptions = [
+    {
+      label: 'Overview',
+      value: 'overview',
+      render: (option, state) => (
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] uppercase tracking-[0.2em] opacity-70">View</span>
+          <span className={state.selected ? 'font-semibold' : 'font-medium'}>{option.label}</span>
+        </span>
+      ),
+      onClick: (option) => console.log('Option clicked:', option.value)
+    },
+    { label: 'Details', value: 'details' },
+    { label: 'Activity', value: 'activity' }
+  ]
+
+  <ButtonGroup
+    options={customOptions}
+    value={selectedView}
+    onChange={setSelectedView}
+    onOptionClick={(option, index) => {
+      console.log('Group handler:', option.value, index)
+    }}
   />
   ```
 
@@ -652,20 +687,72 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   />
   ```
 
-**Dropdown**:
-- **Description:** General-purpose select component with optional search, clear, and icons. Use this for general UI selections outside of forms. For form-specific needs with validation, use the **Select** component instead.
-- **Props:**
-  - **`options`**: `{ value: string; label: string; icon?: ReactNode }[]` — required.
-  - **`value`**: `string` — optional.
-  - **`onChange`**: `(value: string) => void` — required.
-  - **`placeholder`**: `string` — default: `'Select an option'`.
-  - **`label`**, **`error`**, **`searchable`** (default `false`), **`clearable`** (default `true`), **`disabled`**, **`className`**.
+**DropdownMenu**:
+- **Description:** Headless-style dropdown menu primitive with custom trigger support, outside-click close behavior, and nested submenus.
+- **Placement behavior:**
+  - Root menu opens **down or up** based on viewport space (or can be forced).
+  - Nested submenus open **right or left** based on side space (or can be forced).
+- **Use case:**
+  - Nested navigation or action menus where each menu item can itself open another submenu.
+  - Context menus launched from custom triggers like icon buttons, cards, or toolbar actions.
+- **Core Components:**
+  - **`DropdownMenu`**: Root wrapper with controlled/uncontrolled open state.
+  - **`DropdownMenuTrigger`**: Trigger button or custom trigger with `asChild`.
+  - **`DropdownMenuContent`**: Root menu panel.
+  - **`DropdownMenuItem`**: Clickable item (button or custom child with `asChild`).
+  - **`DropdownMenuSub`**: Nested menu wrapper.
+  - **`DropdownMenuSubTrigger`**: Trigger for nested menu.
+  - **`DropdownMenuSubContent`**: Nested panel.
+- **Root Props (`DropdownMenu`):**
+  - **`open`**: `boolean` — optional controlled state.
+  - **`defaultOpen`**: `boolean` — default: `false`.
+  - **`onOpenChange`**: `(open: boolean) => void` — optional callback.
+  - **`placement`**: `'auto' | 'top' | 'bottom'` — default: `'auto'`.
+  - **`className`**: `string` — optional.
 - **Usage:**
 
   ```jsx
-  import { Dropdown } from '@stackloop/ui'
+  import {
+    DropdownMenu,
+    DropdownMenuTrigger,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSub,
+    DropdownMenuSubTrigger,
+    DropdownMenuSubContent
+  } from '@stackloop/ui'
 
-  <Dropdown options={[{value:'a',label:'A'}]} value={val} onChange={setVal} searchable />
+  <DropdownMenu>
+    <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+    <DropdownMenuContent>
+      <DropdownMenuItem asChild>
+        <a href="/dashboard">Dashboard</a>
+      </DropdownMenuItem>
+
+      <DropdownMenuSub>
+        <DropdownMenuSubTrigger>Products</DropdownMenuSubTrigger>
+        <DropdownMenuSubContent>
+          <DropdownMenuItem asChild>
+            <a href="/products/new">New Arrivals</a>
+          </DropdownMenuItem>
+
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Categories</DropdownMenuSubTrigger>
+            <DropdownMenuSubContent>
+              <DropdownMenuItem asChild>
+                <a href="/products/categories/tools">Tools</a>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <a href="/products/categories/home">Home</a>
+              </DropdownMenuItem>
+            </DropdownMenuSubContent>
+          </DropdownMenuSub>
+        </DropdownMenuSubContent>
+      </DropdownMenuSub>
+
+      <DropdownMenuItem onClick={() => console.log('Signed out')}>Sign out</DropdownMenuItem>
+    </DropdownMenuContent>
+  </DropdownMenu>
   ```
 
 **Tooltip**:
@@ -695,7 +782,7 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   ```
 
 **Select**:
-- **Description:** **Form-specific** select component with label, error, hint, and validation support. Specifically designed for use in forms with proper semantics, accessibility, and validation integration. Use this component when building forms. For general UI selections (navigation, filters, etc.), use the **Dropdown** component instead. Based on Dropdown but includes form-specific features like `required` prop, hint text, and better integration with form libraries (React Hook Form, Formik, etc.).
+- **Description:** **Form-specific** select component with label, error, hint, and validation support. Specifically designed for use in forms with proper semantics, accessibility, and validation integration. Use this component when building forms. It includes form-focused features like `required`, hint text, and better integration with form libraries (React Hook Form, Formik, etc.).
 - **Props:**
   - **`options`**: `{ value: string; label: string; icon?: ReactNode; disabled?: boolean }[]` — required. Array of selectable options with optional icons and disabled state.
   - **`value`**: `string` — optional. Currently selected value.

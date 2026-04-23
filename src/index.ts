@@ -31,6 +31,25 @@ export type { DualSliderProps } from './DualSlider'
 export { Dropdown } from './Dropdown'
 export type { DropdownProps, DropdownOption } from './Dropdown'
 
+export {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuSub,
+	DropdownMenuSubTrigger,
+	DropdownMenuSubContent
+} from './DropdownMenu'
+export type {
+	DropdownMenuProps,
+	DropdownMenuTriggerProps,
+	DropdownMenuContentProps,
+	DropdownMenuItemProps,
+	DropdownMenuSubProps,
+	DropdownMenuSubTriggerProps,
+	DropdownMenuSubContentProps
+} from './DropdownMenu'
+
 export { Select } from './Select'
 export type { SelectProps, SelectOption } from './Select'
 

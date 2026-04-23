@@ -135,27 +135,16 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     const month = date.getMonth()
     const firstDay = new Date(year, month, 1)
     const lastDay = new Date(year, month + 1, 0)
-    const daysInMonth = lastDay.getDate()
     const startingDayOfWeek = firstDay.getDay()
+    const endingDayOfWeek = lastDay.getDay()
+    const totalDays = startingDayOfWeek + lastDay.getDate() + (6 - endingDayOfWeek)
+    const gridStart = new Date(year, month, 1 - startingDayOfWeek)
 
-    const days: (Date | null)[] = []
-    
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null)
-    }
-    
-    // Add all days in the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day))
-    }
-
-    // Fill trailing cells so the grid always renders full weeks.
-    while (days.length % 7 !== 0) {
-      days.push(null)
-    }
-    
-    return days
+    return Array.from({ length: totalDays }, (_, index) => {
+      const day = new Date(gridStart)
+      day.setDate(gridStart.getDate() + index)
+      return day
+    })
   }
 
   const handlePreviousMonth = () => {
@@ -279,19 +268,19 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         aria-required={required}
         className={cn(
           'w-full px-4 py-3 rounded-md border transition-all duration-200',
-          'bg-background text-left flex items-center justify-between gap-2',
+          'bg-background text-left flex items-center justify-between gap-2 text-foreground',
           'focus:outline-none focus:ring-1 focus:ring-primary',
-          'disabled:bg-secondary disabled:cursor-not-allowed',
+          'disabled:bg-secondary disabled:text-border-dark disabled:cursor-not-allowed',
           'touch-target',
           error && 'border-error',
           !error && 'border-border',
           isOpen && 'ring-1 ring-primary'
         )}
       >
-        <span className={cn('truncate', !value && 'text-foreground/50')}>
+        <span className={cn('truncate', !value && 'text-foreground/50', disabled && 'text-border-dark')}>
           {value ? formatDate(value) : placeholder}
         </span>
-        <Calendar className="w-5 h-5 text-primary shrink-0" />
+        <Calendar className={cn('w-5 h-5 shrink-0', disabled ? 'text-border-dark' : 'text-primary')} />
       </button>
 
       {shouldAnimate ? (
@@ -436,22 +425,10 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                 const isLastColumn = (index + 1) % 7 === 0
                 const isLastRow = Math.floor(index / 7) === Math.floor((days.length - 1) / 7)
 
-                if (!day) {
-                  return (
-                    <div
-                      key={`empty-${index}`}
-                      className={cn(
-                        'h-8 bg-background',
-                        !isLastColumn && 'border-r border-border',
-                        !isLastRow && 'border-b border-border'
-                      )}
-                    />
-                  )
-                }
-
                 const isSelected = isSameDay(day, value || null)
                 const isCurrentDay = isToday(day)
-                const isDisabled = isDateDisabled(day)
+                const isCurrentMonthDay = day.getMonth() === currentMonthIndex && day.getFullYear() === currentYear
+                const isDisabled = !isCurrentMonthDay || isDateDisabled(day)
 
                 return (
                   <motion.button
@@ -465,7 +442,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
                       'text-[10px] font-medium transition-all duration-200',
                       !isLastColumn && 'border-r border-border',
                       !isLastRow && 'border-b border-border',
-                      'hover:bg-secondary',
+                      isCurrentMonthDay && 'hover:bg-secondary',
+                      !isCurrentMonthDay && 'bg-secondary/40',
                       isSelected && 'bg-primary text-white hover:bg-primary/80',
                       isCurrentDay && !isSelected && 'border border-primary text-primary',
                       isDisabled && 'text-border-dark cursor-not-allowed hover:bg-transparent',

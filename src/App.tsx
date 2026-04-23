@@ -11,6 +11,13 @@ import {
   DualSlider,
   RadioPills,
   Dropdown,
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
   Select,
   MultiSelect,
   Tooltip,
@@ -54,6 +61,7 @@ import {
 
 function AppContent() {
   const { addToast } = useToast()
+  const today = new Date()
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false)
@@ -74,6 +82,8 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [selectedTableRows, setSelectedTableRows] = useState<string[]>([])
   const [groupedButtonValue, setGroupedButtonValue] = useState('day')
+  const demoMinDate = new Date(today.getFullYear(), today.getMonth() - 1, 10)
+  const demoMaxDate = new Date(today.getFullYear(), today.getMonth() + 1, 20)
 
   const dropdownOptions = [
     { label: 'Option 1', value: 'opt1' },
@@ -106,6 +116,48 @@ function AppContent() {
     { label: 'Day', value: 'day' },
     { label: 'Week', value: 'week' },
     { label: 'Month', value: 'month' }
+  ]
+
+  const customGroupedButtonOptions = [
+    {
+      label: 'Overview',
+      value: 'overview',
+      render: (option: { label: string }, state: { selected: boolean }) => (
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] uppercase tracking-[0.2em] opacity-70">View</span>
+          <span className={state.selected ? 'font-semibold' : 'font-medium'}>{option.label}</span>
+        </span>
+      ),
+      onClick: () => {
+        addToast({ message: 'Overview selected', variant: 'info', duration: 1800 })
+      }
+    },
+    {
+      label: 'Details',
+      value: 'details',
+      render: (option: { label: string }, state: { selected: boolean }) => (
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] uppercase tracking-[0.2em] opacity-70">View</span>
+          <span className={state.selected ? 'font-semibold' : 'font-medium'}>{option.label}</span>
+        </span>
+      ),
+      onClick: () => {
+        addToast({ message: 'Details selected', variant: 'info', duration: 1800 })
+      }
+    },
+    {
+      label: 'Activity',
+      value: 'activity',
+      render: (option: { label: string }, state: { selected: boolean }) => (
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] uppercase tracking-[0.2em] opacity-70">View</span>
+          <span className={state.selected ? 'font-semibold' : 'font-medium'}>{option.label}</span>
+        </span>
+      ),
+      onClick: () => {
+        addToast({ message: 'Activity selected', variant: 'info', duration: 1800 })
+      }
+    }
   ]
 
   const tableData = [
@@ -180,6 +232,15 @@ function AppContent() {
                 options={groupedButtonOptions}
                 value={groupedButtonValue}
                 onChange={setGroupedButtonValue}
+              />
+            </div>
+            <div className="mt-5">
+              <p className="text-sm text-foreground/70 mb-2">Custom Render Group (per-button render + onClick)</p>
+              <ButtonGroup
+                options={customGroupedButtonOptions}
+                value={groupedButtonValue}
+                onChange={setGroupedButtonValue}
+                size="lg"
               />
             </div>
           </CardContent>
@@ -492,6 +553,69 @@ function AppContent() {
           </CardContent>
         </Card>
 
+        {/* Dropdown Menu Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Dropdown Menu (Nested)</CardTitle>
+            <CardDescription>
+              Custom trigger + nested menus with automatic drop direction and outside-click close
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap items-right gap-4">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline">Open Navigation Menu</Button>
+                </DropdownMenuTrigger>
+
+                <DropdownMenuContent>
+                  <DropdownMenuItem asChild>
+                    <a href="#dashboard">Dashboard</a>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuSub>
+                    <DropdownMenuSubTrigger>Products</DropdownMenuSubTrigger>
+                    <DropdownMenuSubContent>
+                      <DropdownMenuItem asChild>
+                        <a href="#new">New Arrivals</a>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>Categories</DropdownMenuSubTrigger>
+                        <DropdownMenuSubContent>
+                          <DropdownMenuItem asChild>
+                            <a href="#tools">Tools</a>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <a href="#home">Home</a>
+                          </DropdownMenuItem>
+                            <DropdownMenuSub>
+                              <DropdownMenuSubTrigger>test</DropdownMenuSubTrigger>
+                              <DropdownMenuSubContent>
+                                <DropdownMenuItem asChild>
+                                  <a href="#tools">Tools</a>
+                                </DropdownMenuItem>
+                                <DropdownMenuItem asChild>
+                                  <a href="#home">Home</a>
+                                </DropdownMenuItem>
+                              </DropdownMenuSubContent>
+                            </DropdownMenuSub>
+                        </DropdownMenuSubContent>
+                      </DropdownMenuSub>
+                    </DropdownMenuSubContent>
+                  </DropdownMenuSub>
+
+                  <DropdownMenuItem
+                    onClick={() => addToast({ message: 'Signed out', variant: 'info', duration: 1800 })}
+                  >
+                    Sign out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Tooltip Section */}
         <Card>
           <CardHeader>
@@ -531,14 +655,36 @@ function AppContent() {
         <Card>
           <CardHeader>
             <CardTitle>DatePicker</CardTitle>
-            <CardDescription>Date selection control</CardDescription>
+            <CardDescription>Date selection control with range limits and disabled-state styling</CardDescription>
           </CardHeader>
           <CardContent>
-            <DatePicker
-              label="Select Date"
-              value={selectedDate}
-              onChange={setSelectedDate}
-            />
+            <div className="grid gap-6 lg:grid-cols-2">
+              <div className="space-y-3">
+                <DatePicker
+                  label="Select Date"
+                  value={selectedDate}
+                  onChange={setSelectedDate}
+                  minDate={demoMinDate}
+                  maxDate={demoMaxDate}
+                />
+                <p className="text-sm text-foreground/60">
+                  This picker only allows dates from {demoMinDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} to {demoMaxDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <DatePicker
+                  label="Disabled Picker"
+                  value={today}
+                  onChange={setSelectedDate}
+                  disabled
+                  placeholder="Disabled date picker"
+                />
+                <p className="text-sm text-foreground/60">
+                  Disabled controls keep the same layout, but the text and icon use muted colors to make the state obvious.
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

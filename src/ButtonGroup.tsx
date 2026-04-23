@@ -9,12 +9,17 @@ export interface ButtonGroupOption {
   label: string
   icon?: React.ReactNode
   disabled?: boolean
+  className?: string
+  ariaLabel?: string
+  render?: (option: ButtonGroupOption, state: { selected: boolean; disabled: boolean; index: number }) => React.ReactNode
+  onClick?: (option: ButtonGroupOption, event: React.MouseEvent<HTMLButtonElement>) => void
 }
 
 export interface ButtonGroupProps {
   options: ButtonGroupOption[]
   value?: string
   onChange?: (value: string) => void
+  onOptionClick?: (option: ButtonGroupOption, index: number) => void
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   className?: string
@@ -25,6 +30,7 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
   options,
   value,
   onChange,
+  onOptionClick,
   size = 'md',
   disabled = false,
   className,
@@ -50,19 +56,28 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
     >
       {options.map((option, index) => {
         const isSelected = value === option.value
-        const isDisabled = disabled || option.disabled
+        const isDisabled = Boolean(disabled || option.disabled)
+        const content = option.render?.(option, { selected: isSelected, disabled: isDisabled, index }) ?? (
+          <>
+            {option.icon && <span className="shrink-0">{option.icon}</span>}
+            <span>{option.label}</span>
+          </>
+        )
 
         return (
           <motion.button
             key={option.value}
             type="button"
             whileTap={shouldAnimate ? { scale: isDisabled ? 1 : 0.98 } : undefined}
-            onClick={() => {
+            onClick={(event) => {
               if (!isDisabled) {
+                option.onClick?.(option, event)
+                onOptionClick?.(option, index)
                 onChange?.(option.value)
               }
             }}
             aria-pressed={isSelected}
+            aria-label={option.ariaLabel}
             disabled={isDisabled}
             className={cn(
               'inline-flex items-center justify-center gap-2 font-medium transition-colors duration-200',
@@ -72,11 +87,11 @@ export const ButtonGroup: React.FC<ButtonGroupProps> = ({
               isSelected
                 ? 'bg-primary text-white'
                 : 'bg-transparent text-foreground hover:bg-secondary',
-              isDisabled && 'cursor-not-allowed'
+              isDisabled && 'cursor-not-allowed',
+              option.className
             )}
           >
-            {option.icon && <span className="shrink-0">{option.icon}</span>}
-            <span>{option.label}</span>
+            {content}
           </motion.button>
         )
       })}
