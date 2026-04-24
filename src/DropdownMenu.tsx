@@ -6,6 +6,7 @@ import { ChevronRight } from 'lucide-react'
 import { cn } from './utils'
 
 type RootVerticalPlacement = 'auto' | 'top' | 'bottom'
+type RootHorizontalPlacement = 'auto' | 'left' | 'right'
 type SubmenuHorizontalPlacement = 'auto' | 'left' | 'right'
 
 interface DropdownMenuContextValue {
@@ -111,6 +112,7 @@ export const DropdownMenu: React.FC<DropdownMenuProps> = ({
 
     const handleOutsidePointer = (event: MouseEvent) => {
       if (rootRef.current?.contains(event.target as Node)) return
+      if (contentRef.current?.contains(event.target as Node)) return
       closeAll()
     }
 
@@ -257,6 +259,7 @@ DropdownMenuTrigger.displayName = 'DropdownMenuTrigger'
 export interface DropdownMenuContentProps extends Omit<HTMLMotionProps<'div'>, 'children'> {
   children: React.ReactNode
   align?: 'start' | 'end'
+  side?: RootHorizontalPlacement
   sideOffset?: number
   animate?: boolean
 }
@@ -265,11 +268,64 @@ export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
   children,
   className,
   align = 'start',
+  side = 'auto',
   sideOffset = 8,
   animate = true,
   ...props
 }) => {
-  const { open, setOpen, contentRef, placement } = useDropdownMenuContext()
+  const { open, setOpen, contentRef, placement, triggerRef } = useDropdownMenuContext()
+  const [resolvedHorizontalSide, setResolvedHorizontalSide] = useState<'left' | 'right'>(
+    align === 'end' ? 'left' : 'right'
+  )
+
+  useEffect(() => {
+    if (!open) return
+
+    const updateHorizontalPlacement = () => {
+      if (!triggerRef.current) return
+
+      if (side === 'left') {
+        setResolvedHorizontalSide('left')
+        return
+      }
+
+      if (side === 'right') {
+        setResolvedHorizontalSide('right')
+        return
+      }
+
+      const triggerRect = triggerRef.current.getBoundingClientRect()
+      const menuWidth = contentRef.current?.offsetWidth ?? 224
+      const viewportPadding = 8
+      const availableRight = window.innerWidth - triggerRect.left - viewportPadding
+      const availableLeft = triggerRect.right - viewportPadding
+      const preferredSide: 'left' | 'right' = align === 'end' ? 'left' : 'right'
+      const fallbackSide: 'left' | 'right' = preferredSide === 'right' ? 'left' : 'right'
+      const preferredSpace = preferredSide === 'right' ? availableRight : availableLeft
+      const fallbackSpace = fallbackSide === 'right' ? availableRight : availableLeft
+
+      if (preferredSpace >= menuWidth) {
+        setResolvedHorizontalSide(preferredSide)
+        return
+      }
+
+      if (fallbackSpace >= menuWidth) {
+        setResolvedHorizontalSide(fallbackSide)
+        return
+      }
+
+      setResolvedHorizontalSide(preferredSpace >= fallbackSpace ? preferredSide : fallbackSide)
+    }
+
+    updateHorizontalPlacement()
+    window.addEventListener('resize', updateHorizontalPlacement)
+    window.addEventListener('scroll', updateHorizontalPlacement, true)
+
+    return () => {
+      window.removeEventListener('resize', updateHorizontalPlacement)
+      window.removeEventListener('scroll', updateHorizontalPlacement, true)
+    }
+  }, [open, side, align, triggerRef, contentRef])
 
   return (
     <AnimatePresence>
@@ -284,12 +340,13 @@ export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
           className={cn(
             'absolute z-50 min-w-56 rounded-md border border-border bg-background p-1 shadow-lg',
             placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2',
-            align === 'start' ? 'left-0' : 'right-0',
+            resolvedHorizontalSide === 'right' ? 'left-0' : 'right-0',
             className
           )}
           style={{
             marginTop: placement === 'bottom' ? sideOffset : undefined,
-            marginBottom: placement === 'top' ? sideOffset : undefined
+            marginBottom: placement === 'top' ? sideOffset : undefined,
+            maxWidth: 'calc(100vw - 16px)'
           }}
           {...props}
           onKeyDown={(event) => {
@@ -387,6 +444,7 @@ export const DropdownMenuSub: React.FC<DropdownMenuSubProps> = ({
   defaultOpen = false,
   placement = 'auto'
 }) => {
+  const parentSubmenu = useContext(DropdownSubmenuContext)
   const [open, setOpen] = useState(defaultOpen)
   const [resolvedPlacement, setResolvedPlacement] = useState<'left' | 'right'>('right')
   const triggerRef = useRef<HTMLElement | null>(null)
@@ -412,13 +470,24 @@ export const DropdownMenuSub: React.FC<DropdownMenuSubProps> = ({
       const submenuWidth = contentRef.current?.offsetWidth ?? 220
       const availableRight = window.innerWidth - triggerRect.right - 8
       const availableLeft = triggerRect.left - 8
+      const inheritedPreferredSide = parentSubmenu?.placement ?? 'right'
+      const preferredSide = placement === 'auto' ? inheritedPreferredSide : placement
+      const preferredSpace = preferredSide === 'right' ? availableRight : availableLeft
+      const fallbackSide: 'left' | 'right' = preferredSide === 'right' ? 'left' : 'right'
+      const fallbackSpace = fallbackSide === 'right' ? availableRight : availableLeft
 
-      if (availableRight >= submenuWidth || availableRight >= availableLeft) {
-        setResolvedPlacement('right')
+      if (preferredSpace >= submenuWidth) {
+        setResolvedPlacement(preferredSide)
         return
       }
 
-      setResolvedPlacement('left')
+      if (fallbackSpace >= submenuWidth) {
+        setResolvedPlacement(fallbackSide)
+        return
+      }
+
+      setResolvedPlacement(preferredSpace >= fallbackSpace ? preferredSide : fallbackSide)
+      return
     }
 
     updatePlacement()
@@ -429,7 +498,7 @@ export const DropdownMenuSub: React.FC<DropdownMenuSubProps> = ({
       window.removeEventListener('resize', updatePlacement)
       window.removeEventListener('scroll', updatePlacement, true)
     }
-  }, [open, placement])
+  }, [open, placement, parentSubmenu?.placement])
 
   const contextValue = useMemo<DropdownSubmenuContextValue>(() => ({
     open,
@@ -455,7 +524,7 @@ export interface DropdownMenuSubTriggerProps extends React.ButtonHTMLAttributes<
 
 export const DropdownMenuSubTrigger = React.forwardRef<HTMLElement, DropdownMenuSubTriggerProps>(
   ({ asChild = false, className, children, onClick, ...props }, forwardedRef) => {
-    const { open, toggle, triggerRef } = useDropdownSubmenuContext()
+    const { open, toggle, triggerRef, placement } = useDropdownSubmenuContext()
 
     const attachRef = composeRefs(forwardedRef, (node: HTMLElement | null) => {
       triggerRef.current = node
@@ -501,7 +570,7 @@ export const DropdownMenuSubTrigger = React.forwardRef<HTMLElement, DropdownMenu
         {...props}
       >
         <span className="min-w-0 truncate">{children}</span>
-        <ChevronRight className="h-4 w-4 shrink-0 text-foreground/70" />
+        <ChevronRight className={cn('h-4 w-4 shrink-0 text-foreground/70 transition-transform', placement === 'left' && 'rotate-180')} />
       </button>
     )
   }

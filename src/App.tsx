@@ -562,7 +562,7 @@ function AppContent() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-wrap items-right gap-4">
+            <div className="flex justify-center items-right gap-4">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline">Open Navigation Menu</Button>

@@ -691,6 +691,7 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
 - **Description:** Headless-style dropdown menu primitive with custom trigger support, outside-click close behavior, and nested submenus.
 - **Placement behavior:**
   - Root menu opens **down or up** based on viewport space (or can be forced).
+  - Root menu opens **right or left** based on viewport space and will clamp inside the viewport to avoid horizontal overflow.
   - Nested submenus open **right or left** based on side space (or can be forced).
 - **Use case:**
   - Nested navigation or action menus where each menu item can itself open another submenu.
@@ -709,6 +710,10 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   - **`onOpenChange`**: `(open: boolean) => void` — optional callback.
   - **`placement`**: `'auto' | 'top' | 'bottom'` — default: `'auto'`.
   - **`className`**: `string` — optional.
+- **Content Props (`DropdownMenuContent`):**
+  - **`side`**: `'auto' | 'left' | 'right'` — default: `'auto'`. Controls root horizontal direction.
+  - **`align`**: `'start' | 'end'` — default: `'start'`. Used as fallback preference when `side="auto"`.
+  - **`sideOffset`**: `number` — default: `8`. Gap between trigger and content.
 - **Usage:**
 
   ```jsx
@@ -724,7 +729,7 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
 
   <DropdownMenu>
     <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
-    <DropdownMenuContent>
+    <DropdownMenuContent side="auto">
       <DropdownMenuItem asChild>
         <a href="/dashboard">Dashboard</a>
       </DropdownMenuItem>
