@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
+import { FlagIcon } from './FlagIcon'
 import { cn } from './utils'
 import { countries, type Country } from './countries'
 import { FloatingPortal } from './FloatingPortal'
@@ -22,14 +23,6 @@ export interface CountrySelectProps {
   disabled?: boolean
   animate?: boolean
   className?: string
-}
-
-const getFlagEmoji = (iso2: string) => {
-  const codePoints = iso2
-    .toUpperCase()
-    .split('')
-    .map((char) => 127397 + char.charCodeAt(0))
-  return String.fromCodePoint(...codePoints)
 }
 
 export const CountrySelect: React.FC<CountrySelectProps> = ({
@@ -161,9 +154,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {showFlags && selectedCountry && (
-              <span className="text-base" aria-hidden>
-                {getFlagEmoji(selectedCountry.iso2)}
-              </span>
+              <FlagIcon iso2={selectedCountry.iso2} className="h-4 w-6 rounded-xs ring-1 ring-black/10" />
             )}
             <span className={cn('truncate', !selectedCountry && 'text-foreground/50')}>
               {selectedCountry ? selectedCountry.name : placeholder}
@@ -245,9 +236,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                         )}
                       >
                         {showFlags && (
-                          <span className="text-base" aria-hidden>
-                            {getFlagEmoji(countryOption.iso2)}
-                          </span>
+                          <FlagIcon iso2={countryOption.iso2} className="mt-0.5 h-4 w-6 rounded-xs ring-1 ring-black/10" />
                         )}
                         <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                           {countryOption.name}
@@ -323,9 +312,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                       )}
                     >
                       {showFlags && (
-                        <span className="text-base" aria-hidden>
-                          {getFlagEmoji(countryOption.iso2)}
-                        </span>
+                        <FlagIcon iso2={countryOption.iso2} className="mt-0.5 h-4 w-6 rounded-xs ring-1 ring-black/10" />
                       )}
                       <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                         {countryOption.name}
@@ -349,7 +336,9 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
         </motion.p>
       )}
 
-      {hint && !error && <p className="text-sm text-primary/70">{hint}</p>}
+      {hint && !error && (
+        <p className="text-sm text-primary/70">{hint}</p>
+      )}
     </div>
   )
 }

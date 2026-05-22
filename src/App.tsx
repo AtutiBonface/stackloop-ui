@@ -934,7 +934,7 @@ function AppContent() {
 
 function App() {
   return (
-    <ToastProvider position="top-right" maxToasts={5}>
+    <ToastProvider position="bottom-center" maxToasts={5}>
       <AppContent />
     </ToastProvider>
   )

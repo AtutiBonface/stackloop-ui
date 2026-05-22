@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronDown, Search, X } from 'lucide-react'
+import { FlagIcon } from './FlagIcon'
 import { cn } from './utils'
 import { countries, type Country } from './countries'
 import { FloatingPortal } from './FloatingPortal'
@@ -22,14 +23,6 @@ export interface PhoneInputProps
   showFlags?: boolean
   animate?: boolean
   className?: string
-}
-
-const getFlagEmoji = (iso2: string) => {
-  const codePoints = iso2
-    .toUpperCase()
-    .split('')
-    .map((char) => 127397 + char.charCodeAt(0))
-  return String.fromCodePoint(...codePoints)
 }
 
 const getLocaleCountry = () => {
@@ -278,9 +271,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
             aria-expanded={isOpen}
           >
             {showFlags && (
-              <span className="text-base" aria-hidden>
-                {getFlagEmoji(selectedCountry.iso2)}
-              </span>
+              <FlagIcon iso2={selectedCountry.iso2} className="h-4 w-6 rounded-xs ring-1 ring-black/10" />
             )}
             <span className="text-sm font-medium text-foreground">
               {selectedCountry.iso2}
@@ -362,9 +353,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                     )}
                   >
                     {showFlags && (
-                      <span className="text-base" aria-hidden>
-                        {getFlagEmoji(item.iso2)}
-                      </span>
+                      <FlagIcon iso2={item.iso2} className="mt-0.5 h-4 w-6 rounded-xs ring-1 ring-black/10" />
                     )}
                     <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                       {item.name}
@@ -426,9 +415,7 @@ export const PhoneInput: React.FC<PhoneInputProps> = ({
                   )}
                 >
                   {showFlags && (
-                    <span className="text-base" aria-hidden>
-                      {getFlagEmoji(item.iso2)}
-                    </span>
+                    <FlagIcon iso2={item.iso2} className="mt-0.5 h-4 w-6 rounded-xs ring-1 ring-black/10" />
                   )}
                   <span className="text-sm font-medium text-foreground wrap-break-word whitespace-normal">
                     {item.name}
