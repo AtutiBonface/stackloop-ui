@@ -112,7 +112,7 @@ export function Table<T>({
             <thead className="border-b border-border">
               <tr>
                 {selectable && (
-                  <th className="px-4 py-4 text-left w-14">
+                  <th className="px-4 py-2 text-left w-14">
                     <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={allSelected}
@@ -124,7 +124,7 @@ export function Table<T>({
                   </th>
                 )}
                 {columns.map((_, idx) => (
-                  <th key={idx} className="px-6 py-4 text-left">
+                  <th key={idx} className="px-6 py-2 text-left">
                     <div className={cn('h-4 bg-border rounded w-24', shouldAnimate && 'animate-pulse')}></div>
                   </th>
                 ))}
@@ -134,12 +134,12 @@ export function Table<T>({
               {[...Array(5)].map((_, idx) => (
                 <tr key={idx} className="border-b border-border">
                   {selectable && (
-                    <td className="px-4 py-4 w-14">
+                    <td className="px-4 py-2 w-14">
                       <div className={cn('h-4 bg-secondary rounded', shouldAnimate && 'animate-pulse')}></div>
                     </td>
                   )}
                   {columns.map((_, colIdx) => (
-                    <td key={colIdx} className="px-6 py-4">
+                    <td key={colIdx} className="px-6 py-2">
                       <div className={cn('h-4 bg-secondary rounded', shouldAnimate && 'animate-pulse')}></div>
                     </td>
                   ))}
@@ -164,7 +164,7 @@ export function Table<T>({
           <thead className="border-b border-border">
             <tr>
               {selectable && (
-                <th className="px-4 py-4 text-left w-14">
+                <th className="px-4 py-2 text-left w-14">
                   <div className="flex items-center" onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={allSelected}
@@ -179,7 +179,7 @@ export function Table<T>({
                 <th
                   key={idx}
                   className={cn(
-                    'px-6 py-4 text-left text-sm font-semibold text-foreground',
+                    'px-6 py-2 text-left text-sm font-semibold text-foreground',
                     col.width,
                     col.sortable && 'cursor-pointer  transition-colors'
                   )}
@@ -219,7 +219,7 @@ export function Table<T>({
                 )}
               >
                 {selectable && (
-                  <td className="px-4 py-4 w-14" onClick={(e) => e.stopPropagation()}>
+                  <td className="px-4 py-2 w-14" onClick={(e) => e.stopPropagation()}>
                     <div className="flex items-center">
                       <Checkbox
                         checked={selectedKeySet.has(keyExtractor(item))}
@@ -234,7 +234,7 @@ export function Table<T>({
                   <td 
                     key={colIdx} 
                     className={cn(
-                      'px-6 py-4 text-sm text-foreground/70',
+                      'px-6 py-2 text-sm text-foreground/70',
                       col.width
                     )}
                     style={col.width ? { width: col.width } : undefined}

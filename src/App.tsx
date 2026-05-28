@@ -22,7 +22,7 @@ import {
   MultiSelect,
   Tooltip,
   CountrySelect,
-  DatePicker,
+  
   Card,
   CardHeader,
   CardTitle,
@@ -72,6 +72,16 @@ function AppContent() {
   const [selectedRadio, setSelectedRadio] = useState('option1')
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined)
+  const [selectedTime, setSelectedTime] = useState(() => {
+    const nextDate = new Date()
+    nextDate.setHours(14, 30, 0, 0)
+    return nextDate
+  })
+  const [selectedDateTime, setSelectedDateTime] = useState(() => {
+    const nextDate = new Date()
+    nextDate.setHours(14, 30, 0, 0)
+    return nextDate
+  })
   const [dropdownValue, setDropdownValue] = useState('')
   const [selectValue, setSelectValue] = useState('')
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>([])
@@ -129,7 +139,7 @@ function AppContent() {
         </span>
       ),
       onClick: () => {
-        addToast({ message: 'Overview selected', variant: 'info', duration: 1800 })
+        addToast({ message: 'in the time the minite input i cannot type anyhting above ten for example when i enter 5 ie put 05 so i cant set 50 ', variant: 'info', duration: 1800 })
       }
     },
     {
@@ -655,15 +665,18 @@ function AppContent() {
         <Card>
           <CardHeader>
             <CardTitle>DatePicker</CardTitle>
-            <CardDescription>Date selection control with range limits and disabled-state styling</CardDescription>
+            <CardDescription>Date, time, and datetime-local selection control with range limits and disabled-state styling</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-6 lg:grid-cols-3">
               <div className="space-y-3">
-                <DatePicker
+                <Input
                   label="Select Date"
+                  type="date"
                   value={selectedDate}
-                  onChange={setSelectedDate}
+                  onChange={(nextValue) => {
+                    if (nextValue instanceof Date) setSelectedDate(nextValue)
+                  }}
                   minDate={demoMinDate}
                   maxDate={demoMaxDate}
                 />
@@ -673,15 +686,32 @@ function AppContent() {
               </div>
 
               <div className="space-y-3">
-                <DatePicker
-                  label="Disabled Picker"
-                  value={today}
-                  onChange={setSelectedDate}
-                  disabled
-                  placeholder="Disabled date picker"
+                <Input
+                  label="Select Time"
+                  type="time"
+                  value={selectedTime}
+                  onChange={(nextValue) => {
+                    if (nextValue instanceof Date) setSelectedTime(nextValue)
+                  }}
+                  placeholder="Pick a time"
                 />
                 <p className="text-sm text-foreground/60">
-                  Disabled controls keep the same layout, but the text and icon use muted colors to make the state obvious.
+                  Time mode keeps the same trigger style but lets you choose a time value.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                <Input
+                  label="Select Date & Time"
+                  type="datetime-local"
+                  value={selectedDateTime}
+                  onChange={(nextValue) => {
+                    if (nextValue instanceof Date) setSelectedDateTime(nextValue)
+                  }}
+                  placeholder="Pick a date and time"
+                />
+                <p className="text-sm text-foreground/60">
+                  Date and time mode combines both in a single picker panel.
                 </p>
               </div>
             </div>

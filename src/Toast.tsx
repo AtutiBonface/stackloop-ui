@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, AlertTriangle, Bell, Check, Info, Loader2, X } from 'lucide-react'
+import { AlertCircle, AlertTriangle, Bell, Check, Info, Loader2, X, ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from './utils'
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'default' | 'loading'
@@ -61,17 +61,17 @@ const positionStyles = {
   'bottom-right': 'bottom-4 right-4'
 }
 
-// 🟦 Dynamic Island Toast Component
 const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {  
   const [phase, setPhase] = useState<'entering' | 'expanded' | 'collapsing' | 'exiting'>('entering')
   const [isHovered, setIsHovered] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const Icon = variantIcons[toast.variant || 'default']
-  const duration = toast.duration ?? 4000
+  const duration = toast.duration ?? 7000
 
-  // Independent lifecycle timer
   useEffect(() => {
-    if (isHovered) {
+    // Pause lifecycle while hovered or when the user has expanded the toast
+    if (isHovered || isExpanded) {
       timersRef.current.forEach(clearTimeout)
       timersRef.current = []
       return
@@ -89,7 +89,7 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
 
     timersRef.current = [t1, t2, t3, t4]
     return () => timersRef.current.forEach(clearTimeout)
-  }, [duration, isHovered, onRemove, toast.id])
+  }, [duration, isHovered, isExpanded, onRemove, toast.id])
 
   const morphVariants = {
     entering: { width: '3rem', height: '3rem', opacity: 0, scale: 0.7, borderRadius: 9999 },
@@ -124,19 +124,46 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
         <Icon className={cn('h-5 w-5', toast.variant === 'loading' && 'animate-spin')} />
       </div>
 
-      {/* Content fades in/out during morph */}
+      {/* Content fades in/out during morph; supports two-line preview with expand */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: phase === 'expanded' ? 1 : 0 }}
         transition={{ duration: 0.2 }}
-        className="flex min-w-0 flex-1 items-center gap-2 px-3 pr-4"
+        className="flex min-w-0 flex-1 items-center gap-2 px-3 pr-2"
         style={{ pointerEvents: phase === 'expanded' ? 'auto' : 'none' }}
       >
-        <p className="min-w-0 truncate text-sm font-medium">{toast.message}</p>
-        {toast.priority === 'high' && (
-          <span className="shrink-0 rounded-full border border-current/30 bg-current/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
-            High
-          </span>
+        <div className="min-w-0 flex-1">
+          <p
+            className="text-sm font-medium"
+            style={isExpanded ? undefined : {
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden'
+            }}
+          >
+            {toast.message}
+          </p>
+          {toast.priority === 'high' && (
+            <div className="mt-1">
+              <span className="shrink-0 rounded-full border border-current/30 bg-current/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
+                High
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Expand/collapse control for long messages */}
+        {toast.message.length > 120 && (
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setIsExpanded((s) => !s) }}
+            className="ml-2 shrink-0 p-1 text-current/70 hover:bg-current/10 rounded"
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? 'Collapse' : 'Expand'}
+          >
+            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+          </button>
         )}
       </motion.div>
 

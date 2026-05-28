@@ -47,6 +47,8 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   const [dropdownPlacement, setDropdownPlacement] = useState<'top' | 'bottom'>('bottom')
   const containerRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLDivElement>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const ignoreNextClickRef = useRef(false)
 
   const selectedCountry = useMemo(() => countries.find((country) => country.iso2 === value), [value])
 
@@ -63,6 +65,16 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
   }, [searchQuery, searchable])
 
   useEffect(() => {
+    if (!isOpen || !searchable) return
+
+    const focusSearchInput = window.setTimeout(() => {
+      searchInputRef.current?.focus()
+    }, 0)
+
+    return () => window.clearTimeout(focusSearchInput)
+  }, [isOpen, searchable])
+
+  useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         setIsOpen(false)
@@ -76,6 +88,14 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
 
   useEffect(() => {
     if (!isOpen) return
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsOpen(false)
+      }
+    }
+
+    window.addEventListener('keydown', handleEscape)
 
     const updatePlacement = () => {
       if (!triggerRef.current) return
@@ -103,6 +123,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
     window.addEventListener('scroll', updatePlacement, true)
 
     return () => {
+      window.removeEventListener('keydown', handleEscape)
       window.removeEventListener('resize', updatePlacement)
       window.removeEventListener('scroll', updatePlacement, true)
     }
@@ -135,7 +156,21 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
       <div ref={triggerRef} className="relative">
         <button
           type="button"
-          onClick={() => !disabled && setIsOpen(!isOpen)}
+          onMouseDown={(event) => {
+            if (!searchable || disabled || isOpen) return
+            event.preventDefault()
+            ignoreNextClickRef.current = true
+            setIsOpen(true)
+          }}
+          onClick={() => {
+            if (ignoreNextClickRef.current) {
+              ignoreNextClickRef.current = false
+              return
+            }
+            if (!disabled) {
+              setIsOpen((current) => !current)
+            }
+          }}
           disabled={disabled}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
@@ -143,7 +178,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
           className={cn(
             'w-full px-4 py-3 rounded-md border transition-all duration-200',
             'bg-background text-left flex items-center justify-between gap-2',
-            'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+            'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30',
             'disabled:bg-secondary disabled:cursor-not-allowed',
             'touch-target text-base',
             error && 'border-error focus:ring-error',
@@ -185,11 +220,17 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
                         <input
+                          ref={searchInputRef}
                           type="text"
                           placeholder="Search country or code"
                           value={searchQuery}
                           onChange={(event) => setSearchQuery(event.target.value)}
-                          className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          onKeyDown={(event) => {
+                            if (event.key === 'Escape') {
+                              setIsOpen(false)
+                            }
+                          }}
+                          className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30"
                         />
                         {searchQuery && (
                           <button
@@ -261,11 +302,17 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({
                     <div className="relative">
                       <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
                       <input
+                        ref={searchInputRef}
                         type="text"
                         placeholder="Search country or code"
                         value={searchQuery}
                         onChange={(event) => setSearchQuery(event.target.value)}
-                        className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                        onKeyDown={(event) => {
+                          if (event.key === 'Escape') {
+                            setIsOpen(false)
+                          }
+                        }}
+                        className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30"
                       />
                       {searchQuery && (
                         <button

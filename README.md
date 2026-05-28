@@ -356,6 +356,57 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   />
   ```
 
+### Input onChange details
+
+- **Value-based callback (not DOM event):** The `onChange` handler for `Input` receives the field value (for smart types) or the raw input `value` for native types — it is *not* called with the DOM `Event`. For example, `onChange` will be invoked with a `string` for text/phone/country inputs and with a `Date` for `type="date"`, `type="time"` and `type="datetime-local"`.
+
+- **Convert to string when needed:** If you want to display or log the incoming value without branching on its type, use `String(value)` (or `value?.toString()`), e.g.:
+
+```tsx
+<Input
+  label="Date"
+  type="date"
+  value={selectedDate}
+  onChange={(value) => console.log('new value:', String(value))}
+/>
+```
+
+- **Typing for `onChange`:** The `onChange` signature is `(value: string | Date) => void` (or more specifically for specialized components, `(value: Date) => void` when `type` is a date/time mode). Cast or narrow the value inside the handler when you need to access `Date` methods.
+
+### Password toggle (built-in)
+
+- When you use `type="password"` the `Input` component automatically shows a visibility toggle (Eye/EyeOff) on the right side. You don't need to implement your own right-icon toggle — the built-in toggle overrides a custom `rightIcon` when `type="password"`.
+
+```tsx
+// Automatic visibility toggle — no custom logic required
+<Input label="Password" type="password" />
+```
+
+### Date / Time / Datetime-local notes
+
+- `Input` routes `type="date"`, `type="time"`, and `type="datetime-local"` to the custom `DatePicker` implementation included in the library. These modes use JavaScript `Date` objects as the value payload.
+
+- **Value type:** The `value` for these modes is a `Date` instance. `onChange` will receive a `Date`.
+
+- **Range and disabled support:** Pass `minDate`, `maxDate`, and `disabled` props to restrict selectable dates or disable the control. Example:
+
+```tsx
+<Input
+  label="Select Date"
+  type="date"
+  value={selectedDate}
+  onChange={(v) => v instanceof Date && setSelectedDate(v)}
+  minDate={new Date(2024, 0, 1)}
+  maxDate={new Date(2024, 11, 31)}
+  disabled={false}
+/>
+```
+
+- **Formatting:** The `DatePicker` displays localized text in the trigger; if you need custom formatting for display elsewhere, use `date.toLocaleString()` or a date library.
+
+- **Time only / datetime-local:** `type="time"` opens a compact time-only picker (hours/minutes + AM/PM). `type="datetime-local"` combines the calendar with the compact time controls. Both use `Date` values — the date component may be ignored for `time` when you only care about the clock.
+
+
 **PhoneInput**:
 - **Description:** Phone input with country selector and a single editable value field (country code + number in the same input).
 - **Props:**

@@ -56,6 +56,8 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
     const [searchQuery, setSearchQuery] = useState('')
     const [dropdownPlacement, setDropdownPlacement] = useState<'top' | 'bottom'>('bottom')
     const selectRef = useRef<HTMLDivElement>(null)
+    const searchInputRef = useRef<HTMLInputElement>(null)
+    const ignoreNextClickRef = useRef(false)
 
     const selectedOptions = options.filter((opt) => value.includes(opt.value))
 
@@ -64,6 +66,16 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
           opt.label.toLowerCase().includes(searchQuery.toLowerCase())
         )
       : options
+
+    useEffect(() => {
+      if (!isOpen || !searchable) return
+
+      const focusSearchInput = window.setTimeout(() => {
+        searchInputRef.current?.focus()
+      }, 0)
+
+      return () => window.clearTimeout(focusSearchInput)
+    }, [isOpen, searchable])
 
     useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
@@ -79,6 +91,14 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
 
     useEffect(() => {
       if (!isOpen) return
+
+      const handleEscape = (event: KeyboardEvent) => {
+        if (event.key === 'Escape') {
+          setIsOpen(false)
+        }
+      }
+
+      window.addEventListener('keydown', handleEscape)
 
       const updatePlacement = () => {
         if (!selectRef.current) return
@@ -106,6 +126,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
       window.addEventListener('scroll', updatePlacement, true)
 
       return () => {
+        window.removeEventListener('keydown', handleEscape)
         window.removeEventListener('resize', updatePlacement)
         window.removeEventListener('scroll', updatePlacement, true)
       }
@@ -156,7 +177,21 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
           <div
             role="button"
             tabIndex={disabled ? -1 : 0}
-            onClick={() => !disabled && setIsOpen(!isOpen)}
+            onMouseDown={(event) => {
+              if (!searchable || disabled || isOpen) return
+              event.preventDefault()
+              ignoreNextClickRef.current = true
+              setIsOpen(true)
+            }}
+            onClick={() => {
+              if (ignoreNextClickRef.current) {
+                ignoreNextClickRef.current = false
+                return
+              }
+              if (!disabled) {
+                setIsOpen((current) => !current)
+              }
+            }}
             onKeyDown={(e) => {
               if (disabled) return
               if (e.key === 'Enter' || e.key === ' ') {
@@ -171,7 +206,7 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
             className={cn(
               'w-full px-4 py-3 rounded-md border transition-all duration-200',
               'bg-background text-left flex items-start justify-between gap-2 flex-wrap',
-              'focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30',
               disabled && 'bg-secondary cursor-not-allowed',
               'touch-target text-base min-h-12',
               error && 'border-error focus:ring-error',
@@ -239,11 +274,17 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                         <div className="relative">
                           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
                           <input
+                            ref={searchInputRef}
                             type="text"
                             placeholder="Search..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            onKeyDown={(event) => {
+                              if (event.key === 'Escape') {
+                                setIsOpen(false)
+                              }
+                            }}
+                            className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30"
                             aria-label="Search options"
                           />
                           {searchQuery && (
@@ -332,11 +373,17 @@ export const MultiSelect = forwardRef<HTMLDivElement, MultiSelectProps>(
                       <div className="relative">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-primary/50" />
                         <input
+                          ref={searchInputRef}
                           type="text"
                           placeholder="Search..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
-                          className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                          onKeyDown={(event) => {
+                            if (event.key === 'Escape') {
+                              setIsOpen(false)
+                            }
+                          }}
+                          className="w-full pl-10 pr-8 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/30"
                           aria-label="Search options"
                         />
                         {searchQuery && (

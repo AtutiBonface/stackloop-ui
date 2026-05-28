@@ -4,13 +4,13 @@ import React, { forwardRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Eye, EyeOff } from 'lucide-react'
 import { cn } from './utils'
-import { DatePicker } from './DatePicker'
+import DatePicker from './DatePicker'
 import { CountrySelect } from './CountrySelect'
 import { PhoneInput } from './PhoneInput'
 
-type InputValue = string | Date
+type InputValue = string | Date 
 
-type NativeInputType = Exclude<React.HTMLInputTypeAttribute, 'date' | 'phone' | 'country' | 'tel'>
+type NativeInputType = Exclude<React.HTMLInputTypeAttribute, 'date' | 'time' | 'datetime-local' | 'phone' | 'country' | 'tel'>
 
 type NativeInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'value' | 'onChange'> & {
   type?: NativeInputType
@@ -40,7 +40,7 @@ type CountrySelectInputProps = Omit<React.ComponentProps<typeof CountrySelect>, 
 }
 
 type DatePickerInputProps = Omit<React.ComponentProps<typeof DatePicker>, 'value' | 'onChange'> & {
-  type: 'date'
+  type: 'date' | 'time' | 'datetime-local'
   value?: Date
   onChange?: (value: InputValue) => void
   onValueChange?: (value: InputValue) => void
@@ -79,13 +79,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       )
     }
 
-    if (props.type === 'date') {
+    if (props.type === 'date' || props.type === 'time' || props.type === 'datetime-local') {
       const { type, value, onChange, onValueChange, ...dateProps } = props
+      const pickerMode = type as 'date' | 'time' | 'datetime-local'
       return (
         <DatePicker
           {...dateProps}
+          mode={pickerMode}
           value={value instanceof Date ? value : undefined}
-          onChange={(nextValue) => emitValueChange(nextValue)}
+          onChange={(nextValue: Date) => emitValueChange(nextValue)}
         />
       )
     }
