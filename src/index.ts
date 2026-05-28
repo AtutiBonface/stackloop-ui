@@ -62,8 +62,8 @@ export type { TooltipProps } from './Tooltip'
 export { CountrySelect } from './CountrySelect'
 export type { CountrySelectProps } from './CountrySelect' 
 
-export { default as DatePicker } from './DatePicker.tsx'
-export type { DatePickerProps } from './DatePicker.tsx'
+export { DatePicker } from './DatePicker'
+export type { DatePickerProps } from './DatePicker'
 
 // Layout Components
 export { Accordion } from './Accordion'
