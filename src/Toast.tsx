@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { AlertCircle, AlertTriangle, Bell, Check, Info, Loader2, X, ChevronDown, ChevronUp } from 'lucide-react'
+import { AlertCircle, AlertTriangle, Bell, Check, Info, Loader2, X } from 'lucide-react'
 import { cn } from './utils'
 
 export type ToastVariant = 'success' | 'error' | 'warning' | 'info' | 'default' | 'loading'
@@ -64,14 +64,13 @@ const positionStyles = {
 const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {  
   const [phase, setPhase] = useState<'entering' | 'expanded' | 'collapsing' | 'exiting'>('entering')
   const [isHovered, setIsHovered] = useState(false)
-  const [isExpanded, setIsExpanded] = useState(false)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const Icon = variantIcons[toast.variant || 'default']
   const duration = toast.duration ?? 7000
 
   useEffect(() => {
-    // Pause lifecycle while hovered or when the user has expanded the toast
-    if (isHovered || isExpanded) {
+    // Pause lifecycle while hovered
+    if (isHovered) {
       timersRef.current.forEach(clearTimeout)
       timersRef.current = []
       return
@@ -89,13 +88,13 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
 
     timersRef.current = [t1, t2, t3, t4]
     return () => timersRef.current.forEach(clearTimeout)
-  }, [duration, isHovered, isExpanded, onRemove, toast.id])
+  }, [duration, isHovered, onRemove, toast.id])
 
   const morphVariants = {
-    entering: { width: '3rem', height: '3rem', opacity: 0, scale: 0.7, borderRadius: 9999 },
-    expanded: { width: 'fit-content', height: 'auto', opacity: 1, scale: 1, borderRadius: '1.5rem' },
-    collapsing: { width: 'fit-content', height: 'auto', opacity: 0.8, scale: 1, borderRadius: '1.5rem' },
-    exiting: { width: '2rem', height: '2rem', opacity: 0, scale: 0.4, borderRadius: 9999 }
+    entering: { opacity: 0, scale: 0.85, y: -12 },
+    expanded: { opacity: 1, scale: 1, y: 0 },
+    collapsing: { opacity: 0.9, scale: 1, y: 0 },
+    exiting: { opacity: 0, scale: 0.8, y: 12 }
   }
 
   return (
@@ -105,10 +104,10 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
       variants={morphVariants}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'pointer-events-auto inline-flex w-fit max-w-[min(88vw,26rem)] overflow-hidden border backdrop-blur-md shadow-2xl',
-        'border-b border-white/15 last:border-b-0', // 🔸 Dividers
-        variantStyles[toast.variant || 'default'],   // 🔸 Individual background
-        'items-center justify-center'
+        'pointer-events-auto inline-flex w-fit max-w-[min(88vw,26rem)] overflow-hidden border backdrop-blur-md shadow-2xl rounded-2xl',
+        'border-b border-white/15 last:border-b-0',
+        variantStyles[toast.variant || 'default'],
+        'items-center justify-center py-3 px-4 gap-3'
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -120,62 +119,41 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
       }}
     >
       {/* Icon always visible */}
-      <div className="flex h-12 w-12 shrink-0 items-center justify-center">
+      <div className="flex shrink-0 items-center justify-center">
         <Icon className={cn('h-5 w-5', toast.variant === 'loading' && 'animate-spin')} />
       </div>
 
-      {/* Content fades in/out during morph; supports two-line preview with expand */}
+      {/* Content */}
       <motion.div
         initial={{ opacity: 0 }}
-        animate={{ opacity: phase === 'expanded' ? 1 : 0 }}
+        animate={{ opacity: phase === 'expanded' || phase === 'collapsing' ? 1 : 0 }}
         transition={{ duration: 0.2 }}
-        className="flex min-w-0 flex-1 items-center gap-2 px-3 pr-2"
-        style={{ pointerEvents: phase === 'expanded' ? 'auto' : 'none' }}
+        className="flex min-w-0 flex-1 items-center gap-2"
+        style={{ pointerEvents: phase === 'expanded' || phase === 'collapsing' ? 'auto' : 'none' }}
       >
         <div className="min-w-0 flex-1">
-          <p
-            className="text-sm font-medium"
-            style={isExpanded ? undefined : {
-              display: '-webkit-box',
-              WebkitLineClamp: 2,
-              WebkitBoxOrient: 'vertical',
-              overflow: 'hidden'
-            }}
-          >
+          <p className="text-sm font-medium text-center">
             {toast.message}
           </p>
           {toast.priority === 'high' && (
-            <div className="mt-1">
+            <div className="mt-1 flex justify-center">
               <span className="shrink-0 rounded-full border border-current/30 bg-current/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide">
                 High
               </span>
             </div>
           )}
         </div>
-
-        {/* Expand/collapse control for long messages */}
-        {toast.message.length > 120 && (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); setIsExpanded((s) => !s) }}
-            className="ml-2 shrink-0 p-1 text-current/70 hover:bg-current/10 rounded"
-            aria-expanded={isExpanded}
-            aria-label={isExpanded ? 'Collapse' : 'Expand'}
-          >
-            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-          </button>
-        )}
       </motion.div>
 
       {/* Close button */}
       <motion.button
         type="button"
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: phase === 'expanded' ? 1 : 0 }}
+        animate={{ opacity: phase === 'expanded' || phase === 'collapsing' ? 1 : 0 }}
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
         onClick={(e) => { e.stopPropagation(); onRemove(toast.id) }}
-        className="shrink-0 p-2 text-current/70 transition-colors hover:bg-current/10 hover:text-current"
+        className="shrink-0 p-1 text-current/70 transition-colors hover:bg-current/10 hover:text-current rounded-full"
         aria-label="Dismiss"
       >
         <X className="h-4 w-4" />

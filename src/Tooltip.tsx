@@ -256,6 +256,23 @@ export const Tooltip: React.FC<TooltipProps> = ({
     return 'top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 border-l border-t'
   }, [resolvedInlineAlign, resolvedSide])
 
+  const [bgClasses, borderClasses] = useMemo(() => {
+    if (!className) return ['', '']
+    const classes = className.split(/\s+/)
+    const bgs = classes.filter(cls => cls.startsWith('bg-'))
+    const nonColorBorders = [
+      'border-0', 'border-2', 'border-4', 'border-8', 
+      'border-t', 'border-r', 'border-b', 'border-l', 
+      'border-x', 'border-y', 'border-solid', 'border-dashed', 
+      'border-dotted', 'border-double', 'border-none'
+    ]
+    const borders = classes.filter(cls => 
+      cls.startsWith('border-') && 
+      !nonColorBorders.some(p => cls === p || cls.startsWith(p + '-'))
+    )
+    return [bgs.join(' '), borders.join(' ')]
+  }, [className])
+
   return (
     <>
       <span
@@ -289,6 +306,8 @@ export const Tooltip: React.FC<TooltipProps> = ({
                   style={arrowBaseStyle}
                   className={cn(
                     'absolute rotate-45 bg-background border-border',
+                    bgClasses,
+                    borderClasses,
                     arrowSideClasses,
                     arrowClassName
                   )}

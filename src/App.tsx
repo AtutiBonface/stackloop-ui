@@ -438,6 +438,18 @@ function AppContent() {
                 Show Warning
               </Button>
               <Button
+                variant="outline"
+                onClick={() => {
+                  addToast({
+                    message: 'Your system configuration has been updated successfully. Please check the system log to ensure that all database connections are working and that no background initialization errors occurred.',
+                    variant: 'warning',
+                    duration: 10000
+                  })
+                }}
+              >
+                Show Long Message
+              </Button>
+              <Button
                 variant="ghost"
                 onClick={() => {
                   addToast({
@@ -654,7 +666,7 @@ function AppContent() {
         <Card>
           <CardHeader>
             <CardTitle>Tooltip</CardTitle>
-            <Tooltip content="This is a tooltip for the sliders section" side="top" showArrow>
+            <Tooltip content="This is a tooltip for the sliders section" side="top" className='bg-red-400 border-green-300' showArrow>
               <CardDescription>
                 Hover or focus a trigger to show a portal-based tooltip with auto side placement
               </CardDescription>
