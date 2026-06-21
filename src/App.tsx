@@ -57,6 +57,7 @@ import {
   Globe,
   User,
   Info,
+  MoreVertical,
 } from 'lucide-react'
 
 function AppContent() {
@@ -184,7 +185,30 @@ function AppContent() {
           <p className="text-muted">{row.email} units</p>
         </div>
       ), sortable: true },
-    { key: 'role', header: 'Role', sortable: false }
+    { key: 'role', header: 'Role', sortable: false },
+    {
+      key: 'actions',
+      header: 'Actions',
+      render: (row: any) => (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="sm" aria-label="Actions">
+              <MoreVertical className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => alert(`Edit ${row.name}`)}>
+              <Edit className="w-4 h-4 mr-2" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => alert(`Delete ${row.name}`)}>
+              <Trash2 className="w-4 h-4 mr-2 text-danger" />
+              <span className="text-danger">Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
   ]
 
   const steps = [

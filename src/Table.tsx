@@ -245,9 +245,13 @@ export function Table<T>({
                         {String((item as any)[col.key] ?? '')}
                       </div>
                     ) : col.render ? (
-                      <div className="truncate">
-                        {col.render(item)}
-                      </div>
+                      col.truncate ? (
+                        <div className="truncate">
+                          {col.render(item)}
+                        </div>
+                      ) : (
+                        col.render(item)
+                      )
                     ) : (
                       String((item as any)[col.key] ?? '')
                     )}

@@ -1,6 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import React, { createContext, useContext, useEffect, useMemo, useRef, useState, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence, type HTMLMotionProps } from 'framer-motion'
 import { ChevronRight } from 'lucide-react'
 import { cn } from './utils'
@@ -277,6 +278,38 @@ export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
   const [resolvedHorizontalSide, setResolvedHorizontalSide] = useState<'left' | 'right'>(
     align === 'end' ? 'left' : 'right'
   )
+  const [mounted, setMounted] = useState(false)
+  const [wrapperStyle, setWrapperStyle] = useState<React.CSSProperties | null>(null)
+
+  useEffect(() => {
+    setMounted(true)
+    return () => setMounted(false)
+  }, [])
+
+  const updatePosition = useCallback(() => {
+    if (!open || !triggerRef.current) return
+    const rect = triggerRef.current.getBoundingClientRect()
+    setWrapperStyle({
+      position: 'fixed',
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+      zIndex: 70,
+      pointerEvents: 'none'
+    })
+  }, [open, triggerRef])
+
+  useEffect(() => {
+    if (!open) return
+    updatePosition()
+    window.addEventListener('resize', updatePosition)
+    window.addEventListener('scroll', updatePosition, true)
+    return () => {
+      window.removeEventListener('resize', updatePosition)
+      window.removeEventListener('scroll', updatePosition, true)
+    }
+  }, [open, updatePosition])
 
   useEffect(() => {
     if (!open) return
@@ -327,41 +360,48 @@ export const DropdownMenuContent: React.FC<DropdownMenuContentProps> = ({
     }
   }, [open, side, align, triggerRef, contentRef])
 
-  return (
+  const menuContent = (
     <AnimatePresence>
-      {open ? (
-        <motion.div
-          ref={contentRef}
-          role="menu"
-          initial={animate ? { opacity: 0, y: placement === 'bottom' ? -6 : 6 } : false}
-          animate={animate ? { opacity: 1, y: 0 } : undefined}
-          exit={animate ? { opacity: 0, y: placement === 'bottom' ? -6 : 6 } : undefined}
-          transition={{ duration: 0.16 }}
-          className={cn(
-            'absolute z-50 min-w-56 rounded-md border border-border bg-background p-1 shadow-lg',
-            placement === 'bottom' ? 'top-full mt-2' : 'bottom-full mb-2',
-            resolvedHorizontalSide === 'right' ? 'left-0' : 'right-0',
-            className
-          )}
-          style={{
-            marginTop: placement === 'bottom' ? sideOffset : undefined,
-            marginBottom: placement === 'top' ? sideOffset : undefined,
-            maxWidth: 'calc(100vw - 16px)'
-          }}
-          {...props}
-          onKeyDown={(event) => {
-            props.onKeyDown?.(event)
-            if (event.key === 'Escape') {
-              event.preventDefault()
-              setOpen(false)
-            }
-          }}
-        >
-          {children}
-        </motion.div>
+      {open && wrapperStyle ? (
+        <div style={wrapperStyle}>
+          <motion.div
+            ref={contentRef}
+            role="menu"
+            initial={animate ? { opacity: 0, y: placement === 'bottom' ? -6 : 6 } : false}
+            animate={animate ? { opacity: 1, y: 0 } : undefined}
+            exit={animate ? { opacity: 0, y: placement === 'bottom' ? -6 : 6 } : undefined}
+            transition={{ duration: 0.16 }}
+            className={cn(
+              'absolute z-50 min-w-56 rounded-md border border-border bg-background p-1 shadow-lg',
+              placement === 'bottom' ? 'top-full' : 'bottom-full',
+              resolvedHorizontalSide === 'right' ? 'left-0' : 'right-0',
+              className
+            )}
+            style={{
+              marginTop: placement === 'bottom' ? sideOffset : undefined,
+              marginBottom: placement === 'top' ? sideOffset : undefined,
+              maxWidth: 'calc(100vw - 16px)',
+              pointerEvents: 'auto'
+            }}
+            {...props}
+            onKeyDown={(event) => {
+              props.onKeyDown?.(event)
+              if (event.key === 'Escape') {
+                event.preventDefault()
+                setOpen(false)
+              }
+            }}
+          >
+            {children}
+          </motion.div>
+        </div>
       ) : null}
     </AnimatePresence>
   )
+
+  if (!mounted) return null
+
+  return createPortal(menuContent, document.body)
 }
 
 export interface DropdownMenuItemProps extends React.HTMLAttributes<HTMLElement> {
