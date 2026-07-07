@@ -57,13 +57,13 @@ export const Pagination: React.FC<PaginationProps> = ({
       {...(shouldAnimate
         ? { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, transition: { duration: 0.3 } }
         : {})}
-      className={cn('flex items-center justify-between gap-4 flex-wrap', className)}
+      className={cn('w-full flex items-center justify-between gap-4 flex-wrap', className)}
     >
       <div className="text-sm text-foreground/70">
         {totalItems && itemsPerPage && (
           <span>
-            Showing {Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)} to{' '}
-            {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
+            Showing <strong className="text-primary">{Math.min((currentPage - 1) * itemsPerPage + 1, totalItems)}</strong> to{' '}
+            <strong className="text-primary">{Math.min(currentPage * itemsPerPage, totalItems)}</strong> of <strong className="text-primary">{totalItems}</strong> results
           </span>
         )}
       </div>
@@ -76,7 +76,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           icon={<ChevronLeft className="w-4 h-4" />}
           animate={animate}
         >
-          Previous
         </Button>
         {!pageItems.includes(1) && (
           <Button
@@ -122,7 +121,6 @@ export const Pagination: React.FC<PaginationProps> = ({
           icon={<ChevronRight className="w-4 h-4" />}
           animate={animate}
         >
-          Next
         </Button>
       </div>
     </motion.div>

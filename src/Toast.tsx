@@ -104,7 +104,7 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
       variants={morphVariants}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
       className={cn(
-        'pointer-events-auto inline-flex w-fit max-w-[min(88vw,26rem)] overflow-hidden border backdrop-blur-md shadow-2xl rounded-2xl',
+        'pointer-events-auto flex w-full md:w-auto md:max-w-[min(88vw,26rem)] max-w-[95vw] overflow-hidden border backdrop-blur-md shadow-2xl rounded-2xl',
         'border-b border-white/15 last:border-b-0',
         variantStyles[toast.variant || 'default'],
         'items-center justify-center py-3 px-4 gap-3'
