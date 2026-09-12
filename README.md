@@ -1160,6 +1160,9 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   - **`children`**: `ReactNode` — required. Your app content.
   - **`position`**: `'top-left' | 'top-center' | 'top-right' | 'bottom-left' | 'bottom-center' | 'bottom-right'` — default: `'top-right'`. Where toasts appear on screen.
   - **`maxToasts`**: `number` — default: `5`. Maximum number of toasts shown at once.
+  - **`minWidth`**: `string | number` — optional. Default minimum width for all toasts (e.g. `'360px'` or `360`).
+  - **`className`**: `string` — optional. Custom classes for the toast container.
+  - **`toastClassName`**: `string` — optional. Custom classes applied to all toasts.
 - **useToast() Returns:**
   - **`addToast(toast)`**: Function to create a new toast notification.
   - **`removeToast(id)`**: Function to manually dismiss a toast.
@@ -1168,6 +1171,8 @@ Call `setupRippleEffects()` only once per app (for example in `main.tsx`) to avo
   - **`message`**: `string` — required. Toast content text.
   - **`variant`**: `'success' | 'error' | 'warning' | 'info' | 'default'` — optional (default: `'default'`). Visual style with corresponding icon.
   - **`duration`**: `number` — optional (default: `5000`ms). Auto-dismiss time in milliseconds. Set to `0` for persistent toast.
+  - **`minWidth`**: `string | number` — optional. Override minimum width for this specific toast.
+  - **`className`**: `string` — optional. Additional CSS classes for this specific toast.
   - **`action`**: `{ label: string; onClick: () => void }` — optional. Action button within the toast.
 - **Features:**
   - **Auto-dismiss**: Toasts automatically disappear after duration

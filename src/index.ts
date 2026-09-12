@@ -104,7 +104,7 @@ export { Spinner } from './Spinner'
 export type { SpinnerProps } from './Spinner'
 
 export { ToastProvider, useToast } from './Toast'
-export type { Toast, ToastVariant, ToastPosition } from './Toast'
+export type { Toast, ToastVariant, ToastPosition, ToastProviderProps } from './Toast'
 
 // File Upload & Media Components
 export { CameraCapture, FileUploader } from './FileUpload'

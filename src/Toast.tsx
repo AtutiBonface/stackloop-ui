@@ -15,6 +15,8 @@ export interface Toast {
   variant?: ToastVariant
   priority?: ToastPriority
   duration?: number
+  minWidth?: string | number
+  className?: string
   action?: {
     label: string
     onClick: () => void
@@ -52,21 +54,31 @@ const variantIcons = {
   default: Bell
 }
 
-const positionStyles = {
-  'top-left': 'top-4 left-4',
-  'top-center': 'top-4 left-1/2 -translate-x-1/2',
-  'top-right': 'top-4 right-4',
-  'bottom-left': 'bottom-4 left-4',
-  'bottom-center': 'bottom-4 left-1/2 -translate-x-1/2',
-  'bottom-right': 'bottom-4 right-4'
+const positionStyles: Record<ToastPosition, string> = {
+  'top-left': 'top-4 left-0 right-0 px-4 sm:left-4 sm:right-auto sm:translate-x-0 sm:px-0 sm:items-start items-center',
+  'top-center': 'top-4 left-0 right-0 px-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:px-0 items-center',
+  'top-right': 'top-4 left-0 right-0 px-4 sm:left-auto sm:right-4 sm:translate-x-0 sm:px-0 sm:items-end items-center',
+  'bottom-left': 'bottom-4 left-0 right-0 px-4 sm:left-4 sm:right-auto sm:translate-x-0 sm:px-0 sm:items-start items-center',
+  'bottom-center': 'bottom-4 left-0 right-0 px-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:px-0 items-center',
+  'bottom-right': 'bottom-4 left-0 right-0 px-4 sm:left-auto sm:right-4 sm:translate-x-0 sm:px-0 sm:items-end items-center'
 }
 
-const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => void }> = ({ toast, onRemove }) => {  
+const DynamicIslandToast: React.FC<{
+  toast: Toast
+  onRemove: (id: string) => void
+  defaultMinWidth?: string | number
+  toastClassName?: string
+}> = ({ toast, onRemove, defaultMinWidth, toastClassName }) => {  
   const [phase, setPhase] = useState<'entering' | 'expanded' | 'collapsing' | 'exiting'>('entering')
   const [isHovered, setIsHovered] = useState(false)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const Icon = variantIcons[toast.variant || 'default']
   const duration = toast.duration ?? 7000
+
+  const resolvedMinWidth = toast.minWidth ?? defaultMinWidth
+  const minWidthStyle = resolvedMinWidth !== undefined
+    ? { minWidth: typeof resolvedMinWidth === 'number' ? `${resolvedMinWidth}px` : resolvedMinWidth }
+    : undefined
 
   useEffect(() => {
     // Pause lifecycle while hovered
@@ -103,11 +115,17 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
       animate={phase}
       variants={morphVariants}
       transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+      style={minWidthStyle}
       className={cn(
-        'pointer-events-auto flex w-full md:w-auto md:max-w-[min(88vw,26rem)] max-w-[95vw] overflow-hidden border backdrop-blur-md shadow-2xl rounded-2xl',
+        'pointer-events-auto flex w-full sm:w-auto',
+        'min-w-[min(100%,20rem)] sm:min-w-[22rem]',
+        'max-w-[min(100%,28rem)] sm:max-w-md',
+        'overflow-hidden border backdrop-blur-md shadow-2xl rounded-2xl',
         'border-b border-white/15 last:border-b-0',
         variantStyles[toast.variant || 'default'],
-        'items-center justify-center py-3 px-4 gap-3'
+        'items-center justify-between py-3 px-4 gap-3',
+        toastClassName,
+        toast.className
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -145,6 +163,25 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
         </div>
       </motion.div>
 
+      {/* Action button */}
+      {toast.action && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: phase === 'expanded' || phase === 'collapsing' ? 1 : 0 }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={(e) => {
+            e.stopPropagation()
+            toast.action?.onClick()
+            onRemove(toast.id)
+          }}
+          className="shrink-0 rounded-lg bg-white/20 px-2.5 py-1 text-xs font-semibold text-current transition-colors hover:bg-white/30"
+        >
+          {toast.action.label}
+        </motion.button>
+      )}
+
       {/* Close button */}
       <motion.button
         type="button"
@@ -162,16 +199,22 @@ const DynamicIslandToast: React.FC<{ toast: Toast; onRemove: (id: string) => voi
   )
 }
 
-interface ToastProviderProps {
+export interface ToastProviderProps {
   children: React.ReactNode
   position?: ToastPosition
   maxToasts?: number
+  minWidth?: string | number
+  className?: string
+  toastClassName?: string
 }
 
 export const ToastProvider: React.FC<ToastProviderProps> = ({
   children,
   position = 'top-center',
-  maxToasts = 4
+  maxToasts = 4,
+  minWidth,
+  className,
+  toastClassName
 }) => {
   const [toasts, setToasts] = useState<Toast[]>([])
 
@@ -196,10 +239,22 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
     <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
 
-      <div className={cn('fixed z-50 flex flex-col items-center gap-3 px-4 pointer-events-none', positionStyles[position])}>
+      <div
+        className={cn(
+          'fixed z-50 flex flex-col gap-3 pointer-events-none',
+          positionStyles[position],
+          className
+        )}
+      >
         <AnimatePresence initial={false} mode="popLayout">
           {toasts.map((toast) => (
-            <DynamicIslandToast key={toast.id} toast={toast} onRemove={removeToast} />
+            <DynamicIslandToast
+              key={toast.id}
+              toast={toast}
+              onRemove={removeToast}
+              defaultMinWidth={minWidth}
+              toastClassName={toastClassName}
+            />
           ))}
         </AnimatePresence>
       </div>
